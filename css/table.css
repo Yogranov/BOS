@@ -1,0 +1,425 @@
+/*
+Font Set
+ */
+
+@import "https://fonts.googleapis.com/earlyaccess/opensanshebrew.css";
+
+
+.responstable {
+    margin: 1em 0;
+    width: 100%;
+    overflow: hidden;
+    background: #FFF;
+    color: #024457;
+    border-radius: 10px;
+    border: 1px solid #167F92;
+    padding: 2px;
+    font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
+
+
+
+}
+.responstable tr {
+    border: 1px solid #D9E4E6;
+
+}
+
+.responstable table {
+    margin: 0 auto;
+    width: 100%;
+    font-size: 18px;
+
+
+}
+
+.responstable ul {
+    margin: 2px 0;
+    padding: 0;
+    display: block;
+    text-align: center;
+
+}
+
+.responstable li {
+    list-style-type: none;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+
+}
+
+.responstable tr:nth-child(odd) {
+    background-color: #EAF3F3;
+}
+.responstable th {
+    border: 1px solid #FFF;
+    background-color: #167f92;
+    color: #FFF;
+    padding: 1em;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 5px;
+}
+.responstable th:first-child {
+    display: table-cell;
+    text-align: center;
+
+}
+
+.responstable th:nth-child(2) {
+    display: table-cell;
+
+}
+
+.responstable th:nth-child(2) span {
+    display: none;
+}
+
+.responstable th:nth-child(2):after {
+    content: attr(data-th);
+}
+
+
+
+.responstable td {
+    display: block;
+    word-wrap: break-word;
+    text-align: center;
+    margin: 0;
+    padding: 2px !important;
+
+
+}
+.responstable td:first-child {
+    display: table-cell;
+    text-align: center;
+    border-right: 1px solid #D9E4E6;
+    padding: 0;
+    margin: 0;
+}
+
+.responstable tr:hover {
+    color: black;
+    background-color: #d2dbdb;
+    cursor: pointer;
+}
+
+.responstable tr:hover ul li {
+    color: black;
+    background-color: #d2dbdb;
+    cursor: pointer;
+}
+
+
+.responstable  h1 {
+    font-family: Verdana;
+    font-weight: normal;
+    color: #024457;
+}
+
+.responstable h1 span {
+    color: #167F92;
+}
+
+
+@media (min-width: 480px) {
+    .responstable td {
+        border: 1px solid #D9E4E6;
+    }
+    .responstable th, .responstable td {
+        display: table-cell;
+        padding: 1em;
+    }
+    .responstable th:nth-child(2) span {
+        display: block;
+    }
+
+    .responstable th:nth-child(2):after {
+        display: none;
+
+    }
+}
+
+
+@media screen and  (max-width: 960px) {
+
+    .responstable td:nth-child(4), .responstable th:nth-child(4) {
+        display: none;
+    }
+
+    .responstable td:nth-child(4), .responstable th:nth-child(4) {
+        display: none;
+    }
+
+    .responstable td:nth-child(8), .responstable th:nth-child(8) {
+        display: none;
+    }
+
+    .responstable td:nth-child(8), .responstable th:nth-child(8) {
+        display: none;
+    }
+
+
+}
+
+
+
+@media screen and  (max-width: 480px) {
+
+    .responstable td:nth-child(4),
+    .responstable td:nth-child(8){
+        display:block;
+    }
+
+
+    .responstable th:nth-child(1),
+    .responstable th:nth-child(2),
+    .responstable th:nth-child(3),
+    .responstable th:nth-child(4),
+    .responstable th:nth-child(5),
+    .responstable th:nth-child(6) {
+        display: none;
+    }
+
+    .responstable th:nth-child(7) {
+        visibility: hidden;
+    }
+
+    .responstable th:nth-child(7):after {
+        content: "סיכום הזמנה";
+        visibility: visible;
+        border: 1px solid #FFF;
+        background-color: #167f92;
+        color: #FFF;
+        padding: 12px 40px;
+        border-radius: 5px;
+        margin: 0 10%;
+
+    }
+
+
+}
+
+
+
+/* Reminder starts here  */
+
+
+
+
+.header-users {
+    background-color: #167e91;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
+    letter-spacing: 5px;
+
+}
+
+
+.table-users {
+    border: 1px solid #167e91;
+    border-radius: 10px;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+    max-width: calc(100% - 2em);
+    margin: 30px auto;
+    overflow: hidden;
+    width: 800px;
+}
+
+.table-users img {
+    width: 25px;
+}
+
+.table-users table {
+    width: 100%;
+    font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
+    font-size: 16px;
+
+}
+.table-users table td, table th {
+    color: #2b686e;
+    padding: 10px;
+    font-size: 18px;
+}
+.table-users table td {
+    text-align: center;
+    vertical-align: middle;
+}
+.table-users table td:last-child {
+    font-size: 0.95em;
+    line-height: 1.4;
+    text-align: center;
+}
+.table-users table th {
+    background-color: #daeff1;
+    font-weight: 300;
+}
+.table-users table tr:nth-child(2n) {
+    background-color: white;
+}
+.table-users table tr:nth-child(2n+1) {
+    background-color: #edf7f8;
+}
+
+
+
+@media screen and (max-width: 700px) {
+
+    .table-users td:nth-child(4),
+    .table-users th:nth-child(4) {
+        display: none;
+    }
+
+    .table-users form input[type=text] {
+        width: 83%;
+        margin-left: 15px;
+    }
+
+    .table-users form select {
+        width: 83%;
+        margin-right: 25px;
+    }
+
+    .table-users form button {
+        width: 40%;
+        padding: 10px;
+        margin: 10px 0;
+
+    }
+
+    .table-users td:not(:first-child):before {
+        color: #91ced4;
+        content: '';
+        display: block;
+        left: 0;
+        position: absolute;
+    }
+
+
+    .table-users tr {
+        padding: 10px 0;
+        position: relative;
+    }
+
+}
+
+
+
+
+@media screen and (max-width: 500px) {
+
+    .table-users tr {
+        background-color: white !important;
+        border: 1px solid #6cbec6;
+        border-radius: 10px;
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        margin: 0.5rem 0;
+        padding: 0;
+    }
+
+    .table-users form input[type=text] {
+        width: 80%;
+        margin-left: 10px;
+    }
+
+    .table-users form select {
+        width: 80%;
+        margin-right: 25px;
+    }
+
+    .table-users form button {
+        width: 40%;
+        padding: 10px;
+        margin: 10px 0;
+
+    }
+
+
+
+}
+
+
+.table-users form {
+    background-color: #167d90;
+    display: inline;
+    width: 100%;
+    direction: rtl;
+    float: right;
+    padding-right: 10px;
+    text-align: center;
+    font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
+    font-size: 16px;
+    color: #fff;
+
+}
+
+.table-users input[type=text] {
+    width: 40%;
+    padding: 10px 20px;
+    margin: 5px 10px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    text-align: right;
+    border-radius: 5px;
+}
+
+.table-users select {
+    width: 20%;
+    padding: 10px 20px;
+    margin: 5px 10px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    text-align: right;
+    border-radius: 5px;
+
+}
+
+.table-users button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 3px 0;
+    margin: 0 10px;
+    cursor: pointer;
+    width: 12%;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.table-users button:hover {
+    opacity: 0.8;
+}
+
+.table-users button:active {
+    transform: translateY(4px);
+
+
+
+
+}
+
+@media screen and (max-width: 480px) {
+
+
+    .table-users input[type=text] {
+        width: 75% !important;
+        margin-left: 10px;
+    }
+
+    .table-users select {
+        width: 75% !important;
+        margin-right: 25px;
+    }
+
+    .table-users button {
+        width: 40%;
+        padding: 10px;
+        margin: 10px 0;
+
+    }
+
+}

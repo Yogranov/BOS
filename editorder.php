@@ -1,0 +1,100 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Yogev
+ * Date: 04-Oct-17
+ * Time: 16:13
+ */
+
+
+namespace BugOrderSystem;
+
+session_start();
+require_once "Classes/BugOrderSystem.php";
+
+$shopId = $_SESSION["ShopId"];
+if(!isset($shopId)) {
+    header("Location: login.php");
+}
+$orderId = $_GET["orderId"];
+$orderObject = Order::GetById($orderId);
+$shopObj = &Shop::GetById($shopId);
+
+
+//setting header
+require_once "Header.php";
+$PageTemplate = headerTemplate;
+//setting page title
+\Services::setPlaceHolder($PageTemplate, "PageTitle", "עריכת הזמנה");
+//setting menu bar
+$PageTemplate .= headerMenu;
+\Services::setPlaceHolder($PageTemplate, "shopName", $shopObj->GetShopName());
+\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "'current'");
+///
+
+
+$PageTemplate .= <<<PAGE
+<main>
+    <div class="wrapper">
+        <div id="new-order">
+            <form class="new-order" method="POST">
+                <center> {$orderId} -  עריכת הזמנה</center>
+                <br>
+                הערות<br>
+                <input type="text" name="remarks" value="{$orderObject->GetRemarks()}"><br>
+                מוכרן<br>
+                <select name="seller">
+                {sellerSelect}
+                </select>
+                <br>
+                <br>
+                <br>
+                <button type="submit" name="editorder">עדכן הזמנה</button>
+                <br>
+            </form>
+        </div>
+    </div>
+</main>
+PAGE;
+//setting footer
+$PageTemplate .= footer;
+
+
+
+$orderSellersString = "";
+foreach ($shopObj->GetActiveSellers() as $sellerId => $sellerObj) {
+    $orderSellersString .= "<option value='".$sellerId."' ";
+    if ($orderObject->GetSeller()->GetId() === $sellerId){
+        $orderSellersString .= "selected='selected'";}
+    $orderSellersString .= ">".$sellerObj->GetFullName()."</option>";
+
+}
+\Services::setPlaceHolder($PageTemplate, "sellerSelect", $orderSellersString);
+
+
+
+
+//Take form filed and make them variable.
+
+if(isset($_POST['editorder'])) {
+
+    $remarks = $_POST['remarks'];
+    $seller = $_POST['seller'];
+
+    if (!empty($seller)) {
+
+        try {
+            $orderObject->Update(array("SellerId" => $seller, "Remarks" => $remarks));
+            header("Location: vieworder.php?id=$orderId");
+        } catch (\Exception $e) {
+            $errorMsg = $e->getMessage();
+            echo $errorMsg;
+        }
+    } else {
+        echo "נא למלא את כל השדות";
+    }
+}
+
+echo $PageTemplate;
+
+?>
