@@ -1,30 +1,34 @@
 <?php
-
 /**
  * Created by PhpStorm.
  * User: Yogev
  * Date: 09-Sep-17
  * Time: 17:40
  */
+
 namespace BugOrderSystem;
 require_once "Classes/BugOrderSystem.php";
+use Log\ELogLevel;
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+echo 12344;
 
+/*
+try
+{
+    BugOrderSystem::GetLog()->Write("Blabla");
+    $data = &Region::GetById(0);
+}
+catch (\Throwable $e) {
+    echo $e->getMessage();
+    BugOrderSystem::GetLog()->Write($e->getMessage(), ELogLevel::ERROR(), debug_backtrace());
+}
 
-//Region::GetById(1);
 
 //TODO: Fix getById.
-/*
-
-
-
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 
 
