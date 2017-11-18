@@ -29,6 +29,9 @@ class Shop
     private $password;
     private $shopName;
     private $location;
+    /**
+     * @var int
+     */
     private $region;
     private $phoneNumber;
     private $manager;
@@ -52,8 +55,6 @@ class Shop
         $this->phoneNumber = $shopData["PhoneNumber"];
         $this->manager = Seller::GetById($shopData["Manager"]);
         $this->email = $shopData["Email"];
-
-
 
         $sellersArray = BugOrderSystem::GetDB()->where("ShopId", $shopData["Id"])->get("sellers", null, "Id");
         foreach ($sellersArray as $sellerId) {
@@ -91,21 +92,20 @@ class Shop
     /**
      * @param $shopId
      * @param array $shopData
-     * @return mixed
+     * @return Shop
      * @throws \Exception
      */
     private static function addShopByShopData($shopId, array $shopData){
         $res = @self::$shops[$shopId];
 
         if(!empty($res))
-            throw new \Exception("Shop already exists in this array");
+            throw new Exception("Shop {0} already exists in this array", null, $res);
 
         if(count($shopData) == 0)
-            throw new \Exception("Shop doesn't exists on DB");
+            throw new Exception("Shop {0} doesn't exists in DB", null, $shopId);
 
         self::$shops[$shopId] = new Shop($shopData);
         return self::$shops[$shopId];
-
     }
 
 
@@ -116,7 +116,7 @@ class Shop
      */
     public static function &GetById(int $shopId) {
         if(empty($shopId))
-            throw new \Exception("Iligel Id");
+            throw new Exception("Illegal Id!");
 
         $res = @self::$shops[$shopId];
 
@@ -124,7 +124,7 @@ class Shop
             $shopData = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $shopId)->getOne(self::TABLE_NAME);
 
             if(empty($shopData))
-                throw new \Exception("Shop Id not founded, Shop doesn't exists");
+                throw new Exception("Shop Id ({0}) not founded, Shop doesn't exists", null, $shopId);
 
             $res = self::addShopByShopData($shopId, $shopData);
         }
@@ -139,33 +139,36 @@ class Shop
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function GetPassword() {
         return $this->password;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetShopName() {
         return $this->shopName;
     }
 
     /**
-     * @return Region
+     * @return int
      */
     public function GetRegion() {
         return $this->region;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetLocation() {
         return $this->location;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetPhoneNumber() {
         return $this->phoneNumber;
@@ -180,7 +183,7 @@ class Shop
 
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetEmail() {
         return $this->email;
@@ -225,13 +228,16 @@ class Shop
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function Remove() {
         $sqlSubject = BugOrderSystem::GetDB();
         $sucsses = $sqlSubject()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if(!$sucsses)
-            throw new \Exception("Unable to delete this shop right now.");
+            throw new Exception("Unable to delete shop {0}", null, $this);
+
+        $logText = "נמחקה החנות ".$this." מהמערכת";
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO());
 
         unset(self::$shops[$this->id]);
     }
@@ -244,16 +250,18 @@ class Shop
     public static function AddShop(array $shopData) {
         $check = BugOrderSystem::GetDB()->where(self::TABLE_NAME_COLUMN, $shopData["Name"])->getOne(self::TABLE_NAME,1);
         if ($check != 0)
-            throw new Exception("Cannot add shop, shop %1 is already exists.", null,$shopData["Name"]);
+            throw new Exception("Cannot add shop, shop {0} is already exists.", null, $shopData["Name"]);
 
         $sqlSubject = BugOrderSystem::GetDB();
-     $sucsses = $sqlSubject->insert(self::TABLE_NAME, $shopData);
+        $sucsses = $sqlSubject->insert(self::TABLE_NAME, $shopData);
 
-     if(!$sucsses)
-         throw new \Exception("Ubable to insert a new shop to DB right now.");
+        if(!$sucsses)
+            throw new Exception("Ubable to insert a new shop to DB right now.");
 
-     $res = &self::GetById($sucsses);
-     return $res;
+        $res = &self::GetById($sucsses);
+        $logText = "נוספה חנות חדשה בשם ".$res;
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO());
+        return $res;
     }
 
     /**
@@ -262,15 +270,18 @@ class Shop
      */
     public function ChangeRegion(Region $newRegion) {
         if (empty($newRegion))
-            throw new \Exception("Illegal Region Object!");
+            throw new Exception("Illegal Region Object!");
 
         if ($this->region == $newRegion->GetId())
-            throw new \Exception("Same region! unable to change!");
+            throw new Exception("Same region! unable to change!");
 
         $oldRegion = &Region::GetById($this->region);
         $this->region = $newRegion->GetId();
         $newRegion->AddShop($this);
         $oldRegion->RemoveShop($this);
+
+        $logText = "החנות ".$this." עברה מאיזור ".$oldRegion." לאיזור ".$newRegion;
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO());
     }
 
 
@@ -286,7 +297,10 @@ class Shop
         //}
 
         if (!$emailObject->send())
-            throw new \Exception($emailObject->ErrorInfo);
+            throw new Exception($emailObject->ErrorInfo);
+
+        $logText = "אימייל נשלח אל החנות ".$this;
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("Subject" => $subject, "Message" => $message));
     }
 
 
@@ -298,59 +312,69 @@ class Shop
     }
 
     /**
-     * @param mixed $shopName
+     * @param $shopName
+     * @param bool $update
      */
-    public function SetShopName($shopName) {
+    public function SetShopName($shopName, bool $update = true) {
         $this->shopName = $shopName;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
-     * @param mixed $location
+     * @param $location
+     * @param bool $update
      */
-    public function SetLocation($location) {
+    public function SetLocation($location, bool $update = true) {
         $this->location = $location;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
-     * @param mixed $region
+     * @param $region
+     * @param bool $update
      */
-    public function SetRegion($region) {
+    public function SetRegion($region, bool $update = true) {
         $this->region = $region;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
-     * @param mixed $phoneNumber
+     * @param $phoneNumber
+     * @param bool $update
      */
-    public function SetPhoneNumber($phoneNumber) {
+    public function SetPhoneNumber($phoneNumber, bool $update = true) {
         $this->phoneNumber = $phoneNumber;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
-     * @param mixed $email
+     * @param $email
+     * @param bool $update
      */
-    public function SetEmail($email) {
+    public function SetEmail($email, bool $update = true) {
         $this->email = $email;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
-
 
     /**
-     * @param mixed $manager
+     * @param Seller $manager
+     * @param bool $update
      */
-    public function SetManager(Seller $manager) {
+    public function SetManager(Seller $manager, bool $update = true) {
         $this->manager = $manager;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
-
 
     /**
      * @throws Exception
      */
-    private function Update() {
+    public function Update() {
 
         $updateArray = array(
             "Name" => $this->shopName,
@@ -363,6 +387,9 @@ class Shop
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
             throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
+
+        $logText = "החנות ".$this." עודכנה";
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
     }
 
 

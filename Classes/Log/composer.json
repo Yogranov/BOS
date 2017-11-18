@@ -1,0 +1,9 @@
+{
+    "name": "IsrTG/LogClass",
+    "require": {
+        "monolog/monolog": "1.*",
+        "phpmailer/phpmailer": "~6.0",
+        "wazaari/monolog-mysql": ">1.0.0",
+        "tylercd100/monolog-sms": "1.*"
+    }
+}

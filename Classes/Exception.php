@@ -23,9 +23,9 @@ class Exception extends \Exception
             $message = str_replace("{".$i."}", $vars[$i], $message);
         }
 
-        $message = "Exception: ".$message."<BR>".$res."<BR>".$dumpVarRes;
+        BugOrderSystem::GetLog()->Write($message, ELogLevel::ERROR(), array($trace, $dumpVar));
 
-        //Log::Write($message, ELogHandler::File(), ELogLevel::CRITICAL(), "Exceptions");
+        $message = "Exception: ".$message."<BR>".$res."<BR>".$dumpVarRes;
 
         parent::__construct($message, 0, null);
     }

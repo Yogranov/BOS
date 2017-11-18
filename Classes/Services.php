@@ -124,4 +124,21 @@ class Services
     public static function setPlaceHolder(&$str, $name, $value) {
         $str = str_replace("{".$name."}", $value, $str);
     }
+
+    /**
+     * @param string $Directory
+     * @return mixed
+     */
+    public static function GetBaseDir($Directory='[a-z]+.php')
+    {
+        //var_dump($_SERVER);
+        $Directory=str_replace('.','\.',$Directory);
+        $Directory=str_replace('/','\/',$Directory);
+        $pattern = '/'.$Directory.'[a-z0-9\/\.]*/i';
+        $url=$_SERVER['SCRIPT_FILENAME'];
+        $baseDir=@preg_replace($pattern,'',$url) . $Directory . '/';
+        //var_dump($baseDir);
+
+        return $baseDir;
+    }
 }

@@ -82,8 +82,9 @@ if(isset($_POST['editorder'])) {
             && !empty($_POST['shopEmail']) && !empty($_POST['shopRegion'])) {
         try {
             foreach ($arrayToUpdate as $func => $attr) {
-                $shopObj->$func($attr);
+                $shopObj->$func($attr, false);
             }
+            $shopObj->Update();
             header("Location: reditshop.php?id={$shopObj->GetId()}");
         } catch (\Exception $e) {
             $errorMsg = $e->getMessage();
