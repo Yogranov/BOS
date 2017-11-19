@@ -61,6 +61,7 @@ class BugOrderSystem {
             self::$log = new \Log(Constant::SYSTEM_LOG_NAME);
             $LogsBaseDir = \Services::GetBaseDir(Constant::SYSTEM_NAME) . Constant::LOG_SUBFOLDER;
             self::$log->AddFileHandler(ELogLevel::DEBUG(), $LogsBaseDir, null, Constant::DEFAULT_MAX_FILE);
+            self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB());
             self::$log->AddEmailHandler(ELogLevel::CRITICAL(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
             return self::$log;
         }
