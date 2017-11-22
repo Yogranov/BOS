@@ -55,7 +55,7 @@ class Log
             $level = \Log\ELogLevel::DEBUG();
 
         if ($this->isLevelHandlerAssigned($level))
-            throw new \Exception("no Handlers has been assigned to handle the requested Log minimum level!");
+            throw new \Exception("no Handler has been assigned to handle the requested Log minimum level!");
 
         //adding Ips to log
         if ($showIp) {
@@ -67,24 +67,6 @@ class Log
         }
 
         $this->loggerObject->log($level->getValue(), $logText, $context);
-    }
-
-    /**
-     * @param \Log\ELogLevel $level
-     * @return bool
-     */
-    private function isLevelHandlerAssigned(\Log\ELogLevel $level) {
-        if (!is_array($this->hasHandler))
-            return False;
-
-        foreach (\Log\ELogLevel::toArray() as $name => $value) {
-            if (@isset($this->hasHandler[$value]))
-                return True;
-            else if ($value >= $level->getValue())
-                break;
-        }
-
-        return False;
     }
 
     /**
@@ -119,6 +101,38 @@ class Log
     }
 
     /**
+     * @param \Log\ELogLevel $level
+     * @return bool
+     */
+    private function isLevelHandlerAssigned(\Log\ELogLevel $level) {
+        if (!is_array($this->hasHandler))
+            return False;
+
+        foreach (\Log\ELogLevel::toArray() as $name => $value) {
+            if (@isset($this->hasHandler[$value])) {
+                foreach ($this->hasHandler[$value] as $handlerArray) {
+                    if ($handlerArray[3] || $value == $level->getValue())
+                        return True;
+                }
+            }
+            else if ($value > $level->getValue())
+                break;
+        }
+
+        return False;
+    }
+
+    /**
+     * @param \Log\ELogLevel $minlevel
+     * @param string $method
+     * @param bool $bubble
+     * @param null $object
+     */
+    private function addToHandlersArray(\Log\ELogLevel $minlevel, string $method, bool $bubble, $object = null) {
+        $this->hasHandler[$minlevel->getValue()][] = array($method, $object, $bubble);
+    }
+
+    /**
      * @param \Log\ELogLevel $minlevel
      * @param string $fileLocation
      * @param string|null $fileName
@@ -138,7 +152,7 @@ class Log
         $handler = new RotatingFileHandler($fileLocation.$fileName.'.log', $maxFiles, $minlevel->getValue(), $bubble);
         $handler->setFilenameFormat($fileName.'_{date}', RotatingFileHandler::FILE_PER_MONTH);
         $this->loggerObject->pushHandler($handler);
-        $this->hasHandler[$minlevel->getValue()] = array("File", $fileName);
+        $this->addToHandlersArray($minlevel, "File", $bubble, $fileName);
     }
 
     /**
@@ -157,7 +171,7 @@ class Log
 
         $handler = new NativeMailerHandler($toEmail, $this->name, $fromEmail, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->hasHandler[$minlevel->getValue()] = "Email";
+        $this->addToHandlersArray($minlevel, "Email", $bubble, "");
     }
 
     /**
@@ -169,7 +183,7 @@ class Log
     public function AddMysqliDbHandler(\Log\ELogLevel $minlevel, MysqliDb $dbinstance, string $DbTable = "", bool $bubble = true) {
         $handler = new MysqliDBHandler($dbinstance, $minlevel->getValue(), $DbTable, $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->hasHandler[$minlevel->getValue()] = array("DB", $dbinstance);
+        $this->addToHandlersArray($minlevel,"DB", $bubble, $dbinstance);
     }
 
     /**
@@ -182,7 +196,7 @@ class Log
     public function AddDbHandler(\Log\ELogLevel $minlevel, $dbinstance, string $DbTable, array $DbColumns, bool $bubble = true) {
         $handler = new MySQLHandler($dbinstance, $DbTable, $DbColumns, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->hasHandler[$minlevel->getValue()] = array("DB", $dbinstance);
+        $this->addToHandlersArray($minlevel,"DB", $bubble, $dbinstance);
     }
 
     /**
@@ -209,7 +223,7 @@ class Log
 
         $handler = new PlivoHandler($Token, $AuthId, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->hasHandler[$minlevel->getValue()] = "SMS";
+        $this->addToHandlersArray($minlevel,"SMS", $bubble);
     }
 
     /**
@@ -236,7 +250,7 @@ class Log
 
         $handler = new TwilioHandler($Token, $AuthId, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->hasHandler[$minlevel->getValue()] = "SMS";
+        $this->addToHandlersArray($minlevel,"SMS", $bubble);
     }
 
     public function AddSmsHandlerCLICKATELL(\Log\ELogLevel $minlevel, string $Token, string $toPhoneNumber, string $fromPhoneNumber = null, bool $bubble = true) {
@@ -248,6 +262,6 @@ class Log
 
         $handler = new ClickatellHandler($Token, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->hasHandler[$minlevel->getValue()] = "SMS";
+        $this->addToHandlersArray($minlevel,"SMS", $bubble);
     }
 }

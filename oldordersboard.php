@@ -36,7 +36,7 @@ $PageTemplate .= <<<PAGE
     <oldorderboard>
     <div class="wrapper">
         <div id="old-order-table" class="responstable" style="margin-top: 30px;">
-                <table cellpadding="0" cellspacing="0" style=" font-size: 14px !important;">
+                <table id="OldOrderBoard" class="table" cellpadding="0" cellspacing="0" style=" font-size: 14px !important;">
                   <thead>
                     <tr>
                         <th>סטאטוס</th>
@@ -100,7 +100,7 @@ foreach ($shopOrders as $order) {
     \Services::setPlaceHolder($orderBoard, "orderRemarks", $order->GetRemarks());
     \Services::setPlaceHolder($orderBoard, "clientCellPhone", $order->GetClient()->GetPhoneNumber());
     \Services::setPlaceHolder($orderBoard, "clientName", $order->GetClient()->GetFullName());
-    \Services::setPlaceHolder($orderBoard, "orderDate", $order->GetTimeStamp()->format("d/m"));
+    \Services::setPlaceHolder($orderBoard, "orderDate", $order->GetTimeStamp()->format("d/m/Y"));
 
     $orderProductString = "";
     foreach ($order->GetOrderProducts() as $orderProduct) {
