@@ -234,7 +234,7 @@ class Shop
         $sqlSubject = BugOrderSystem::GetDB();
         $sucsses = $sqlSubject()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if(!$sucsses)
-            throw new Exception("Unable to delete shop {0}", null, $this);
+            throw new DBException("Unable to delete shop {0}", null, $this);
 
         $logText = "נמחקה החנות ".$this." מהמערכת";
         BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO());

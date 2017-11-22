@@ -37,7 +37,7 @@ $PageTemplate .= <<<PAGE
   <orderboard>
     <div class="wrapper">
         <div class="responstable" style="margin-top: 30px">
-                <table>
+                <table id="OrderBoard" class="table">
                   <thead>
                     <tr>
                         <th>סטאטוס</th>
@@ -62,8 +62,6 @@ $PageTemplate .= <<<PAGE
 PAGE;
 //setting footer
 $PageTemplate .= footer;
-
-
 
 
 $OrderBoard_Table_Temlplate = <<<EOF
@@ -150,7 +148,7 @@ foreach ($shopOrders as $order) {
 $preOrderTemplate = <<<PreOrder
 <div class="pre-order-title">הזמנות מוקדמות</div>
     <div class="responstable">
-        <table cellpadding="0" cellspacing="0">
+        <table id="PreOrderBoard" class="table" cellpadding="0" cellspacing="0">
           <thead>
             <tr>
                 <th>סטאטוס</th>

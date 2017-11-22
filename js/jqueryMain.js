@@ -8,6 +8,20 @@ $(document).ready(function(){
         history.back(1);
     });
 
+    $("#OrderBoard[class='table']").DataTable( {
+        "order": [[ 7, "desc" ]],
+        "paging":   false,
+        "info":     false
+    });
+
+    $("#PreOrderBoard[class='table']").DataTable({
+        "order": [[ 7, "desc" ]]
+    });
+
+    $("#OldOrderBoard[class='table']").DataTable({
+        "order": [[ 7, "desc" ]]
+    });
+
     $("#orderstatus").change(function(){
         var selectedStatus = parseInt($(this).val());
         var ClientsWantEmails = $("#ClientWantEmails").attr("data-value");
