@@ -20,7 +20,7 @@ Font Set
 
 }
 .responstable tr {
-    border: 1px solid #D9E4E6;
+    border: 1px solid #D9E4E6 !important;
 
 }
 
@@ -53,7 +53,7 @@ Font Set
 }
 .responstable th {
     border: 1px solid #FFF;
-    background-color: #167f92;
+    background-color: #167f92 !important;;
     color: #FFF;
     padding: 1em;
     border-radius: 5px;

@@ -37,7 +37,7 @@ $PageTemplate .= <<<PAGE
   <orderboard>
     <div class="wrapper">
         <div class="responstable" style="margin-top: 30px">
-                <table id="OrderBoard" class="table">
+                <table id="OrderBoard">
                   <thead>
                     <tr>
                         <th>סטאטוס</th>
@@ -148,7 +148,7 @@ foreach ($shopOrders as $order) {
 $preOrderTemplate = <<<PreOrder
 <div class="pre-order-title">הזמנות מוקדמות</div>
     <div class="responstable">
-        <table id="PreOrderBoard" class="table" cellpadding="0" cellspacing="0">
+        <table id="PreOrderBoard" cellpadding="0" cellspacing="0">
           <thead>
             <tr>
                 <th>סטאטוס</th>

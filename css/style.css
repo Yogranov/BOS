@@ -58,7 +58,7 @@ header h1{
 .shop-details {
     position: absolute;
     width: 160px;
-    margin: -10px 200px;
+    margin: -15px 200px;
     font-size: 18px;
     color: #4e4e4e;
     font-weight: 500;
@@ -86,7 +86,7 @@ header h1{
 header nav{
     float: right;
     text-shadow: 0 1px 0 #6a6a6a;
-
+    height: 20px;
 
 }
 
@@ -99,7 +99,7 @@ header:after{
 
 header nav h2{
     line-height: 0;
-    margin: 0;
+    margin: 10px;
     text-indent: -10000px;
 }
 
@@ -108,7 +108,7 @@ header nav li{
     float: left;
     margin-left:  10px;
     font-size: 20px;
-    margin-top: -15px;
+    margin-top: -25px;
     border-right: 1px solid #000000;
     padding-right: 15px;
     font-family: 'Secular One', sans-serif;
@@ -124,7 +124,7 @@ li:nth-last-child(5) {
 }
 
 header nav li a{
-    text-decoration: none;
+    text-decoration: none !important;
     color: #4e4e4e;
     font-weight: 500;
     letter-spacing: 2px;
