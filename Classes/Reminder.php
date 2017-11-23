@@ -66,7 +66,6 @@ class Reminder {
      */
     public static function &GetById(int $remindId)
     {
-        \Services::dump($remindId);
         if (empty($remindId))
             throw new Exception("Illegal remind Id {0}!", null, $remindId);
 
