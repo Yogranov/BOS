@@ -36,7 +36,7 @@
     font-weight: bold;
 }
 
-#edit-shop input[type=text] {
+#edit-shop input[type=text], #edit-shop input[type=password] {
     width: 90%;
     padding: 10px 20px;
     margin: 5px 0;

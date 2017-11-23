@@ -258,7 +258,7 @@ class Shop
         if(!$sucsses)
             throw new Exception("Ubable to insert a new shop to DB right now.");
 
-        $res = &self::GetById($sucsses);
+        $res = &self::GetById($shopData["Id"]);
         $logText = "נוספה חנות חדשה בשם ".$res;
         BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO());
         return $res;

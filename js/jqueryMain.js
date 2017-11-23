@@ -7,7 +7,7 @@ $(document).ready(function(){
         event.preventDefault();
         history.back(1);
     });
-
+/*
     $("#OrderBoard[class='table']").DataTable( {
         "order": [[ 7, "desc" ]],
         "paging":   false,
@@ -21,6 +21,9 @@ $(document).ready(function(){
     $("#OldOrderBoard[class='table']").DataTable({
         "order": [[ 7, "desc" ]]
     });
+*/
+
+//TODO: charts doenst works with datatable JS.
 
     $("#orderstatus").change(function(){
         var selectedStatus = parseInt($(this).val());

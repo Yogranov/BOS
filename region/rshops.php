@@ -33,6 +33,7 @@ $PageTemplate .= <<<INDEX
 <main>
     <div class="wrapper">
     <h1 style="direction: rtl">סניפים</h1>
+<a href="addshop.php">צור סניף</a>
         <div id="region-shops-list">
         {shopBlock}
         </div>
