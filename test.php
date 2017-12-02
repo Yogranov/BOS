@@ -7,30 +7,31 @@
  */
 
 namespace BugOrderSystem;
-require_once "Classes/BugOrderSystem.php";
-use Log\ELogLevel;
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-echo 12344;
+require_once "Classes/BugOrderSystem.php";
+use Log\ELogLevel;
 
-/*
+echo 12344;
 try
 {
-    BugOrderSystem::GetLog()->Write("Blabla");
-    $data = &Region::GetById(0);
+    BugOrderSystem::GetLog();
+    //BugOrderSystem::GetLog()->Write("BlaBla2");
+    foreach(BugOrderSystem::$logReadHandlers as $handler) {
+        \Services::dump($handler->Read(0, new \DateTime("2017-12-02 14:35")));
+    }
+    //$data = &Region::GetById(0);
 }
-catch (\Throwable $e) {
+catch (\Exception $e) {
     echo $e->getMessage();
     BugOrderSystem::GetLog()->Write($e->getMessage(), ELogLevel::ERROR(), debug_backtrace());
 }
 
-
+/*
 //TODO: Fix getById.
-
-
 
 \Services::dump(EOrderStatus::Arrived[0]);
 

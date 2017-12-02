@@ -253,15 +253,15 @@ class Order
      * @return Order[]
      */
     public static function GetPreOrders(Shop $shop) {
-        $shopOrdersOld = array();
-        Order::LoopAll(function (Order $order) use ($shop, &$shopOrdersOld) {
+        $shopPreOrders = array();
+        Order::LoopAll(function (Order $order) use ($shop, &$shopPreOrders) {
             if ($order->GetShop() === $shop) {
                 if($order->GetStatus() == EOrderStatus::Pre_order()) {
-                    array_push($shopOrdersOld, $order);
+                    array_push($shopPreOrders, $order);
                 }
             }
         });
-        return $shopOrdersOld;
+        return $shopPreOrders;
     }
 
     /**
@@ -309,7 +309,6 @@ class Order
     }
 
 
-
     /**
      * @return string
      */
@@ -332,7 +331,6 @@ class Order
         return $this->timeStamp;
     }
 
-
     /**
      * @return OrderProducts[]
      */
@@ -344,7 +342,7 @@ class Order
      * @return string
      */
     public function __toString() {
-        return "Order " . $this->id;
+        return "הזמנה " . $this->id;
     }
 
     /**
@@ -358,6 +356,10 @@ class Order
     public function ChangeStatus($status) {
         $info = array("Status" => $status);
         BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
+
+        $logText = "סטטוס {$this} השתנה";
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array($status));
+
         $this->status = $status;
         return $this->status;
     }

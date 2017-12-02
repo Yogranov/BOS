@@ -1,6 +1,8 @@
 <?php
 namespace BugOrderSystem;
 
+use Log\ELogLevel;
+
 class LoginC {
 
     const COOKIE_NAME = "BugOrderSystemCookie";
@@ -12,6 +14,13 @@ class LoginC {
     private $connected = False;
     private $loginTimestamp;
 
+    /**
+     * LoginC constructor.
+     * @param string $username
+     * @param string $password
+     * @param bool $remember
+     * @throws \Exception
+     */
     public function __construct(string $username, string $password, bool $remember = false){
         if (empty($username) || empty($password))
             throw new \Exception("unable to login without proper credentials!");
@@ -23,19 +32,55 @@ class LoginC {
     }
 
 
+    /**
+     * @return bool
+     */
     public function isConnected() {
         return $this->connected;
     }
 
+    /**
+     * @param $Session
+     * @throws \Exception
+     */
     public static function Disconnect(&$Session) {
         $type = (@explode("|@|", Cookie::Get(self::COOKIE_NAME)))[1];
-        BugOrderSystem::GetDB()->where("UserId", $Session[ucfirst($type)."Id"])->delete("cookies",1);
+        $userId = $Session[ucfirst($type)."Id"];
+        $userObject = "";
+        if (!empty($type)) {
+            $userObject = call_user_func(ucfirst($type).'::GetById('.$userId.')');
+        }
+
+        BugOrderSystem::GetDB()->where("UserId", $userId)->delete("cookies",1);
         Cookie::Delete(self::COOKIE_NAME);
         unset($Session);
         session_destroy();
+
+        $logText = "המשתמש {$userId} התנתק מהמערכת";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array($userObject));
     }
 
+    /**
+     * @return bool|string
+     */
+    public static function ConnectedAs() {
+        $shopId = @$_SESSION["ShopId"];
+        $regionId = @$_SESSION["RegionId"];
 
+        if(!isset($shopId) && !isset($regionId)) {
+            return false;
+        }
+        elseif (isset($regionId)) {
+            return 'RegionId';
+        }
+        else {
+            return 'ShopId';
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
     private function connect() {
         if ($this->isConnected())
             throw new \Exception("Login class already connected!");
@@ -54,15 +99,19 @@ class LoginC {
             $type = "shop";
 
             //Log
-            $shopClass = Shop::GetById($connectedShopData["Id"]);
+            $shopClass = &Shop::GetById($connectedShopData["Id"]);
             $timeNow = new \DateTime( "now", new \DateTimeZone("Asia/Jerusalem"));
             $logFile = fopen("logs/EnterLog.php", "a");
-            fwrite($logFile, "\n" . "<br>" . "{$timeNow->format("Y/m/d H:i:s")} - סניף <b>{$shopClass->GetShopName()}</b> - התחבר.");
+            $logText = "סניף {$shopClass} התחבר";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array($connectedShopData["Id"]));
+            fwrite($logFile, "\n" . "<br>" . "{$timeNow->format("Y/m/d H:i:s")} {$logText}.");
             fclose($logFile);
 
         }
         else {
             $_SESSION["RegionId"] = $regionConnectData["Id"];
+            $logText = "מנהל אזור ".$regionConnectData["Id"]." התחבר";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array($regionConnectData["Id"]));
             $type = "region";
         }
 
@@ -82,9 +131,10 @@ class LoginC {
     }
 
     /**
-     * @param string $redirectHeader
      * @param $Session
-     * @return bool
+     * @param string $redirectHeader
+     * @return bool|void
+     * @throws \Exception
      */
     public static function Reconnect(&$Session, string $redirectHeader = "index.php") {
         if(Cookie::Exists(self::COOKIE_NAME) && empty($Session)) {
@@ -109,9 +159,11 @@ class LoginC {
                 $shopClass = Shop::GetById($Object->GetId());
                 $timeNow = new \DateTime( "now", new \DateTimeZone("Asia/Jerusalem"));
                 $logFile = fopen("logs/EnterLog.php", "a");
-                fwrite($logFile, "\n" . "<br>" . "{$timeNow->format("Y/m/d H:i:s")} - סניף <b>{$shopClass->GetShopName()}</b> - התחבר מחדש אוטומטית.");
+                $logText = "סניף {$shopClass} התחבר מחדש אוטומטית";
+                fwrite($logFile, "\n" . "<br>" . "{$timeNow->format("Y/m/d H:i:s")} {$logText}.");
                 fclose($logFile);
-                //
+                BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array($Session[$name]));
+
                 return header("Location: ".$redirectHeader);
             }
         }

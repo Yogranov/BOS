@@ -17,8 +17,7 @@ if(!isset($shopId)) {
     header("Location: login.php");
 }
 
-
-$shopObject = Shop::GetById($shopId);
+$shopObject = &Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
@@ -30,7 +29,6 @@ $PageTemplate .= headerMenu;
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
 \Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "'current'");
 ///
-
 
 $PageTemplate .= <<<PAGE
 <main>
@@ -60,9 +58,9 @@ $PageTemplate .= <<<PAGE
     </orderboard>
 </main>
 PAGE;
+
 //setting footer
 $PageTemplate .= footer;
-
 
 $OrderBoard_Table_Temlplate = <<<EOF
 <tr onclick="document.location = 'vieworder.php?id={orderId}';">
@@ -80,19 +78,18 @@ $OrderBoard_Table_Temlplate = <<<EOF
     <td>{orderDate}</td>
 </tr>
 EOF;
+
 $productOrderTemplate_Quantity_More_Then_One = "<li><span style='color: indianred'> {ProductQuantity} X </span>{ProductName}</li>";
 $productOrderTemplate_Quantity_One = "<li>{ProductName}</li>";
 
 $productOrderTemplate_Quantity_One_Code = "<li>{ProductCode}</li>";
 
-
 $shopOrders = Order::GetActiveOrders($shopObject);
 
 $orderBoard = (count($shopOrders) > 0) ? "" : "<tr colspan='7'><div id='no-orders-available'>אין הזמנות </div></tr>";
+
 foreach ($shopOrders as $order) {
-
     $orderBoard .= $OrderBoard_Table_Temlplate;
-
 
     if (array_key_exists($order->GetStatus()->getValue(),Constant::ORDER_STATUS_STYLE)) {
         \Services::setPlaceHolder($orderBoard, "rowClass", Constant::ORDER_STATUS_STYLE[$order->GetStatus()->getValue()][0]);
@@ -137,13 +134,10 @@ foreach ($shopOrders as $order) {
     }
     \Services::setPlaceHolder($orderBoard, "barcodeTemplate", $orderProductCode);
 
-
 }
 \Services::setPlaceHolder($PageTemplate, "OrderBoard_Table_Template", $orderBoard);
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 $preOrderTemplate = <<<PreOrder
 <div class="pre-order-title">הזמנות מוקדמות</div>
@@ -169,7 +163,6 @@ $preOrderTemplate = <<<PreOrder
 PreOrder;
 
 
-
 $PreOrderBoard_Table_Temlplate = <<<EOF
 <tr onclick="document.location = 'vieworder.php?id={orderId}';">
     <td>{orderStatus}</td>
@@ -188,27 +181,24 @@ $PreOrderBoard_Table_Temlplate = <<<EOF
 EOF;
 $productPreOrderTemplate_Quantity_More_Then_One = "<li><span style='color: indianred'> {ProductQuantity} X </span>{ProductName}</li>";
 $productPreOrderTemplate_Quantity_One = "<li>{ProductName}</li>";
-
 $productPreOrderTemplate_Quantity_One_Code = "<li>{ProductCode}</li>";
-
 
 $shopPreOrders = Order::GetPreOrders($shopObject);
 
 $PreOrderBoard = (count($shopPreOrders) > 0) ? "" : "<tr colspan='7'><div id='no-orders-available'>אין הזמנות </div></tr>";
+
 foreach ($shopPreOrders as $order) {
-
     $PreOrderBoard .= $PreOrderBoard_Table_Temlplate;
-
 
     \Services::setPlaceHolder($PreOrderBoard, "orderId", $order->GetId());
     \Services::setPlaceHolder($PreOrderBoard, "orderStatus", $order->GetStatus()->getDesc());
     try {
         \Services::setPlaceHolder($PreOrderBoard, "orderSellerName", $order->GetSeller()->GetFullName());
     } catch (\Exception $e) {
-        $errorMsg = $e->getMessage();
         \Services::setPlaceHolder($PreOrderBoard, "orderSellerName", "מוכר לא ידוע");
 
-    }    \Services::setPlaceHolder($PreOrderBoard, "orderRemarks", $order->GetRemarks());
+    }
+    \Services::setPlaceHolder($PreOrderBoard, "orderRemarks", $order->GetRemarks());
     \Services::setPlaceHolder($PreOrderBoard, "clientCellPhone", $order->GetClient()->GetPhoneNumber());
     \Services::setPlaceHolder($PreOrderBoard, "clientName", $order->GetClient()->GetFullName());
     \Services::setPlaceHolder($PreOrderBoard, "orderDate", $order->GetTimeStamp()->format("d/m"));
@@ -218,7 +208,8 @@ foreach ($shopPreOrders as $order) {
         if ($orderProduct->GetQuantity() > 1) {
             $preOrderProductString .= $productPreOrderTemplate_Quantity_More_Then_One;
             \Services::setPlaceHolder($preOrderProductString, "ProductQuantity", $orderProduct->GetQuantity());
-        } else {
+        }
+        else {
             $preOrderProductString .= $productPreOrderTemplate_Quantity_One;
         }
         \Services::setPlaceHolder($preOrderProductString, "ProductName", $orderProduct->getProductName());
@@ -228,14 +219,13 @@ foreach ($shopPreOrders as $order) {
     $preOrderProductCode = "";
     foreach ($order->GetOrderProducts() as $orderProduct) {
         $preOrderProductCode .= $productPreOrderTemplate_Quantity_One_Code;
-
         \Services::setPlaceHolder($preOrderProductCode, "ProductCode", $orderProduct->GetProductBarcode());
     }
+
     \Services::setPlaceHolder($PreOrderBoard, "barcodeTemplate", $preOrderProductCode);
-
-
 }
 \Services::setPlaceHolder($preOrderTemplate, "PreOrderBoard_Table_Template", $PreOrderBoard);
+
 if(count($shopPreOrders)) {
     \Services::setPlaceHolder($PageTemplate, "PreOrderBoard_Table", $preOrderTemplate);
 } else {

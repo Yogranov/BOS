@@ -9,9 +9,10 @@
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 
+require_once "ILogRead.php";
 require __DIR__ . '/vendor/autoload.php';
 
-class MysqliDBHandler extends AbstractProcessingHandler
+class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
 {
     const DEFAULT_DB_TABLE_NAME = "monolog";
 
@@ -19,7 +20,14 @@ class MysqliDBHandler extends AbstractProcessingHandler
     private $initialized = false;
     private $mysqliDb;
 
-    public function __construct(MysqliDb $mysqliDb, $level = Logger::DEBUG, string $DbTable = "", bool $bubble = true) {
+    /**
+     * MysqliDBHandler constructor.
+     * @param MysqliDb $mysqliDb
+     * @param $level
+     * @param string $DbTable
+     * @param bool $bubble
+     */
+    public function __construct(MysqliDb $mysqliDb, $level = Logger::DEBUG, string $DbTable = self::DEFAULT_DB_TABLE_NAME, bool $bubble = true) {
         $this->mysqliDb = $mysqliDb;
 
         if (empty($DbTable))
@@ -29,6 +37,9 @@ class MysqliDBHandler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
 
+    /**
+     * @param array $record
+     */
     protected function write(array $record) {
         if (!$this->initialized) {
             $this->initialize();
@@ -42,27 +53,41 @@ class MysqliDBHandler extends AbstractProcessingHandler
         );
 
         $Success = $this->mysqliDb->insert($this->dbTable, $data);
-        /*
-        if(!$Success)
-            throw new \Exception("Unable to Add new DB Log");
-        */
     }
 
+    /**
+     * @param int $rows
+     * @param DateTime|null $TimeFrom
+     * @param DateTime|null $TimeTo
+     * @return array
+     * @throws Exception
+     */
+    public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
+        // TODO: Implement Message Class to hold the message object
+
+        if ($TimeFrom !== null)
+            $this->mysqliDb->where("time", $TimeFrom->format("U"), ">=");
+        if ($TimeTo !== null)
+            $this->mysqliDb->where("time", $TimeTo->format("U"), "<=");
+
+        $this->mysqliDb->orderBy("time", "Desc");
+
+        if ($rows == 0)
+            $rows = null;
+
+        $export = $this->mysqliDb->get($this->dbTable, $rows);
+
+        return $export;
+    }
+
+    /**
+     *
+     */
     private function initialize() {
 
         $tableCreateQuery = 'CREATE TABLE IF NOT EXISTS '.$this->dbTable.' (channel VARCHAR(255), level INTEGER, message LONGTEXT, time INTEGER UNSIGNED)';
         $this->mysqliDb->rawQueryOne($tableCreateQuery);
 
         $this->initialized = true;
-
-        /*
-        $this->mysqliDb->exec(
-            'CREATE TABLE IF NOT EXISTS monolog '
-            .'(channel VARCHAR(255), level INTEGER, message LONGTEXT, time INTEGER UNSIGNED)'
-        );
-        $this->statement = $this->mysqliDb->prepare(
-            'INSERT INTO monolog (channel, level, message, time) VALUES (:channel, :level, :message, :time)'
-        );
-        */
     }
 }

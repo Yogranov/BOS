@@ -16,120 +16,95 @@ use Tylercd100\Monolog\Handler\ClickatellHandler;
 
 require __DIR__. '/ELogLevel.php';
 require __DIR__. '/MysqliDBHandler.php';
+require __DIR__. '/FileHandler.php';
 require __DIR__ . '/vendor/autoload.php';
 
 class Log
 {
-    /**
-     * @var Logger[]
-     */
+    const READ_INTERFACE = "ILogRead";
     private $loggerObject;
     private $name;
-    private $hasHandler = array();
+    private $userName;
 
     /**
      * Log constructor.
      * @param string $name
+     * @param string $userName
+     * @param DateTimeZone|null $timeZone
      * @throws Exception
      */
-    public function __construct(string $name) {
+    public function __construct(string $name, string $userName = "", DateTimeZone $timeZone = null) {
         if (empty($name))
             throw new \Exception("Unable to create log object without log name");
 
+        if (!empty($userName))
+            $this->userName = $userName;
+
+        if (empty($timeZone))
+            $timeZone = new DateTimeZone("GMT");
+
         $this->loggerObject = new Logger($name);
+        $this->loggerObject->setTimezone($timeZone);
         $this->name = $name;
+    }
+
+    /**
+     * @param string $userName
+     */
+    public function SetUserName(string $userName) {
+        if (!empty($userName))
+            $this->userName = $userName;
     }
 
     /**
      * @param string $logText
      * @param null $level
      * @param array $context
+     * @param bool $showUserName
      * @param bool $showIp
      * @throws Exception
      */
-    public function Write(string $logText, $level = null, array $context = [], bool $showIp = true) {
+    public function Write(string $logText, $level = null, array $context = [], bool $showUserName = true, bool $showIp = true) {
         if (empty($logText))
             throw new \Exception("Unable to write log without log text!");
 
         if (empty($level))
             $level = \Log\ELogLevel::DEBUG();
 
-        if ($this->isLevelHandlerAssigned($level))
+        if (!$this->loggerObject->isHandling($level->getValue()))
             throw new \Exception("no Handler has been assigned to handle the requested Log minimum level!");
 
-        //adding Ips to log
+        $ipText = "";
+        $userName = "";
+        $ipAndUsername = "";
+
         if ($showIp) {
             $ipText = $_SERVER['REMOTE_ADDR'];
             if ($_SERVER['REMOTE_ADDR'] !== $_SERVER['HTTP_X_FORWARDED_FOR'])
-                $ipText .= " - ".$_SERVER['HTTP_X_FORWARDED_FOR'];
-
-            $logText = "(".$ipText.") ".$logText;
+                $ipText .= "-".$_SERVER['HTTP_X_FORWARDED_FOR'];
         }
+
+        if ($showUserName && !empty($this->userName))
+            $userName = "_".$this->userName;
+
+        if ($showIp || $showUserName)
+            $ipAndUsername = "({$ipText}{$userName})";
+
+        $logText = "{$ipAndUsername} {$logText}";
 
         $this->loggerObject->log($level->getValue(), $logText, $context);
     }
 
     /**
-     * @param $object
-     * @return bool
+     * @param $handler
+     * @return null
      */
-    private function isReadAvailHandlerAssigned(&$object = "") {
-        if (!is_array($this->hasHandler))
-            return False;
-
-        foreach($this->hasHandler as $methode) {
-            if (is_array($methode)) {
-                $name = $methode[1];
-                $methodData = $methode[2];
-            }
-            else
-                break;
-
-            //Todo: need to complete the readobject!
-            switch ($name) {
-                case 'File':
-                    return True;
-                    break;
-
-                case 'DB':
-                    return True;
-                    break;
-            }
-        }
-
-        return False;
-    }
-
-    /**
-     * @param \Log\ELogLevel $level
-     * @return bool
-     */
-    private function isLevelHandlerAssigned(\Log\ELogLevel $level) {
-        if (!is_array($this->hasHandler))
-            return False;
-
-        foreach (\Log\ELogLevel::toArray() as $name => $value) {
-            if (@isset($this->hasHandler[$value])) {
-                foreach ($this->hasHandler[$value] as $handlerArray) {
-                    if ($handlerArray[3] || $value == $level->getValue())
-                        return True;
-                }
-            }
-            else if ($value > $level->getValue())
-                break;
-        }
-
-        return False;
-    }
-
-    /**
-     * @param \Log\ELogLevel $minlevel
-     * @param string $method
-     * @param bool $bubble
-     * @param null $object
-     */
-    private function addToHandlersArray(\Log\ELogLevel $minlevel, string $method, bool $bubble, $object = null) {
-        $this->hasHandler[$minlevel->getValue()][] = array($method, $object, $bubble);
+    private function getReturnedData(&$handler) {
+        $reflection = new \ReflectionClass($handler);
+        if ($reflection->implementsInterface(self::READ_INTERFACE))
+            return $handler;
+        else
+            return null;
     }
 
     /**
@@ -138,9 +113,10 @@ class Log
      * @param string|null $fileName
      * @param bool $bubble
      * @param int $maxFiles
+     * @return FileHandler|null
      * @throws Exception
      */
-    public function AddFileHandler(\Log\ELogLevel $minlevel, string $fileLocation, string $fileName = null, bool $bubble = true, int $maxFiles = 10) {
+    public function AddFileHandler(\Log\ELogLevel $minlevel, string $fileLocation, string $fileName = null, bool $bubble = true, int $maxFiles = 12) {
         if (empty($fileLocation))
             throw new \Exception("Invalid file location! (Empty)");
 
@@ -149,10 +125,13 @@ class Log
         else
             $fileName = $this->name.'_'.$fileName;
 
-        $handler = new RotatingFileHandler($fileLocation.$fileName.'.log', $maxFiles, $minlevel->getValue(), $bubble);
-        $handler->setFilenameFormat($fileName.'_{date}', RotatingFileHandler::FILE_PER_MONTH);
+        $handler = new FileHandler($fileLocation.$fileName.'.log', $maxFiles, $minlevel->getValue(), $bubble);
+        $fileFormat = $fileName.'_{date}';
+        $dateFormat = FileHandler::FILE_PER_MONTH;
+        $handler->setFilenameFormat($fileFormat, $dateFormat);
         $this->loggerObject->pushHandler($handler);
-        $this->addToHandlersArray($minlevel, "File", $bubble, $fileName);
+
+        return $this->getReturnedData($handler);
     }
 
     /**
@@ -160,6 +139,7 @@ class Log
      * @param string $toEmail
      * @param string $fromEmail
      * @param bool $bubble
+     * @return null
      * @throws Exception
      */
     public function AddEmailHandler(\Log\ELogLevel $minlevel, string $toEmail, string $fromEmail = "", bool $bubble = true) {
@@ -171,7 +151,8 @@ class Log
 
         $handler = new NativeMailerHandler($toEmail, $this->name, $fromEmail, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->addToHandlersArray($minlevel, "Email", $bubble, "");
+
+        return $this->getReturnedData($handler);
     }
 
     /**
@@ -179,24 +160,28 @@ class Log
      * @param MysqliDb $dbinstance
      * @param string $DbTable
      * @param bool $bubble
+     * @return MysqliDBHandler
      */
     public function AddMysqliDbHandler(\Log\ELogLevel $minlevel, MysqliDb $dbinstance, string $DbTable = "", bool $bubble = true) {
         $handler = new MysqliDBHandler($dbinstance, $minlevel->getValue(), $DbTable, $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->addToHandlersArray($minlevel,"DB", $bubble, $dbinstance);
+
+        return $this->getReturnedData($handler);
     }
 
     /**
      * @param \Log\ELogLevel $minlevel
-     * @param $dbinstance
+     * @param mysqli $dbinstance
      * @param string $DbTable
      * @param array $DbColumns
      * @param bool $bubble
+     * @return MySQLHandler
      */
-    public function AddDbHandler(\Log\ELogLevel $minlevel, $dbinstance, string $DbTable, array $DbColumns, bool $bubble = true) {
+    public function AddDbHandler(\Log\ELogLevel $minlevel, mysqli $dbinstance, string $DbTable, array $DbColumns, bool $bubble = true) {
         $handler = new MySQLHandler($dbinstance, $DbTable, $DbColumns, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->addToHandlersArray($minlevel,"DB", $bubble, $dbinstance);
+
+        return $this->getReturnedData($handler);
     }
 
     /**
@@ -206,6 +191,7 @@ class Log
      * @param string $toPhoneNumber
      * @param string $fromPhoneNumber
      * @param bool $bubble
+     * @return null
      * @throws Exception
      */
     public function AddSmsHandlerPLIVO(\Log\ELogLevel $minlevel, string $Token, string $AuthId, string $toPhoneNumber, string $fromPhoneNumber, bool $bubble = true) {
@@ -223,7 +209,8 @@ class Log
 
         $handler = new PlivoHandler($Token, $AuthId, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->addToHandlersArray($minlevel,"SMS", $bubble);
+
+        return $this->getReturnedData($handler);
     }
 
     /**
@@ -233,6 +220,7 @@ class Log
      * @param string $toPhoneNumber
      * @param string $fromPhoneNumber
      * @param bool $bubble
+     * @return null
      * @throws Exception
      */
     public function AddSmsHandlerTWILIO(\Log\ELogLevel $minlevel, string $Token, string $AuthId, string $toPhoneNumber, string $fromPhoneNumber, bool $bubble = true) {
@@ -250,9 +238,19 @@ class Log
 
         $handler = new TwilioHandler($Token, $AuthId, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->addToHandlersArray($minlevel,"SMS", $bubble);
+
+        return $this->getReturnedData($handler);
     }
 
+    /**
+     * @param \Log\ELogLevel $minlevel
+     * @param string $Token
+     * @param string $toPhoneNumber
+     * @param string|null $fromPhoneNumber
+     * @param bool $bubble
+     * @return null
+     * @throws Exception
+     */
     public function AddSmsHandlerCLICKATELL(\Log\ELogLevel $minlevel, string $Token, string $toPhoneNumber, string $fromPhoneNumber = null, bool $bubble = true) {
         if (empty($Token))
             throw new Exception("Unable to set sms handler without provider Token!");
@@ -262,6 +260,7 @@ class Log
 
         $handler = new ClickatellHandler($Token, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
         $this->loggerObject->pushHandler($handler);
-        $this->addToHandlersArray($minlevel,"SMS", $bubble);
+
+        return $this->getReturnedData($handler);
     }
 }
