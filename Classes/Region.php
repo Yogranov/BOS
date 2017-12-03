@@ -54,11 +54,11 @@ class Region
     /**
      * @param int $regionId
      * @return Region
-     * @throws \Exception
+     * @throws Exception
      */
     public static function &GetById(int $regionId) {
         if(empty($regionId))
-            throw new \Exception("Iligel Id");
+            throw new Exception("Iligel Id ({0})",null, $regionId);
 
         $res = @self::$regions[$regionId];
 
@@ -66,7 +66,7 @@ class Region
             $regionData = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $regionId)->getOne(self::TABLE_NAME);
 
             if(empty($regionData))
-                throw new \Exception("Region Id not founded, Region doesn't exists");
+                throw new Exception("Region Id ({0}) not founded, Region doesn't exists.",null,$regionId);
 
             $res = self::addRegionByRegionData($regionId, $regionData);
         }
@@ -77,16 +77,16 @@ class Region
      * @param int $regionId
      * @param array $regionData
      * @return Region
-     * @throws \Exception
+     * @throws Exception
      */
     private static function addRegionByRegionData(int $regionId, array $regionData){
         $res = @self::$regions[$regionId];
 
         if(!empty($res))
-            throw new \Exception("Region already exists in this array");
+            throw new Exception("Region {0} already exists in this array",null,$regionId);
 
         if(count($regionData) == 0)
-            throw new \Exception("Region doesn't exists on DB");
+            throw new Exception("Region {0} doesn't exists on DB",null,$regionId);
 
         self::$regions[$regionId] = new Region($regionData);
         return self::$regions[$regionId];
@@ -96,7 +96,7 @@ class Region
     /**
      * @param array $regionData
      * @return Region
-     * @throws \Exception
+     * @throws Exception
      */
     public static function Add(array $regionData) {
         $check = BugOrderSystem::GetDB()->where(self::TABLE_NAME_COLUMN, $regionData["Name"])->getOne(self::TABLE_NAME,1);
@@ -107,20 +107,20 @@ class Region
         $sucsses = $sqlSubject->insert(self::TABLE_NAME, $regionData);
 
         if(!$sucsses)
-            throw new \Exception("Ubable to insert a new region to DB right now.");
+            throw new Exception("Ubable to insert a new region to DB right now.");
 
         $res = &self::GetById($sucsses);
         return $res;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function Remove() {
         $sqlSubject = BugOrderSystem::GetDB();
-        $sucsses = $sqlSubject()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
+        $sucsses = $sqlSubject->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if(!$sucsses)
-            throw new \Exception("Unable to delete this shop right now.");
+            throw new Exception("Unable to delete this region right now.");
 
         unset(self::$regions[$this->id]);
     }

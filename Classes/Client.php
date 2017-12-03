@@ -42,10 +42,10 @@ class Client {
         $res = @self::$clients[$clientId];
 
         if (!empty($res))
-            throw new \Exception("Client Already Exist in the array!");
+            throw new Exception("Client {0} Already Exist in the array!",null,$clientId);
 
         if (count($clientData) == 0)
-            throw new \Exception("Client not exist in Database!");
+            throw new Exception("Client {0} not exist in Database!",null,$clientId);
 
         self::$clients[$clientId] = new Client($clientData);
 
@@ -59,14 +59,14 @@ class Client {
      */
     public static function &GetById(int $clientId) {
         if (empty($clientId))
-            throw new \Exception("Illegal Id!");
+            throw new Exception("Illegal Id! ({0})",null,$clientId);
 
         $res = @self::$clients[$clientId];
 
         if (empty($res)) {
             $clientsData = BugOrderSystem::GetDb()->where(self::TABLE_KEY_COLUMN, $clientId)->getOne(self::TABLE_NAME);
             if (empty($clientsData))
-                throw new \Exception("No client data found! Client not exist!");
+                throw new Exception("No client data found! Client {0} not exist!",null, $clientId);
 
             $res = self::addClientByClientData($clientId, $clientsData);
         }
@@ -82,7 +82,7 @@ class Client {
         $sqlObject = BugOrderSystem::GetDB();
         $success = $sqlObject->insert(self::TABLE_NAME, $clientData);
         if (!$success)
-            throw new \Exception("Unable to add client!\n\r ".$sqlObject->getLastError());
+            throw new Exception("Unable to add client!\n\r ".$sqlObject->getLastError(), $clientData);
         $res = &self::getById($success);
         return $res;
     }
@@ -109,7 +109,7 @@ class Client {
         $sqlObject = BugOrderSystem::GetDB();
         $success = $sqlObject->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if (!$success)
-            throw new \Exception("Unable to delete client (".$this->id."):\n\r ".$sqlObject->getLastError());
+            throw new Exception("Unable to delete client (".$this->id."):\n\r ".$sqlObject->getLastError());
 
         unset(self::$clients[$this->id]);
     }
@@ -137,7 +137,7 @@ class Client {
         //}
 
         if (!$emailObject->send())
-            throw new \Exception($emailObject->ErrorInfo);
+            throw new Exception($emailObject->ErrorInfo);
     }
 
     /**

@@ -165,7 +165,7 @@ logo{
 #manager-enter input[type=password] {
     float: right;
     width: 90%;
-    padding: 10px 20px;
+    padding: 5px 20px;
     margin: 5px 0;
     display: inline-block;
     border: 1px solid #ccc;

@@ -423,3 +423,55 @@ Font Set
     }
 
 }
+
+
+#mytable {
+    text-align: center;
+    font-size: 14px !important;
+    background-color: #ffffff;
+}
+
+#mytable table {
+    border: 2px solid rgba(0,0,0,1) !important;
+
+}
+
+
+#mytable tr:hover {
+    color: black;
+    background-color: #d2dbdb;
+    cursor: pointer;
+}
+
+#mytable tr:hover ul li {
+    color: black;
+    background-color: #d2dbdb;
+    cursor: pointer;
+}
+
+#mytable ul {
+    margin: 2px 0;
+    padding: 0;
+    display: block;
+    text-align: center;
+
+}
+
+#mytable li {
+    list-style-type: none;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination li {
+    background-color: #FFF;
+    border: 1px solid rgba(0,0,0,0.3);
+    padding: 2px 5px;
+    margin-right: 3px;
+    cursor: pointer;
+}
+
+.pagination .active {
+    background-color: #f2f2f2
+}
