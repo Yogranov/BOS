@@ -3,6 +3,8 @@ namespace BugOrderSystem;
 
 require_once "Order.php";
 
+use Log\ELogLevel;
+
 class Client {
     const TABLE_NAME = "clients";
     const TABLE_KEY_COLUMN = "Id";
@@ -16,7 +18,6 @@ class Client {
     private $email;
     private $phoneNumber;
     private $wantEmail;
-    //private $ordersInfo = array();
 
     /**
      * Client constructor.
@@ -29,7 +30,6 @@ class Client {
         $this->email =       $clientData["Email"];
         $this->phoneNumber = $clientData["PhoneNumber"];
         $this->wantEmail =   (bool)$clientData["ClientWantsMails"];
-        //$this->ordersInfo =  array();
     }
 
     /**
@@ -42,7 +42,7 @@ class Client {
         $res = @self::$clients[$clientId];
 
         if (!empty($res))
-            throw new Exception("Client {0} Already Exist in the array!",null,$clientId);
+            throw new Exception("Client {0} Already Exist in the array!",null, $clientId);
 
         if (count($clientData) == 0)
             throw new Exception("Client {0} not exist in Database!",null,$clientId);
@@ -82,14 +82,15 @@ class Client {
         $sqlObject = BugOrderSystem::GetDB();
         $success = $sqlObject->insert(self::TABLE_NAME, $clientData);
         if (!$success)
-            throw new Exception("Unable to add client!\n\r ".$sqlObject->getLastError(), $clientData);
+            throw new DBException("Unable to add client!", $clientData);
         $res = &self::getById($success);
         return $res;
     }
 
     /**
      * @param string $phoneNumber
-     * @return int/bool
+     * @return bool
+     * @throws \Exception
      */
     public static function isPhoneExist(string $phoneNumber) {
         $data = BugOrderSystem::GetDB()->where("PhoneNumber", $phoneNumber)->getOne(self::TABLE_NAME);
@@ -109,7 +110,7 @@ class Client {
         $sqlObject = BugOrderSystem::GetDB();
         $success = $sqlObject->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if (!$success)
-            throw new Exception("Unable to delete client (".$this->id."):\n\r ".$sqlObject->getLastError());
+            throw new DBException("Unable to delete client {0}",null, $this);
 
         unset(self::$clients[$this->id]);
     }
@@ -142,7 +143,9 @@ class Client {
 
     /**
      * @param string $newEmail
+     * @throws DBException
      * @throws Exception
+     * @throws \Exception
      */
     public function ChangeEmail(string $newEmail) {
         if($newEmail) {
@@ -150,13 +153,18 @@ class Client {
             if (!$emailObject::validateAddress($newEmail))
                 throw new Exception("Invalid client Email address ({0})!", null, $newEmail);
 
+            $oldEmail = $this->email;
             $this->email = $newEmail;
             $this->Update();
+
+            $logText = "האימייל של הלקוח {client} השתנה מאימייל {oldEmail} לאימייל {newEmail}";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this, "oldEmail" => $oldEmail, "newEmail" => $this->email));
         }
     }
 
     /**
-     * @throws Exception
+     * @throws DBException
+     * @throws \Exception
      */
     private function Update() {
         $updateArray = array(
@@ -169,12 +177,13 @@ class Client {
 
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
-            throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
+            throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
     }
 
     /**
      * @param callable $function_doEachIteration
      * @param array $OrderByArray
+     * @throws \Exception
      */
     public static function LoopAll(callable $function_doEachIteration, array $OrderByArray = array()) {
         if (!self::$loadedAll) {
@@ -197,10 +206,7 @@ class Client {
             call_user_func($function_doEachIteration, $client);
         }
     }
-    
-    public function AddOrderInfo() {
-        
-    }
+
 
     /**
      * @return string
@@ -212,7 +218,7 @@ class Client {
     /**
      * @return bool
      */
-    public function IsWantEmail(): bool {
+    public function IsWantEmail() {
         return $this->wantEmail;
     }
 
@@ -254,6 +260,8 @@ class Client {
 
     /**
      * @param string $firstName
+     * @throws DBException
+     * @throws \Exception
      */
     public function SetFirstName(string $firstName) {
         $this->firstName = $firstName;
@@ -262,6 +270,8 @@ class Client {
 
     /**
      * @param string $lastName
+     * @throws DBException
+     * @throws \Exception
      */
     public function SetLastName(string $lastName) {
         $this->lastName = $lastName;
@@ -269,7 +279,9 @@ class Client {
     }
 
     /**
-     * @param mixed $phoneNumber
+     * @param string $phoneNumber
+     * @throws DBException
+     * @throws \Exception
      */
     public function SetPhoneNumber(string $phoneNumber) {
         $this->phoneNumber = $phoneNumber;
@@ -278,16 +290,13 @@ class Client {
 
     /**
      * @param int $wantEmail
+     * @throws DBException
+     * @throws \Exception
      */
     public function SetWantEmail(int $wantEmail) {
         $this->wantEmail = (bool)$wantEmail;
         $this->Update();
     }
-
-    public function UpdateRegular(array $updateData) {
-        BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateData, 1);
-    }
-
 
     /**
      * @return string

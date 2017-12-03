@@ -1,9 +1,9 @@
 <?php
 namespace BugOrderSystem;
 
-require_once "MysqliDb.php";
-require_once "PHPMailer/PHPMailer.php";
-require_once "Log/Log.php";
+require "MysqliDb.php";
+require "PHPMailer/PHPMailer.php";
+require "Log/Log.php";
 
 //aux classes
 include_once "Services.php";

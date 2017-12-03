@@ -24,6 +24,16 @@ class OrderProducts {
     private $quantity;
     private $status;
 
+    /**
+     * OrderProducts constructor.
+     * @param int $OrderId
+     * @param string $ProductName
+     * @param string $ProductBarcode
+     * @param string|null $remarks
+     * @param int $Quantity
+     * @throws Exception
+     * @throws \Exception
+     */
     public function __construct(int $OrderId, string $ProductName, string $ProductBarcode, string $remarks = null, $Quantity = 1) {
         $res = BugOrderSystem::GetDB()->where("OrderId", $OrderId)->where("ProductBarcode", $ProductBarcode)->getOne(self::TABLE_NAME, self::TABLE_KEY_COLUMN);
         if (BugOrderSystem::GetDB()->count == 0) {
@@ -70,7 +80,6 @@ class OrderProducts {
         return $this->quantity;
     }
 
-
     /**
      * @return EProductStatus
      */
@@ -78,10 +87,11 @@ class OrderProducts {
         return $this->status;
     }
 
-
     /**
      * @param $status
      * @return EProductStatus
+     * @throws \Exception
+     * Todo: change method input type to EProductStatus Enum
      */
     public function ChangeStatus($status) {
         $info = array("Status" => $status);

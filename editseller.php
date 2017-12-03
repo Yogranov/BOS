@@ -5,7 +5,6 @@
  * Date: 26/09/2017
  * Time: 19:44
  */
-
 namespace BugOrderSystem;
 
 session_start();
@@ -46,12 +45,12 @@ $PageTemplate .= <<<PAGE
                 <form class="new-order" method="POST">
                     <center>       {$sellerObject->GetId()}  -  עריכת מוכרן</center>
                     מספר מוכרן<br>
-                    <input type="text" name="sellernumber" value="{$sellerObject->GetId()}" required><br>
+                    <input type="text" name="sellernumber" value="{$sellerObject->GetId()}" disabled><br>
                     <br>
                     שם פרטי<br>
-                    <input type="text" name="firstname" value="{$sellerObject->GetFirstName()}" required><br>
+                    <input type="text" name="firstname" value="{$sellerObject->GetFirstName()}" disabled><br>
                     שם משפחה<br>
-                    <input type="text" name="lastname" value="{$sellerObject->GetLastName()}" required><br>
+                    <input type="text" name="lastname" value="{$sellerObject->GetLastName()}" disabled><br>
                     אימייל<br>
                     <input type="text" name="email" value="{$sellerObject->GetEmail()}" required><br>
                     <button type="submit" name="editseller">עדכן מוכרן</button>
@@ -78,9 +77,9 @@ if(isset($_POST['editseller'])) {
     $seller_email = $_POST['email'];
 
 
-    if(!empty($seller_number) && !empty($first_name) && !empty($last_name) && !empty($seller_email)) {
+    if(!empty($seller_email)) {
         try {
-            Seller::GetById($sellerId)->Update(array("Id" => $seller_number, "FirstName" => $first_name, "LastName" => $last_name, "Email" => $seller_email));
+            Seller::GetById($sellerId)->ChangeEmail($seller_email);
             header("Location: shopmanager.php");
         } catch (\Exception $e) {
             $errorMsg = $e->getMessage();

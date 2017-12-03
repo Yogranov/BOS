@@ -5,7 +5,6 @@
  * Date: 26/09/2017
  * Time: 19:44
  */
-
 namespace BugOrderSystem;
 
 session_start();
@@ -49,7 +48,6 @@ $PageTemplate .= <<<PAGE
                 <br>
                 מעוניין לקבל עדכונים במייל <input type="checkbox" id="checkwantsemails" name="wantsemail" style="display = 'none'" onclick="emailsClick()" {checkedString}><br><br>
                 <div id="clientwantsemails" class="{emailClassString}">
-                <br>
                 :אימייל
                 <input type="text" name="email" value="{$clientObject->GetEmail()}"><br>
                 </div>
@@ -66,15 +64,14 @@ PAGE;
 //setting footer
 $PageTemplate .= footer;
 
-
 $checkedString = "";
 $emailClassString = "";
 if ($clientObject->IsWantEmail()) {
     $checkedString = "Checked";
     $emailClassString = "open";
 }
-\Services::setPlaceHolder($pageTemplate,"checkedString",$checkedString);
-\Services::setPlaceHolder($pageTemplate,"emailClassString",$emailClassString);
+\Services::setPlaceHolder($PageTemplate,"checkedString", $checkedString);
+\Services::setPlaceHolder($PageTemplate,"emailClassString", $emailClassString);
 
 
 //Take form filed and make them variable.

@@ -31,11 +31,12 @@ class Order
     /**
      * @var OrderProducts[]
      */
-    private $orderProducts = array();
+    private $orderProducts;
 
     /**
      * Order constructor.
      * @param array $orderData
+     * @throws \Exception
      */
     private function __construct(array $orderData)
     {
@@ -78,8 +79,9 @@ class Order
 
     /**
      * @param int $orderId
-     * @return Order
+     * @return mixed
      * @throws Exception
+     * @throws \Exception
      */
     public static function &GetById(int $orderId)
     {
@@ -104,6 +106,7 @@ class Order
      * @param array $OrderData
      * @return Order
      * @throws Exception
+     * @throws \Exception
      */
     public static function Add(array $OrderData)
     {
@@ -121,6 +124,8 @@ class Order
     /**
      * @param callable $function_doEachIteration
      * @param array $OrderByArray
+     * @throws Exception
+     * @throws \Exception
      */
     public static function LoopAll(callable $function_doEachIteration, array $OrderByArray = array())
     {
@@ -148,6 +153,8 @@ class Order
     /**
      * @param Shop $shop
      * @return Order[]
+     * @throws Exception
+     * @throws \Exception
      */
     public static function GetShopOrders(Shop $shop)
     {
@@ -163,6 +170,8 @@ class Order
     /**
      * @param Shop $shop
      * @return Order[]
+     * @throws Exception
+     * @throws \Exception
      */
     public static function GetOldOrders(Shop $shop) {
             $shopOrdersOld = array();
@@ -178,7 +187,9 @@ class Order
 
     /**
      * @param Shop $shop
-     * @return array
+     * @return Order[]
+     * @throws Exception
+     * @throws \Exception
      */
     public static function GetArrivedOrders(Shop $shop) {
         $shopOrdersOld = array();
@@ -195,7 +206,9 @@ class Order
     /**
      * @param Shop $shop
      * @param \DateTime|null $since
-     * @return array
+     * @return Order[]
+     * @throws Exception
+     * @throws \Exception
      */
     public static function GetCanceledOrders(Shop $shop, \DateTime $since = null) {
         $shopOrdersOld = array();
@@ -214,6 +227,8 @@ class Order
     /**
      * @param Shop $shop
      * @return Order[]
+     * @throws Exception
+     * @throws \Exception
      */
     public static function GetActiveOrders(Shop $shop) {
         $shopOrdersActive = array();
@@ -230,7 +245,9 @@ class Order
     /**
      * @param Shop $shop
      * @param $searchKey
-     * @return array
+     * @return Order[]
+     * @throws Exception
+     * @throws \Exception
      */
     public static function GetSearchOrders(Shop $shop, $searchKey) {
         $shopOrdersActive = array();
@@ -247,10 +264,11 @@ class Order
         return $shopOrdersActive;
     }
 
-
     /**
      * @param Shop $shop
      * @return Order[]
+     * @throws Exception
+     * @throws \Exception
      */
     public static function GetPreOrders(Shop $shop) {
         $shopPreOrders = array();
@@ -271,11 +289,11 @@ class Order
      * @throws Exception
      */
     public function AddOrderProduct(string $ProductName, string $ProductBarcode, string $Remarks) {
-        $orderProductObject = new OrderProducts($this->id, $ProductName, $ProductBarcode, $Remarks);
-        if (array_key_exists($orderProductObject->GetId(),$this->orderProducts))
-            throw new Exception("המוצר {0} כבר קיים בהזמנה של הלקוח ולכן לא ניתן להוסיפו!", $this->orderProducts, $orderProductObject);
+        if (array_key_exists($this->id,$this->orderProducts))
+            throw new Exception("המוצר {0} כבר קיים בהזמנה של הלקוח ולכן לא ניתן להוסיפו!", $this->orderProducts, $ProductName);
 
-        $this->orderProducts[$orderProductObject->GetId()] = $orderProductObject;
+        $orderProductObject = new OrderProducts($this->id, $ProductName, $ProductBarcode, $Remarks);
+        $this->orderProducts[$this->id] = $orderProductObject;
     }
 
     /**
@@ -287,6 +305,7 @@ class Order
 
     /**
      * @return Shop
+     * @throws \Exception
      */
     public function GetShop() {
         $shop = &Shop::GetById($this->shopId);
@@ -295,6 +314,9 @@ class Order
 
     /**
      * @return Seller
+     * @throws DBException
+     * @throws Exception
+     * @throws \Exception
      */
     public function GetSeller() {
         $seller = &Seller::GetById($this->sellerId);
@@ -308,7 +330,6 @@ class Order
         return $this->updateTime;
     }
 
-
     /**
      * @return string
      */
@@ -318,6 +339,7 @@ class Order
 
     /**
      * @return EOrderStatus
+     * @throws \Exception
      */
     public function GetStatus() {
         $statusEnum = EOrderStatus::search($this->status);
@@ -347,12 +369,19 @@ class Order
 
     /**
      * @return Client
+     * @throws \Exception
      */
     public function GetClient() {
         $clientObject = &Client::GetById($this->clientId);
         return $clientObject;
     }
 
+    /**
+     * @param $status
+     * @return int
+     * @throws \Exception
+     * Todo: change method input type to EOrderStatus Enum
+     */
     public function ChangeStatus($status) {
         $info = array("Status" => $status);
         BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
@@ -364,7 +393,11 @@ class Order
         return $this->status;
     }
 
-
+    /**
+     * @param array $data
+     * @throws \Exception
+     * TODO: Change to new private update function like Seller/Client...
+     */
     public function Update(array $data){
         if (empty($data))
             throw new \Exception("לא ניתן לעדכן הזמנה, חסר מידע");

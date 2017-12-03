@@ -17,13 +17,33 @@ class Seller {
     const TABLE_KEY_COLUMN = "Id";
     const TABLE_NAME = "sellers";
 
+    /**
+     * @var int
+     */
     private $id;
+    /**
+     * @var string
+     */
     private $firstName;
+    /**
+     * @var string
+     */
     private $lastName;
+    /**
+     * @var string
+     */
     private $email;
+    /**
+     * @var ESellerStatus
+     */
     private $sellerStatus;
 
-    private  function __construct(array $sellerData) {
+    /**
+     * Seller constructor.
+     * @param array $sellerData
+     * @throws \Exception
+     */
+    private function __construct(array $sellerData) {
         $this->id = $sellerData["Id"];
         $this->firstName = $sellerData["FirstName"];
         $this->lastName = $sellerData["LastName"];
@@ -35,7 +55,7 @@ class Seller {
     /**
      * @param int $sellerId
      * @param array $sellerData
-     * @return Seller|mixed
+     * @return Seller
      * @throws Exception
      */
     private static function addSellerBySellerData(int $sellerId, array $sellerData){
@@ -46,25 +66,28 @@ class Seller {
         if(count($sellerData) == 0)
             throw new Exception("Seller {0} doesn't exists on DB",null,$sellerId);
 
-        $res = self::$sellers[$sellerId] = new Seller($sellerData);
-        return $res;
+        self::$sellers[$sellerId] = new Seller($sellerData);
+        return self::$sellers[$sellerId];
     }
+
 
     /**
      * @param int $sellerId
      * @return Seller
+     * @throws DBException
      * @throws Exception
+     * @throws \Exception
      */
     public static function &GetById(int $sellerId) {
         if (empty($sellerId))
-            throw new Exception("Illegal Id! ({0})",null,$sellerId);
+            throw new Exception("Illegal Id! ({0})",null, $sellerId);
 
         $res = @self::$sellers[$sellerId];
 
         if (empty($res)) {
             $sellerData = BugOrderSystem::GetDb()->where(self::TABLE_KEY_COLUMN, $sellerId)->getOne(self::TABLE_NAME);
             if (empty($sellerData))
-                throw new Exception("No seller data found! seller not exist!");
+                throw new DBException("No seller data found! seller {0} not exist!", null, $sellerId);
 
             $res = self::addSellerBySellerData($sellerId, $sellerData);
         }
@@ -73,6 +96,9 @@ class Seller {
 
     /**
      * @param callable $function_doEachIteration
+     * @param array $OrderByArray
+     * @throws Exception
+     * @throws \Exception
      */
     public static function LoopAll(callable $function_doEachIteration, array $OrderByArray = array()) {
         if (!self::$loadedAll) {
@@ -110,9 +136,8 @@ class Seller {
         return $this->sellerStatus;
     }
 
-
     /**
-     * @return mixed
+     * @return int|mixed
      */
     public function GetId() {
         return $this->id;
@@ -126,109 +151,98 @@ class Seller {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetFirstName() {
         return $this->firstName;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetLastName() {
         return $this->lastName;
     }
 
-
-
     /**
-     * @return mixed
+     * @return string
      */
     public function GetEmail() {
         return $this->email;
     }
 
-
     /**
      * @param array $sellerData
-     * @return Seller
+     * @return Seller|mixed
+     * @throws DBException
      * @throws Exception
+     * @throws \Exception
      */
     public static function Add(array $sellerData){
         $sqlObject = BugOrderSystem::GetDB();
         $success = $sqlObject->insert(self::TABLE_NAME, $sellerData);
         if (!$success)
-            throw new Exception("Unable to add seller!\n\r ".$sqlObject->getLastError());
+            throw new DBException("Unable to add seller!", $sellerData);
         $res = &self::getById($sellerData["Id"]);
         return $res;
     }
 
-
     /**
-     * @throws Exception
+     * @throws DBException
+     * @throws \Exception
      */
     public function Fire() {
-        $firedStatus = ESellerStatus::Fired();
-
-        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, array("Status" => $firedStatus->getValue()), 1);
-        if(!$success)
-            throw new Exception("Unable to fire seller id ".$this->id);
-
-        $this->sellerStatus = $firedStatus;
+        $this->sellerStatus = ESellerStatus::Fired();
+        $this->update();
     }
 
     /**
-     * @throws Exception
+     * @throws DBException
+     * @throws \Exception
      */
     public function BackToWork() {
-        $ActiveStatus = ESellerStatus::Active();
-
-        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, array("Status" => $ActiveStatus->getValue()), 1);
-        if(!$success)
-            throw new Exception("Unable to fire seller id ".$this->id);
-
-        $this->sellerStatus = $ActiveStatus;
-
-
+        $this->sellerStatus = ESellerStatus::Active();
+        $this->update();
     }
-        /**
-     * @throws Exception
+
+    /**
+     * @throws DBException
+     * @throws \Exception
      */
     public function Remove() {
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME, 1);
         if(!$success)
-            throw new Exception("Unable to remove seller id ".$this->id);
+            throw new DBException("Unable to remove seller {0}", null, $this);
 
         unset(self::$sellers[$this->id]);
     }
 
     /**
      * @param string $newEmail
+     * @throws DBException
      * @throws Exception
+     * @throws \Exception
      */
     public function ChangeEmail(string $newEmail) {
         $valid = \PHPMailer::validateAddress($newEmail);
         if(!$valid)
-            throw new Exception("Illegal email address ({0}).",null,$newEmail);
-
-        $newEmailArray = array("Email" => $newEmail);
-
-        $success = BugOrderSystem::GetDB()->where("Email", $this->email)->update(self::TABLE_NAME, $newEmailArray, 1);
-        if(!$success)
-            throw new Exception("Unable to change email right now");
+            throw new Exception("Illegal email address ({0})",null, $newEmail);
 
         $this->email = $newEmail;
+        $this->update();
     }
+
 
     /**
      * @param string $message
      * @param string $subject
      * @param string $AttachedFile
      * @throws Exception
+     * @throws \Exception
      */
     public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
         if (empty($this->email))
-            throw new Exception("Email not exist!", $this);
+            throw new Exception("Unable to send email to {0} email not exist!", null, $this);
 
         $emailObject = BugOrderSystem::GetEmail($subject, $message);
         $emailObject->addAddress($this->email, $this->firstName." ".$this->lastName);
@@ -242,22 +256,30 @@ class Seller {
     }
 
 
-
-    public function isExists() {
-        if($this->id > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+/*
     public function Update(array $sellerData) {
         if (empty($sellerData))
-            throw new \Exception("לא ניתן לעדכן מוכרן, חסר מידע");
+            throw new Exception("לא ניתן לעדכן מוכרן, חסר מידע");
 
         BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $sellerData);
     }
+*/
 
+    /**
+     * @throws DBException
+     * @throws \Exception
+     */
+    private function update() {
+        $updateArray = array(
+            "FirstName" => $this->firstName,
+            "LastName" => $this->lastName,
+            "Email" => $this->email,
+            "Status" => $this->sellerStatus->getValue()
+        );
 
+        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
+        if (!$success)
+            throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
+    }
 
 }

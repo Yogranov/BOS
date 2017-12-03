@@ -45,6 +45,9 @@ class Shop
     /**
      * Shop constructor.
      * @param array $shopData
+     * @throws DBException
+     * @throws Exception
+     * @throws \Exception
      */
     private function __construct(array $shopData) {
         $this->id = $shopData["Id"];
@@ -65,6 +68,7 @@ class Shop
     /**
      * @param callable $function_doEachIteration
      * @param array $OrderByArray
+     * @throws \Exception
      */
     public static function LoopAll(callable $function_doEachIteration, array $OrderByArray = array()) {
         if (!self::$loadedAll) {
@@ -206,6 +210,9 @@ class Shop
 
     /**
      * @return Seller[]
+     * @throws DBException
+     * @throws Exception
+     * @throws \Exception
      */
     public function GetFiredSellers() {
         $fired = ESellerStatus::Fired();
@@ -228,11 +235,11 @@ class Shop
     }
 
     /**
-     * @throws Exception
+     * @throws DBException
+     * @throws \Exception
      */
     public function Remove() {
-        $sqlSubject = BugOrderSystem::GetDB();
-        $sucsses = $sqlSubject()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
+        $sucsses = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if(!$sucsses)
             throw new DBException("Unable to delete shop {0}", null, $this);
 
@@ -285,6 +292,13 @@ class Shop
     }
 
 
+    /**
+     * @param string $message
+     * @param string $subject
+     * @param string $AttachedFile
+     * @throws Exception
+     * @throws \Exception
+     */
     public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
         if (empty($this->email))
             throw new Exception("Email not exist!", $this);
@@ -303,7 +317,6 @@ class Shop
         BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("Subject" => $subject, "Message" => $message));
     }
 
-
     /**
      * @return Seller[]
      */
@@ -314,6 +327,7 @@ class Shop
     /**
      * @param $shopName
      * @param bool $update
+     * @throws Exception
      */
     public function SetShopName($shopName, bool $update = true) {
         $this->shopName = $shopName;
@@ -324,6 +338,7 @@ class Shop
     /**
      * @param $location
      * @param bool $update
+     * @throws Exception
      */
     public function SetLocation($location, bool $update = true) {
         $this->location = $location;
@@ -334,6 +349,7 @@ class Shop
     /**
      * @param $region
      * @param bool $update
+     * @throws Exception
      */
     public function SetRegion($region, bool $update = true) {
         $this->region = $region;
@@ -344,6 +360,7 @@ class Shop
     /**
      * @param $phoneNumber
      * @param bool $update
+     * @throws Exception
      */
     public function SetPhoneNumber($phoneNumber, bool $update = true) {
         $this->phoneNumber = $phoneNumber;
@@ -354,6 +371,7 @@ class Shop
     /**
      * @param $email
      * @param bool $update
+     * @throws Exception
      */
     public function SetEmail($email, bool $update = true) {
         $this->email = $email;
@@ -364,6 +382,7 @@ class Shop
     /**
      * @param Seller $manager
      * @param bool $update
+     * @throws Exception
      */
     public function SetManager(Seller $manager, bool $update = true) {
         $this->manager = $manager;
@@ -371,11 +390,12 @@ class Shop
             $this->Update();
     }
 
+
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function Update() {
-
         $updateArray = array(
             "Name" => $this->shopName,
             "Location" => $this->location,

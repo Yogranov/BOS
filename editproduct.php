@@ -17,8 +17,7 @@ if(!isset($shopId)) {
 }
 $orderId = $_GET["id"];
 $productId = $_GET["productId"];
-$shopObject = Shop::GetById($shopId);
-$productsObject = Order::GetById($orderId)->GetOrderProducts();
+$shopObject = &Shop::GetById($shopId);
 
 
 //setting header
@@ -65,9 +64,9 @@ PAGE;
 //setting footer
 $PageTemplate .= footer;
 
-
-foreach ($productsObject as $productObject){
-    if($productObject->GetId() == $productId) {
+$productsObject = &Order::GetById($orderId)->GetOrderProducts();
+foreach ($productsObject as $id => $productObject){
+    if($id == $productId) {
         \Services::setPlaceHolder($PageTemplate, "productId", $productObject->GetId());
         \Services::setPlaceHolder($PageTemplate, "productName", $productObject->getProductName());
         \Services::setPlaceHolder($PageTemplate, "productBarcode", $productObject->GetProductBarcode());
@@ -79,7 +78,6 @@ foreach ($productsObject as $productObject){
 
 //Take form filed and make them variable.
 if(isset($_POST['editorder'])) {
-    include_once("inc/db_connect.req.php");
 
     $product_name = $_POST['ProductName'];
     $product_barcode = $_POST['ProductBarcode'];

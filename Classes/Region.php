@@ -32,8 +32,11 @@ class Region
     private $shops = array();
 
     /**
-     * Shop constructor.
+     * Region constructor.
      * @param array $regionData
+     * @throws DBException
+     * @throws Exception
+     * @throws \Exception
      */
     private function __construct(array $regionData)
     {
@@ -50,15 +53,15 @@ class Region
 
     }
 
-
     /**
      * @param int $regionId
      * @return Region
      * @throws Exception
+     * @throws \Exception
      */
     public static function &GetById(int $regionId) {
         if(empty($regionId))
-            throw new Exception("Iligel Id ({0})",null, $regionId);
+            throw new Exception("Illegal Id ({0})",null, $regionId);
 
         $res = @self::$regions[$regionId];
 
@@ -66,7 +69,7 @@ class Region
             $regionData = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $regionId)->getOne(self::TABLE_NAME);
 
             if(empty($regionData))
-                throw new Exception("Region Id ({0}) not founded, Region doesn't exists.",null,$regionId);
+                throw new Exception("Region Id ({0}) not found, Region not exists",null, $regionId);
 
             $res = self::addRegionByRegionData($regionId, $regionData);
         }
@@ -83,10 +86,10 @@ class Region
         $res = @self::$regions[$regionId];
 
         if(!empty($res))
-            throw new Exception("Region {0} already exists in this array",null,$regionId);
+            throw new Exception("Region {0} already exists in this array",null, $regionId);
 
         if(count($regionData) == 0)
-            throw new Exception("Region {0} doesn't exists on DB",null,$regionId);
+            throw new Exception("Region {0} doesn't exists in the DB",null, $regionId);
 
         self::$regions[$regionId] = new Region($regionData);
         return self::$regions[$regionId];
@@ -96,31 +99,34 @@ class Region
     /**
      * @param array $regionData
      * @return Region
+     * @throws DBException
      * @throws Exception
+     * @throws \Exception
      */
     public static function Add(array $regionData) {
         $check = BugOrderSystem::GetDB()->where(self::TABLE_NAME_COLUMN, $regionData["Name"])->getOne(self::TABLE_NAME,1);
         if ($check != 0)
-            throw new Exception("Cannot add region, region %1 is already exists.", null,$regionData["Name"]);
+            throw new DBException("Cannot add region, region {0} already exists.", null, $regionData["Name"]);
 
         $sqlSubject = BugOrderSystem::GetDB();
         $sucsses = $sqlSubject->insert(self::TABLE_NAME, $regionData);
 
         if(!$sucsses)
-            throw new Exception("Ubable to insert a new region to DB right now.");
+            throw new DBException("Ubable to insert a new region to DB right now.", $regionData);
 
         $res = &self::GetById($sucsses);
         return $res;
     }
 
     /**
-     * @throws Exception
+     * @throws DBException
+     * @throws \Exception
      */
     public function Remove() {
         $sqlSubject = BugOrderSystem::GetDB();
         $sucsses = $sqlSubject->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if(!$sucsses)
-            throw new Exception("Unable to delete this region right now.");
+            throw new DBException("Unable to delete region {0} right now.", null, $this);
 
         unset(self::$regions[$this->id]);
     }
@@ -138,7 +144,7 @@ class Region
      */
     public function AddShop(Shop $shop) {
         if (array_key_exists($shop->GetId(), $this->shops))
-            throw new Exception("Unable to add shop %1 to the region %2 - shop already included",null, $shop, $this);
+            throw new Exception("Unable to add shop {0} to the region {1} - shop already included",null, $shop, $this);
 
         $this->shops[$shop->GetId()] = $shop;
     }
@@ -149,7 +155,7 @@ class Region
      */
     public function RemoveShop(Shop $shop) {
         if (!array_key_exists($shop->GetId(), $this->shops))
-            throw new Exception("Unable to remove shop %1 from region %2 - shop not included",null, $shop, $this);
+            throw new Exception("Unable to remove shop {0} from region {1} - shop not included",null, $shop, $this);
 
         unset($this->shops[$shop->GetId()]);
     }
@@ -175,8 +181,9 @@ class Region
         return $this->shops;
     }
 
-
-
+    /**
+     * @return string
+     */
     public function __toString() {
         return $this->name.' ('.$this->id.')';
     }
