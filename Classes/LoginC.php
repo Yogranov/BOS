@@ -45,13 +45,12 @@ class LoginC {
      */
     public static function Disconnect(&$Session) {
         $type = (@explode("|@|", Cookie::Get(self::COOKIE_NAME)))[1];
-        $userId = $Session[ucfirst($type)."Id"];
-        $userObject = "";
-        if (!empty($type)) {
-            $userObject = call_user_func(ucfirst($type).'::GetById('.$userId.')');
-        }
+        $connectedAs = self::ConnectedAs();
+        $userId = &$Session[$connectedAs];
+        $userObject = call_user_func(ucfirst(strtolower(substr($connectedAs, 0, strlen($connectedAs)-2))).'::GetById('.$userId.')');
+        if (!empty($type))
+            BugOrderSystem::GetDB()->where("UserId", $userId)->delete("cookies",1);
 
-        BugOrderSystem::GetDB()->where("UserId", $userId)->delete("cookies",1);
         Cookie::Delete(self::COOKIE_NAME);
         unset($Session);
         session_destroy();
@@ -134,6 +133,7 @@ class LoginC {
      * @param $Session
      * @param string $redirectHeader
      * @return bool|void
+     * @throws Exception
      * @throws \Exception
      */
     public static function Reconnect(&$Session, string $redirectHeader = "index.php") {

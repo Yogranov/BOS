@@ -7,12 +7,19 @@
  */
 
 use Monolog\Logger;
+
+use Monolog\Processor\PsrLogMessageProcessor;
+
+use \Monolog\Formatter\LineFormatter;
+
+use Monolog\Handler\DeduplicationHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\NativeMailerHandler;
 use MySQLHandler\MySQLHandler;
 use Tylercd100\Monolog\Handler\PlivoHandler;
 use Tylercd100\Monolog\Handler\TwilioHandler;
 use Tylercd100\Monolog\Handler\ClickatellHandler;
+use Log\Message;
 
 require __DIR__. '/ELogLevel.php';
 require __DIR__. '/MysqliDBHandler.php';
@@ -25,6 +32,7 @@ class Log
     private $loggerObject;
     private $name;
     private $userName;
+    private $formatter;
 
     /**
      * Log constructor.
@@ -44,7 +52,11 @@ class Log
             $timeZone = new DateTimeZone("GMT");
 
         $this->loggerObject = new Logger($name);
+        $this->loggerObject->pushProcessor(new PsrLogMessageProcessor);
         $this->loggerObject->setTimezone($timeZone);
+
+        $this->formatter = new LineFormatter(Message::DEFAULT_FORMAT, Message::DEFAULT_DATETIME, false, true);
+
         $this->name = $name;
     }
 
@@ -65,6 +77,7 @@ class Log
      * @throws Exception
      */
     public function Write(string $logText, $level = null, array $context = [], bool $showUserName = true, bool $showIp = true) {
+        //Todo: formal the log message
         if (empty($logText))
             throw new \Exception("Unable to write log without log text!");
 
@@ -74,37 +87,33 @@ class Log
         if (!$this->loggerObject->isHandling($level->getValue()))
             throw new \Exception("no Handler has been assigned to handle the requested Log minimum level!");
 
-        $ipText = "";
-        $userName = "";
-        $ipAndUsername = "";
+        $username = "";
+        if ($showUserName)
+            $username = $this->userName;
 
+        $context['username'] = $username;
+
+        $ipText = "";
         if ($showIp) {
             $ipText = $_SERVER['REMOTE_ADDR'];
             if ($_SERVER['REMOTE_ADDR'] !== $_SERVER['HTTP_X_FORWARDED_FOR'])
                 $ipText .= "-".$_SERVER['HTTP_X_FORWARDED_FOR'];
         }
-
-        if ($showUserName && !empty($this->userName))
-            $userName = "_".$this->userName;
-
-        if ($showIp || $showUserName)
-            $ipAndUsername = "({$ipText}{$userName})";
-
-        $logText = "{$ipAndUsername} {$logText}";
+        $context['ip'] = $ipText;
 
         $this->loggerObject->log($level->getValue(), $logText, $context);
     }
 
     /**
      * @param $handler
-     * @return null
+     * @return void | object
      */
     private function getReturnedData(&$handler) {
         $reflection = new \ReflectionClass($handler);
         if ($reflection->implementsInterface(self::READ_INTERFACE))
             return $handler;
         else
-            return null;
+            return;
     }
 
     /**
@@ -113,7 +122,7 @@ class Log
      * @param string|null $fileName
      * @param bool $bubble
      * @param int $maxFiles
-     * @return FileHandler|null
+     * @return FileHandler|void
      * @throws Exception
      */
     public function AddFileHandler(\Log\ELogLevel $minlevel, string $fileLocation, string $fileName = null, bool $bubble = true, int $maxFiles = 12) {
@@ -129,7 +138,10 @@ class Log
         $fileFormat = $fileName.'_{date}';
         $dateFormat = FileHandler::FILE_PER_MONTH;
         $handler->setFilenameFormat($fileFormat, $dateFormat);
+        $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
+        //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 1));
+
 
         return $this->getReturnedData($handler);
     }
@@ -139,7 +151,7 @@ class Log
      * @param string $toEmail
      * @param string $fromEmail
      * @param bool $bubble
-     * @return null
+     * @return object|void
      * @throws Exception
      */
     public function AddEmailHandler(\Log\ELogLevel $minlevel, string $toEmail, string $fromEmail = "", bool $bubble = true) {
@@ -150,7 +162,9 @@ class Log
             $fromEmail = $_SERVER["HTTP_HOST"].' Logger';
 
         $handler = new NativeMailerHandler($toEmail, $this->name, $fromEmail, $minlevel->getValue(), $bubble);
+        $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
+        //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 600));
 
         return $this->getReturnedData($handler);
     }
@@ -160,11 +174,13 @@ class Log
      * @param MysqliDb $dbinstance
      * @param string $DbTable
      * @param bool $bubble
-     * @return MysqliDBHandler
+     * @return MysqliDBHandler|void
      */
     public function AddMysqliDbHandler(\Log\ELogLevel $minlevel, MysqliDb $dbinstance, string $DbTable = "", bool $bubble = true) {
         $handler = new MysqliDBHandler($dbinstance, $minlevel->getValue(), $DbTable, $bubble);
+        $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
+        //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 60));
 
         return $this->getReturnedData($handler);
     }
@@ -175,11 +191,13 @@ class Log
      * @param string $DbTable
      * @param array $DbColumns
      * @param bool $bubble
-     * @return MySQLHandler
+     * @return MySQLHandler|void
      */
     public function AddDbHandler(\Log\ELogLevel $minlevel, mysqli $dbinstance, string $DbTable, array $DbColumns, bool $bubble = true) {
         $handler = new MySQLHandler($dbinstance, $DbTable, $DbColumns, $minlevel->getValue(), $bubble);
+        $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
+        //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 60));
 
         return $this->getReturnedData($handler);
     }
@@ -191,7 +209,7 @@ class Log
      * @param string $toPhoneNumber
      * @param string $fromPhoneNumber
      * @param bool $bubble
-     * @return null
+     * @return object|void
      * @throws Exception
      */
     public function AddSmsHandlerPLIVO(\Log\ELogLevel $minlevel, string $Token, string $AuthId, string $toPhoneNumber, string $fromPhoneNumber, bool $bubble = true) {
@@ -208,7 +226,9 @@ class Log
             throw new \Exception("Unable to set sms handler without provider destination PhoneNumber!");
 
         $handler = new PlivoHandler($Token, $AuthId, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
+        $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
+        //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 600));
 
         return $this->getReturnedData($handler);
     }
@@ -220,7 +240,7 @@ class Log
      * @param string $toPhoneNumber
      * @param string $fromPhoneNumber
      * @param bool $bubble
-     * @return null
+     * @return object|void
      * @throws Exception
      */
     public function AddSmsHandlerTWILIO(\Log\ELogLevel $minlevel, string $Token, string $AuthId, string $toPhoneNumber, string $fromPhoneNumber, bool $bubble = true) {
@@ -237,7 +257,9 @@ class Log
             throw new Exception("Unable to set sms handler without provider destination PhoneNumber!");
 
         $handler = new TwilioHandler($Token, $AuthId, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
+        $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
+        //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 600));
 
         return $this->getReturnedData($handler);
     }
@@ -248,7 +270,7 @@ class Log
      * @param string $toPhoneNumber
      * @param string|null $fromPhoneNumber
      * @param bool $bubble
-     * @return null
+     * @return object|void
      * @throws Exception
      */
     public function AddSmsHandlerCLICKATELL(\Log\ELogLevel $minlevel, string $Token, string $toPhoneNumber, string $fromPhoneNumber = null, bool $bubble = true) {
@@ -259,7 +281,9 @@ class Log
             throw new Exception("Unable to set sms handler without provider destination PhoneNumber!");
 
         $handler = new ClickatellHandler($Token, $fromPhoneNumber, $toPhoneNumber, $minlevel->getValue(), $bubble);
+        $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
+        //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 600));
 
         return $this->getReturnedData($handler);
     }

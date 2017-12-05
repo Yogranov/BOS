@@ -10,6 +10,7 @@ use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
 
 require_once "ILogRead.php";
+require_once __DIR__ . '/Message.php';
 require __DIR__ . '/vendor/autoload.php';
 
 class FileHandler extends RotatingFileHandler implements ILogRead
@@ -38,15 +39,13 @@ class FileHandler extends RotatingFileHandler implements ILogRead
      * @return array
      */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
-        // TODO: Implement Message Class to hold the message object
-
         $object = new SplFileObject($this->getTimedFilename(),"a+");
         $contents = array();
         while(!$object->eof()) {
             $lineData = $object->fgets();
 
             if (!empty($lineData)) {
-                array_push($contents, $lineData);
+                array_push($contents, new \Log\Message($lineData));
             }
         }
 

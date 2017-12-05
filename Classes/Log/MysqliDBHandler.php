@@ -10,6 +10,7 @@ use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 
 require_once "ILogRead.php";
+require_once __DIR__ . '/Message.php';
 require __DIR__ . '/vendor/autoload.php';
 
 class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
@@ -75,9 +76,20 @@ class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
         if ($rows == 0)
             $rows = null;
 
+        $content = array();
         $export = $this->mysqliDb->get($this->dbTable, $rows);
+        foreach ($export as $dbLogLine) {
+            if (!empty($dbLogLine)) {
+                //Services::dump($dbLogLine);
+                $messageObject = new \Log\Message($dbLogLine["message"]);
+                $messageObject->SetChannel($dbLogLine["channel"]);
+                $messageObject->SetLevel(\Log\ELogLevel::search($dbLogLine["level"]));
+                $messageObject->SetTime(new DateTime($dbLogLine["time"]));
+                array_push($content, $messageObject);
+            }
+        }
 
-        return $export;
+        return $content;
     }
 
     /**

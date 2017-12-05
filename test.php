@@ -5,36 +5,17 @@
  * Date: 09-Sep-17
  * Time: 17:40
  */
-namespace BugOrderSystem;
-require_once "Classes/BugOrderSystem.php";
-use Log\ELogLevel;
 
+namespace BugOrderSystem;
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+require_once "Classes/BugOrderSystem.php";
+use Log\ELogLevel;
 
-
-$order = Order::GetById(91);
-$encode = base64_encode($order->GetShop()->GetId() . "_" . $order->GetId() . "_" . $order->GetTimeStamp()->format("U"));
-
-$decode = base64_decode($encode);
-
-\Services::dump(explode("_",$decode));
-
-
-echo "<br><br><br><br>";
-
-echo $encode;
-echo "<br><br><br><br>";
-
-echo $decode;
-
-
-
-/*
-echo 12344;
+//echo 12344;
 try
 {
     BugOrderSystem::GetLog();
@@ -49,8 +30,7 @@ catch (\Exception $e) {
     BugOrderSystem::GetLog()->Write($e->getMessage(), ELogLevel::ERROR(), debug_backtrace());
 }
 
-
-
+/*
 \Services::dump(EOrderStatus::Arrived[0]);
 
 $orderId = 84;
