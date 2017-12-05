@@ -14,7 +14,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
+if(preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"])){
+    echo "blablabla";
+}
+/*
 
 $order = Order::GetById(91);
 $encode = base64_encode($order->GetShop()->GetId() . "_" . $order->GetId() . "_" . $order->GetTimeStamp()->format("U"));
@@ -33,7 +36,7 @@ echo $decode;
 
 
 
-/*
+
 echo 12344;
 try
 {

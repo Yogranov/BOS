@@ -79,7 +79,7 @@ class Order
 
     /**
      * @param int $orderId
-     * @return mixed
+     * @return Order
      * @throws Exception
      * @throws \Exception
      */
@@ -306,6 +306,7 @@ class Order
     /**
      * @return Shop
      * @throws \Exception
+     * @throws Exception
      */
     public function GetShop() {
         $shop = &Shop::GetById($this->shopId);
