@@ -113,6 +113,9 @@ class Client {
             throw new DBException("Unable to delete client {0}",null, $this);
 
         unset(self::$clients[$this->id]);
+
+        $logText = "הלקוח {client} הוסר";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
     }
 
     /**
@@ -178,6 +181,9 @@ class Client {
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
             throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
+
+        $logText = "הלקוח {client} עודכן";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
     }
 
     /**

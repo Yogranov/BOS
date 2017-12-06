@@ -47,7 +47,24 @@ $PageTemplate .= <<<PAGE
                 שים לב! פעולה זו אינה הפיכה!
             </p>
         </div>
-
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6" style="background: lightblue; height: 50px; margin: 0 auto;">Stating using grid</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3" style="background: red; height: 200px;">Grid</div>
+                <div class="col-sm-3" style="background: blue; height: 200px;">Grid</div>
+                <div class="col-sm-3" style="background: green; height: 200px;">Grid</div>
+                <div class="col-sm-3" style="background: yellow; height: 200px;">Grid</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3" style="background: yellow; height: 200px;">Grid</div>
+                <div class="col-sm-3" style="background: green; height: 200px;">Grid</div>
+                <div class="col-sm-3" style="background: blue; height: 200px;">Grid</div>
+                <div class="col-sm-3" style="background: red; height: 200px;">Grid</div>
+            </div>
+        </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div id="view-order" dir="rtl">
           <div class="order-title">הזמנת לקוח - $orderId</div>
           <br>

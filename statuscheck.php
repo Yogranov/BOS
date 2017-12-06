@@ -7,10 +7,6 @@
  */
 namespace BugOrderSystem;
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once "Classes/BugOrderSystem.php";
 
 if(isset($_GET["id"])){
@@ -77,9 +73,7 @@ body {
         {$orderObj->GetShop()->GetLocation()}
         
         <br><br>
-        {wazeIcon}
-        <br>
-        {callMe}
+        {mobile}
     </div>
 </body>
 PAGE;
@@ -100,24 +94,29 @@ foreach ($orderObj->GetOrderProducts() as $product) {
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
+
 //if the client use smartPhone
+
+$mobile = <<<MOBILE
+        לניווט וחיוג מהיר: <br>
+        <a href='waze://?q={$orderObj->GetShop()->GetLocation()}'><img src='/images/icons/waze.png' alt='waze' height='50' width='50'></a> 
+        <a href=\"tel:{$orderObj->GetShop()->GetPhoneNumber()}\"><img src='/images/icons/telephone.png' alt='telephone'  height='50' width='50'></a>
+MOBILE;
+
 if(preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"])){
-   \Services::setPlaceHolder($PageTemplate,"wazeIcon", "<a href='waze://?q={$orderObj->GetShop()->GetLocation()}'><img src=\"http://www.nirtours.co.il/webfiles/links/32/waze-hover_-_g.svg\"></a>");
-   \Services::setPlaceHolder($PageTemplate,"callMe", "<a href=\"tel:{$orderObj->GetShop()->GetPhoneNumber()}\"><img src='https://holidayford.com/images/phone-icon.png'></a>");
+    \Services::setPlaceHolder($PageTemplate,"mobile", $mobile);
 
 } else {
-    \Services::setPlaceHolder($PageTemplate,"wazeIcon", "");
-    \Services::setPlaceHolder($PageTemplate,"callMe", "");
-
+    \Services::setPlaceHolder($PageTemplate,"mobile", "");
 }
-
+///////////////////////
 
 
 
 if($orderObj->GetShop()->GetId() == $shopId && $orderObj->GetTimeStamp()->format("U") == $unixTime) {
     echo $PageTemplate;
 } else {
-    echo "לא ניתן להציג דף זה, נא להכניס מספר הזמנה חוקי";
+    echo "<h2>לא ניתן להציג דף זה, נא להכניס מספר הזמנה חוקי</h2>";
 }
 
 

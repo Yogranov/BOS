@@ -103,17 +103,19 @@ class OrderProducts {
     /**
      * @param int $Quantity
      * @throws Exception
+     * @throws \Exception
      */
     public function ChangeQuantity(int $Quantity) {
         if ($Quantity < 1 || $Quantity > self::MAX_QUANTITY)
             throw new Exception("כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $Quantity, self::MAX_QUANTITY);
-
         $this->quantity = $Quantity;
         $this->Update();
     }
 
     /**
      * @param string $Remarks
+     * @throws Exception
+     * @throws \Exception
      */
     public function ChangeRemarks(string $Remarks) {
         $this->remarks = $Remarks;
@@ -156,21 +158,67 @@ class OrderProducts {
     }
 
     /**
+     * @param $productName
      * @throws Exception
+     * @throws \Exception
      */
-    private function OldUpdate() {
+    public function SetProductName($productName) {
+        $this->productName = $productName;
+        $this->Update();
+    }
+
+    /**
+     * @param $productBarcode
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function SetProductBarcode($productBarcode) {
+        $this->productBarcode = $productBarcode;
+        $this->Update();
+    }
+
+    /**
+     * @param $remarks
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function SetRemarks($remarks) {
+        $this->remarks = $remarks;
+        $this->Update();
+    }
+
+    /**
+     * @param $quantity
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function SetQuantity($quantity) {
+        if($quantity < 1 || $quantity > self::MAX_QUANTITY)
+            throw new Exception("לא ניתן להוסיף {0} מוצרים, מקסימום {1}",null,$quantity);
+        $this->quantity = $quantity;
+        $this->Update();
+    }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    private function Update() {
         $updateArray = array(
             "ProductName" => $this->productName,
             "ProductBarcode" => $this->productBarcode,
             "Quantity" => $this->quantity,
-            "Remarks" => $this->remarks,
-            "Status" => $this->status
+            "Remarks" => $this->remarks
         );
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
             throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
     }
 
+    /**
+     * @param array $data
+     * @throws \Exception
+     */
     public function ProductUpdate(array $data){
         BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $data);
     }

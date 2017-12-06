@@ -5,7 +5,6 @@
  * Date: 21-Sep-17
  * Time: 19:13
  */
-
 namespace BugOrderSystem;
 
 session_start();
@@ -81,16 +80,26 @@ if(isset($_POST['editorder'])) {
 
     $product_name = $_POST['ProductName'];
     $product_barcode = $_POST['ProductBarcode'];
-    $product_quantity = $_POST['Quantity'];
     $product_remarks = $_POST['Remarks'];
+    $product_quantity = $_POST['Quantity'];
 
+
+    $arrayToUpdate = array(
+        "SetProductName" => $_POST['ProductName'],
+        "SetProductBarcode" => $_POST['ProductBarcode'],
+        "SetRemarks" => $_POST['Remarks'],
+        "SetQuantity" => $_POST['Quantity']
+    );
 
         //Update product
     if(!empty($product_name) && !empty($product_barcode) && !empty($product_quantity)) {
         try {
-            $newProductObject->ProductUpdate(array("ProductName" => $product_name, "ProductBarcode" => $product_barcode, "Quantity" => $product_quantity, "Remarks" => $product_remarks));
+            foreach ($arrayToUpdate as $func => $attr) {
+                $newProductObject->$func($attr);
+            }
             header("Location: vieworder.php?id=$orderId");
-        }catch (\Exception $e) {
+        }catch (Exception $e) {
+            //todo: fix the Exeption issue.
             $errorMsg = $e->getMessage();
             echo $errorMsg;
         }
