@@ -14,38 +14,26 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$order = Order::GetById(84);
-$test = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
-$encode = base64_encode($order->GetShop()->GetId() . "_" . $order->GetId() . "_" . $order->GetTimeStamp()->format("U"));
+$orderObject = Order::GetById(120);
+$clientId = 76;
+$orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
+$encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
 
-\Services::setPlaceHolder($test,"ClientName",$order->GetClient()->GetFirstName());
-\Services::setPlaceHolder($test,"StatusCheckURL", $encode);
-\Services::setPlaceHolder($test,"OrderDate", $order->GetTimeStamp()->format("d/m/y H:m"));
-\Services::setPlaceHolder($test,"ShopName", $order->GetShop()->GetShopName());
-\Services::setPlaceHolder($test,"Address", $order->GetShop()->GetLocation());
-\Services::setPlaceHolder($test,"Selller", $order->GetSeller()->GetFirstName());
-\Services::setPlaceHolder($test,"PhoneNumber", $order->GetShop()->GetPhoneNumber());
-\Services::setPlaceHolder($test,"ShopName", $order->GetShop()->GetShopName());
+\Services::setPlaceHolder($orderSummery,"OrderId",$orderObject->GetId());
+\Services::setPlaceHolder($orderSummery,"ClientName",$orderObject->GetClient()->GetFirstName());
+\Services::setPlaceHolder($orderSummery,"StatusCheckURL", $encode);
+\Services::setPlaceHolder($orderSummery,"OrderDate", $orderObject->GetTimeStamp()->format("d/m/y H:m"));
+\Services::setPlaceHolder($orderSummery,"ShopName", $orderObject->GetShop()->GetShopName());
+\Services::setPlaceHolder($orderSummery,"Address", $orderObject->GetShop()->GetLocation());
+\Services::setPlaceHolder($orderSummery,"Seller", $orderObject->GetSeller()->GetFirstName());
+\Services::setPlaceHolder($orderSummery,"PhoneNumber", $orderObject->GetShop()->GetPhoneNumber());
 
+//set client object
+$clientObj = Client::GetById($clientId);
 
-$productRow = <<<EOF
-<tr>
-    <td>{productName}</td>
-    <td>{productQuantity}</td>
-</tr>
-EOF;
+echo $orderSummery;
+//$clientObj->SendEmail($orderSummery,"סיכום הזמנה");
 
-$productList = "";
-foreach ($order->GetOrderProducts() as $product) {
-    $productList .= $productRow;
-    \Services::setPlaceHolder($productList, "productName", $product->getProductName());
-    \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
-}
-\Services::setPlaceHolder($test, "productsList", $productList);
-
-
-
-echo $test;
 
 
 

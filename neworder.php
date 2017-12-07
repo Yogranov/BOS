@@ -169,8 +169,32 @@ if(isset($_POST['neworder']))  {
             //Add products to order.
             $orderProductsObject = new OrderProducts($orderObject->GetId(), $product_name, $product_barcode, $client_product_remarks, $product_quantity);
             if ($orderProductsObject) {
-                $locationToorder = $orderObject->GetId();
-                header("Location:vieworder.php?id=$locationToorder");
+
+                //Send order summery to client
+                if (count($client_email) != 0) {
+                    $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
+                    $encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
+
+                    \Services::setPlaceHolder($orderSummery,"OrderId",$orderObject->GetId());
+                    \Services::setPlaceHolder($orderSummery,"ClientName",$orderObject->GetClient()->GetFirstName());
+                    \Services::setPlaceHolder($orderSummery,"StatusCheckURL", $encode);
+                    \Services::setPlaceHolder($orderSummery,"OrderDate", $orderObject->GetTimeStamp()->format("d/m/y H:m"));
+                    \Services::setPlaceHolder($orderSummery,"ShopName", $orderObject->GetShop()->GetShopName());
+                    \Services::setPlaceHolder($orderSummery,"Address", $orderObject->GetShop()->GetLocation());
+                    \Services::setPlaceHolder($orderSummery,"Seller", $orderObject->GetSeller()->GetFirstName());
+                    \Services::setPlaceHolder($orderSummery,"PhoneNumber", $orderObject->GetShop()->GetPhoneNumber());
+                    \Services::setPlaceHolder($orderSummery,"ShopName", $orderObject->GetShop()->GetShopName());
+
+                    //set client object
+                    $clientObj = Client::GetById($clientId);
+
+                    $clientObj->SendEmail($orderSummery,"סיכום הזמנה");
+
+                }
+
+                    $locationToorder = $orderObject->GetId();
+                    header("Location:vieworder.php?id=$locationToorder");
+
             }
 
         } catch (Exception $e) {

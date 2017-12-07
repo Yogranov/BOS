@@ -73,9 +73,11 @@ class Client {
         return $res;
     }
 
+
     /**
      * @param array $clientData
      * @return Client
+     * @throws DBException
      * @throws \Exception
      */
     public static function Add(array $clientData) {

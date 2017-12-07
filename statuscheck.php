@@ -43,16 +43,27 @@ body {
                 <div class="container"><h1 class="page-header">הזמנה {$orderObj->GetId()}</h1>
             <h2><small>קבלת מידע אודות סטאטוס ההזמנה</small></h2></div>
         </div>
-    <div class="container">
-    </div>
     <br>
-    <div class="container">
+    <div class="container" style="margin-top: -20px">
         שלום {$orderObj->GetClient()->GetFirstName()},<br>
         ההזמנה שביצעת בתאריך {$orderObj->GetTimeStamp()->format("d/m/y")} בסניף {$orderObj->GetShop()->GetShopName()} נמצאת כרגע בסטאטוס: <b>{$orderObj->GetStatus()->getDesc()}</b>.<br>
         לפרטים נוספים או בכל שאלה ניתן ליצור קשר עם הסניף בטלפון מספר {$orderObj->GetShop()->GetPhoneNumber()}.
         <br>
         <br>
         לנוחותך, מצורף סיכום ההזמנה:
+        <br>
+        <br>
+        <ul style="list-style-type: none; line-height: 15px">
+              <li>  <b>מספר הזמנה:</b> {OrderId} </li><br>
+              <li>  <b>תאריך:</b> {OrderDate} </li><br>
+              <li>  <b>שם המזמין:</b>  {ClientName} </li><br>
+              <li>  <b>סניף:</b>  {ShopName} </li><br>
+              <li>  <b>כתובת:</b>  {Address} </li><br>
+              <li>  <b>מוכר:</b>  {Seller} </li><br>
+              <li>  <b>טלפון לבירורים:</b> {PhoneNumber} </li><br>
+        </ul>
+        <br>
+        מוצרים:
         <br>
         <br>
           <table class="table table-striped">
@@ -85,6 +96,15 @@ $productRow = <<<EOF
     <td>{productQuantity}</td>
 </tr>
 EOF;
+
+\Services::setPlaceHolder($PageTemplate,"OrderId",$orderObj->GetId());
+\Services::setPlaceHolder($PageTemplate,"ClientName",$orderObj->GetClient()->GetFirstName());
+\Services::setPlaceHolder($PageTemplate,"OrderDate", $orderObj->GetTimeStamp()->format("d/m/y H:m"));
+\Services::setPlaceHolder($PageTemplate,"ShopName", $orderObj->GetShop()->GetShopName());
+\Services::setPlaceHolder($PageTemplate,"Address", $orderObj->GetShop()->GetLocation());
+\Services::setPlaceHolder($PageTemplate,"Seller", $orderObj->GetSeller()->GetFirstName());
+\Services::setPlaceHolder($PageTemplate,"PhoneNumber", $orderObj->GetShop()->GetPhoneNumber());
+
 
 $productList = "";
 foreach ($orderObj->GetOrderProducts() as $product) {
