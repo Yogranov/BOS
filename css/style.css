@@ -760,7 +760,7 @@ order editing button
 .order-button {
     background-color: #4CAF50;
     color: white;
-    padding: 6px;
+    padding: 5px;
     cursor: pointer;
     width: 15%;
     border-radius: 5px;
@@ -916,11 +916,70 @@ Remider Table
 
 
 
+.order-client-info {
+    height: 100%;
+    width: 100%;
+    padding: 5px;
+    background: #ffffff;
+    direction: rtl;
+    text-align: right;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 5px;
+    margin: 5px;
+    line-height: 35px;
+
+}
+
+.order-client-info span {
+    font-weight: bold;
+}
+
+.order-info {
+    height: 100%;
+    width: 100%;
+    padding: 5px;
+    background: #ffffff;
+    direction: rtl;
+    text-align: right;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 5px;
+    margin: 5px;
+    line-height: 35px;
+}
+
+.order-info span {
+    font-weight: bold;
+}
 
 
+.order-products-info {
+    height: 100%;
+    width: 100%;
+    padding: 5px;
+    direction: rtl;
+    text-align: right;
+    margin: 20px 0;
+}
 
+.order-products-info h4 {
+    width: 100%;
+    background: #dddddd;
+    padding: 5px;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 5px 5px 0 0;
+}
 
+.order-products-info table {
+    margin-top: -8px;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 5px;
+    background: #fff;
 
+}
+
+.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+    background-color: #fafafa;
+}
 
 @media (max-width:800px) {
 

@@ -437,13 +437,11 @@ Font Set
 }
 
 
-#mytable tr:hover {
-    color: black;
-    background-color: #d2dbdb;
-    cursor: pointer;
+#mytable tbody tr:nth-child(odd) {
+    background-color: #fafafa;
 }
 
-#mytable tr:hover ul li {
+#mytable tbody tr:hover {
     color: black;
     background-color: #d2dbdb;
     cursor: pointer;

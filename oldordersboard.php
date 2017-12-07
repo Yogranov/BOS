@@ -36,6 +36,9 @@ $PageTemplate .= <<<PAGE
     <oldorderboard>
     <div class="wrapper" style="margin-top:35px">
         <div class="form-group" style="direction: rtl">
+            <div style="width: 200px; float: left">
+                <input type="text" name="search" placeholder="חיפוש" id="search" class="form-control">
+            </div>
             <select name="state" id="maxRows" class="form-control" style="width:150px;">
                 <option value="5000">הצג הכל</option>
                 <option value="5">5</option>
@@ -47,7 +50,7 @@ $PageTemplate .= <<<PAGE
                 <option value="100">100</option>
             </select>
         </div>
-                <table id="mytable" class="table table-bordered table-striped">
+                <table id="mytable" class="table table-bordered">
                   <thead>
                     <tr>
                         <th>סטאטוס</th>
@@ -65,12 +68,38 @@ $PageTemplate .= <<<PAGE
                   </tbody>
                 </table>
                 
-                        <div class="pagination-container">
+         <div class="pagination-container">
             <nav>
                 <ul class="pagination"></ul>
             </nav>
         
-    </div>
+         </div>
+
+    <script>
+    $(document).ready(function() {
+        $('#search').keyup(function() {
+          search_table($(this).val());
+        });
+    });
+    
+    function search_table(value) {
+      $('#mytable tbody tr').each(function() {
+        var found = 'false';
+        $(this).each(function() {
+          if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+              found = 'true';
+          }
+        });
+        if(found == 'true') {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+      });
+    }
+    
+    
+    </script>
 
     <script>
     var table = '#mytable'
