@@ -395,16 +395,49 @@ class Order
     }
 
     /**
-     * @param array $data
+     * @param $sellerId
+     * @param bool $update
+     * @throws Exception
      * @throws \Exception
-     * TODO: Change to new private update function like Seller/Client...
      */
-    public function Update(array $data){
-        if (empty($data))
-            throw new \Exception("לא ניתן לעדכן הזמנה, חסר מידע");
-
-        BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $data);
+    public function SetSellerId($sellerId, bool $update = true) {
+        $this->sellerId = $sellerId;
+        if ($update)
+            $this->Update();
     }
+
+    /**
+     * @param $remarks
+     * @param bool $update
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function SetRemarks($remarks, bool $update = true) {
+        $this->remarks = $remarks;
+        if ($update)
+            $this->Update();
+    }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function Update() {
+        $updateArray = array(
+            "SellerId" => $this->sellerId,
+            "Remarks" => $this->remarks
+        );
+        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
+        if (!$success)
+            throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
+
+        $logText = "הלקוח ".$this." עודכן";
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
+    }
+
+
+
+
 
 
 

@@ -5,8 +5,6 @@
  * Date: 04-Oct-17
  * Time: 16:13
  */
-
-
 namespace BugOrderSystem;
 
 session_start();
@@ -83,8 +81,16 @@ if(isset($_POST['editorder'])) {
 
     if (!empty($seller)) {
 
+        $arrayToUpdate = array(
+            "SetSellerId" => $seller,
+            "SetRemarks" => $remarks
+        );
+
         try {
-            $orderObject->Update(array("SellerId" => $seller, "Remarks" => $remarks));
+            foreach ($arrayToUpdate as $func => $attr) {
+                $orderObject->$func($attr, false);
+            }
+            $orderObject->Update();
             header("Location: vieworder.php?id=$orderId");
         } catch (\Exception $e) {
             $errorMsg = $e->getMessage();

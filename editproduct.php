@@ -95,9 +95,11 @@ if(isset($_POST['editorder'])) {
     if(!empty($product_name) && !empty($product_barcode) && !empty($product_quantity)) {
         try {
             foreach ($arrayToUpdate as $func => $attr) {
-                $newProductObject->$func($attr);
+                $newProductObject->$func($attr, false);
             }
+            $newProductObject->Update();
             header("Location: vieworder.php?id=$orderId");
+
         }catch (Exception $e) {
             //todo: fix the Exeption issue.
             $errorMsg = $e->getMessage();

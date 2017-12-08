@@ -95,8 +95,9 @@ if(isset($_POST['editclient'])) {
     if(!empty($_POST['firstname']) && !empty($_POST['lastname']) && !empty($_POST['phonenumber'])) {
         try {
             foreach ($arrayToUpdate as $func => $attr) {
-                $clientObject->$func($attr);
+                $clientObject->$func($attr, false);
             }
+            $clientObject->Update();
             header("Location: Ordersboard.php");
         } catch (\Exception $e) {
             $errorMsg = $e->getMessage();

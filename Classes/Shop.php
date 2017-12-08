@@ -317,6 +317,7 @@ class Shop
         BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("Subject" => $subject, "Message" => $message));
     }
 
+
     /**
      * @return Seller[]
      */
@@ -328,6 +329,7 @@ class Shop
      * @param $shopName
      * @param bool $update
      * @throws Exception
+     * @throws \Exception
      */
     public function SetShopName($shopName, bool $update = true) {
         $this->shopName = $shopName;
@@ -339,6 +341,7 @@ class Shop
      * @param $location
      * @param bool $update
      * @throws Exception
+     * @throws \Exception
      */
     public function SetLocation($location, bool $update = true) {
         $this->location = $location;
@@ -350,6 +353,7 @@ class Shop
      * @param $region
      * @param bool $update
      * @throws Exception
+     * @throws \Exception
      */
     public function SetRegion($region, bool $update = true) {
         $this->region = $region;
@@ -361,6 +365,7 @@ class Shop
      * @param $phoneNumber
      * @param bool $update
      * @throws Exception
+     * @throws \Exception
      */
     public function SetPhoneNumber($phoneNumber, bool $update = true) {
         $this->phoneNumber = $phoneNumber;
@@ -372,6 +377,7 @@ class Shop
      * @param $email
      * @param bool $update
      * @throws Exception
+     * @throws \Exception
      */
     public function SetEmail($email, bool $update = true) {
         $this->email = $email;
@@ -383,6 +389,7 @@ class Shop
      * @param Seller $manager
      * @param bool $update
      * @throws Exception
+     * @throws \Exception
      */
     public function SetManager(Seller $manager, bool $update = true) {
         $this->manager = $manager;

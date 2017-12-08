@@ -147,48 +147,6 @@ class Client {
     }
 
     /**
-     * @param string $newEmail
-     * @throws DBException
-     * @throws Exception
-     * @throws \Exception
-     */
-    public function ChangeEmail(string $newEmail) {
-        if($newEmail) {
-            $emailObject = new \PHPMailer();
-            if (!$emailObject::validateAddress($newEmail))
-                throw new Exception("Invalid client Email address ({0})!", null, $newEmail);
-
-            $oldEmail = $this->email;
-            $this->email = $newEmail;
-            $this->Update();
-
-            $logText = "האימייל של הלקוח {client} השתנה מאימייל {oldEmail} לאימייל {newEmail}";
-            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this, "oldEmail" => $oldEmail, "newEmail" => $this->email));
-        }
-    }
-
-    /**
-     * @throws DBException
-     * @throws \Exception
-     */
-    private function Update() {
-        $updateArray = array(
-            "Email" => $this->email,
-            "FirstName" => $this->firstName,
-            "LastName" => $this->lastName,
-            "PhoneNumber" => $this->phoneNumber,
-            "ClientWantsMails" => (string)$this->wantEmail
-        );
-
-        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
-        if (!$success)
-            throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
-
-        $logText = "הלקוח {client} עודכן";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
-    }
-
-    /**
      * @param callable $function_doEachIteration
      * @param array $OrderByArray
      * @throws \Exception
@@ -267,43 +225,92 @@ class Client {
     }
 
     /**
+     * @param string $newEmail
+     * @param bool $update
+     * @throws DBException
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function ChangeEmail(string $newEmail, bool $update = true) {
+        if($newEmail) {
+            $emailObject = new \PHPMailer();
+            if (!$emailObject::validateAddress($newEmail))
+                throw new Exception("Invalid client Email address ({0})!", null, $newEmail);
+
+            $oldEmail = $this->email;
+            $this->email = $newEmail;
+            if ($update)
+                $this->Update();
+        }
+    }
+
+    /**
      * @param string $firstName
+     * @param bool $update
      * @throws DBException
      * @throws \Exception
      */
-    public function SetFirstName(string $firstName) {
+    public function SetFirstName(string $firstName, bool $update = true) {
         $this->firstName = $firstName;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
      * @param string $lastName
+     * @param bool $update
      * @throws DBException
      * @throws \Exception
      */
-    public function SetLastName(string $lastName) {
+    public function SetLastName(string $lastName, bool $update = true) {
         $this->lastName = $lastName;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
      * @param string $phoneNumber
+     * @param bool $update
      * @throws DBException
      * @throws \Exception
      */
-    public function SetPhoneNumber(string $phoneNumber) {
+    public function SetPhoneNumber(string $phoneNumber, bool $update = true) {
         $this->phoneNumber = $phoneNumber;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
      * @param int $wantEmail
+     * @param bool $update
      * @throws DBException
      * @throws \Exception
      */
-    public function SetWantEmail(int $wantEmail) {
+    public function SetWantEmail(int $wantEmail, bool $update = true) {
         $this->wantEmail = (bool)$wantEmail;
-        $this->Update();
+        if ($update)
+            $this->Update();
+    }
+
+    /**
+     * @throws DBException
+     * @throws \Exception
+     */
+    public function Update() {
+        $updateArray = array(
+            "Email" => $this->email,
+            "FirstName" => $this->firstName,
+            "LastName" => $this->lastName,
+            "PhoneNumber" => $this->phoneNumber,
+            "ClientWantsMails" => (string)$this->wantEmail
+        );
+
+        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
+        if (!$success)
+            throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
+
+        $logText = "הלקוח {client} עודכן";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
     }
 
     /**

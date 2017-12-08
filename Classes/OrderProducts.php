@@ -162,9 +162,10 @@ class OrderProducts {
      * @throws Exception
      * @throws \Exception
      */
-    public function SetProductName($productName) {
+    public function SetProductName($productName, bool $update = true) {
         $this->productName = $productName;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
@@ -172,9 +173,10 @@ class OrderProducts {
      * @throws Exception
      * @throws \Exception
      */
-    public function SetProductBarcode($productBarcode) {
+    public function SetProductBarcode($productBarcode, bool $update = true) {
         $this->productBarcode = $productBarcode;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
@@ -182,9 +184,10 @@ class OrderProducts {
      * @throws Exception
      * @throws \Exception
      */
-    public function SetRemarks($remarks) {
+    public function SetRemarks($remarks, bool $update = true) {
         $this->remarks = $remarks;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
@@ -192,18 +195,19 @@ class OrderProducts {
      * @throws Exception
      * @throws \Exception
      */
-    public function SetQuantity($quantity) {
+    public function SetQuantity($quantity, bool $update = true) {
         if($quantity < 1 || $quantity > self::MAX_QUANTITY)
             throw new Exception("לא ניתן להוסיף {0} מוצרים, מקסימום {1}",null,$quantity);
         $this->quantity = $quantity;
-        $this->Update();
+        if ($update)
+            $this->Update();
     }
 
     /**
      * @throws Exception
      * @throws \Exception
      */
-    private function Update() {
+    public function Update() {
         $updateArray = array(
             "ProductName" => $this->productName,
             "ProductBarcode" => $this->productBarcode,
@@ -213,6 +217,9 @@ class OrderProducts {
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
             throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
+
+        $logText = "המוצר ".$this." עודכן";
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
     }
 
     /**
