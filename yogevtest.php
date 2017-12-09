@@ -179,4 +179,59 @@ foreach (Shop::GetById(94)->GetActiveSellers() as $seller) {
 //Seller::GetById(1898)->SendEmail($message, $subject);
 
 
+
+<!--
+
+                <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+                <form class="new-order" method="post">
+                <center>הזמנה חדשה</center>
+                <br>
+                מספר טלפון<br>
+                     <input type="text" name="phonenumber" id="PhoneNumber" pattern=".{10,}" maxlength="10" title="10 ספרות" onkeyup="this.value=this.value.replace(/[^\d]/,''); autofill();" required><br>
+                שם פרטי<br>
+                     <input type="text" name="firstname" id="FirstName" required><br>
+                שם משפחה<br>
+                     <input type="text" name="lastname" id="LastName" required><br>
+                <label for="checkwantsemails"> מעוניין לקבל עדכונים במייל</label>
+                     <input type="checkbox" id="checkwantsemails" name="wantsemail" style="cursor: pointer" onclick="emailsClick()" ><br><br>
+                <div id="clientwantsemails">
+                    אימייל<br>
+                      <input type="text" name="email" id="Email">
+                </div>
+
+
+                הערות להזמנה<br>
+                     <input type="text" name="remarks"><br>
+                מוכרן<br>
+                      <select  name="seller" required><br>
+                         {sellerSelect}
+                      </select>
+                <br>
+                <hr>
+                <br>
+                שם המוצר<br>
+                      <input type="text" name="productname" required><br>
+                ברקוד<br>
+                      <input type="text" name="productbarcode" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
+                כמות<br>
+                      <input type="text" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
+
+                <br>
+                הערות למוצר
+                      <input type="text" name="productremarks"><br>
+                <br>
+                      <button type="submit" name="neworder">צור הזמנה</button>
+
+                <br>
+            </form>
+        </div>
+    </div>
+</main>
+-->
+
+
+
 */

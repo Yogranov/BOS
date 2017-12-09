@@ -33,21 +33,28 @@ $PageTemplate .= headerMenu;
 
 $PageTemplate .= <<<PAGE
 <main>
-    <div class="wrapper">
+    <div class="container">
         <div id="new-order">
             <form class="new-order" method="POST">
                 <center> {$orderId} -  עריכת הזמנה</center>
+                
+                <div class="form-group">
+                    <label for="order-remarks">הערות להזמנה</label>
+                    <input type="text" class="form-control" id="order-remarks" name="remarks" value="{$orderObject->GetRemarks()}"><br>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-seller">מוכרן</label>
+                    <select class="form-control" id="form-seller" name="seller">
+                    {sellerSelect}
+                    </select>
+                </div>
+                  
                 <br>
-                הערות<br>
-                <input type="text" name="remarks" value="{$orderObject->GetRemarks()}"><br>
-                מוכרן<br>
-                <select name="seller">
-                {sellerSelect}
-                </select>
                 <br>
                 <br>
-                <br>
-                <button type="submit" name="editorder">עדכן הזמנה</button>
+                <input type="submit" value="עדכן הזמנה" name="editorder" class="btn btn-info btn-block">
+
                 <br>
             </form>
         </div>

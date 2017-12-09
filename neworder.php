@@ -34,65 +34,134 @@ $PageTemplate .= headerMenu;
 
 $PageTemplate .= <<<PAGE
 <main>
-    <div class="wrapper">
-        <div id="new-order">
-            <form class="new-order" method="post">
-                <center>הזמנה חדשה</center>
-                <br>
-                מספר טלפון<br>
-                     <input type="text" name="phonenumber" id="PhoneNumber" pattern=".{10,}" maxlength="10" title="10 ספרות" onkeyup="this.value=this.value.replace(/[^\d]/,''); autofill();" required><br>
-                שם פרטי<br>
-                     <input type="text" name="firstname" id="FirstName" required><br>
-                שם משפחה<br>
-                     <input type="text" name="lastname" id="LastName" required><br>
-                <label for="checkwantsemails"> מעוניין לקבל עדכונים במייל</label>
-                     <input type="checkbox" id="checkwantsemails" name="wantsemail" style="cursor: pointer" onclick="emailsClick()" ><br><br>
-                <div id="clientwantsemails">
-                    אימייל<br>
-                      <input type="text" name="email" id="Email">
+    <div class="container">
+        <div class="row centered-form" id="new-order">
+         <div class="col-12">
+          <span><h3> הזמנה חדשה </h3></span>
+            </div>
+            <div class="col-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form role="form" style="font-size: 18px">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                    <label for="form-PhoneNumber">מספר טלפון</label>
+                                    <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern=".{10,}" maxlength="10" title="10 ספרות" onkeyup="this.value=this.value.replace(/[^\d]/,''); autofill();" required>
+                                    </div>                                
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                      <label for="form-FirstName">שם פרטי</label>
+                                      <input type="text" class="form-control" id="form-FirstName" name="firstname" placeholder="שם פרטי" required>
+                                    </div>                                
+                                </div>
+                                
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label for="form-LastName">שם משפחה</label>
+                                        <input type="text" class="form-control" id="form-LastName" name="lastname" placeholder="שם משפחה" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="wantsemail" id="form-checkwantsemails" style="cursor: pointer" onclick="emailsClick()">
+                                        <label for="form-checkwantsemails">עדכונים באימייל</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-12">
+                                   <div id="clientwantsemails" class="form-group">
+                                        <label for="form-Email">אימייל</label>
+                                        <input type="text" class="form-control" id="form-Email" name="email" placeholder="דואר אלקטרוני">
+                                    </div>
+                                </div>
+                                
+                               <div class="col-sm-12">
+                                  <hr>
+                               </div>
+                                 <!-- End of client info -->
+                                
+                               <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="form-seller">מוכרן</label>
+                                        <select class="form-control" name="seller" id="form-seller" required><br>
+                                             {sellerSelect}
+                                        </select>
+                                    </div>
+                               </div>
+                                
+                               <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label for="form-remarks">הערות להזמנה</label>
+                                        <input type="text" class="form-control" id="form-remarks" name="remarks" placeholder="הערות עבור ההזמנה">
+                                    </div>
+                               </div>
+                                
+                               <div class="col-sm-12">
+                                  <hr>
+                               </div>
+                                <!--End of order info-->
+                                
+                                <div class="col-sm-5">
+                                    <div class="form-group">
+                                         <label for="form-product-name">שם המוצר</label>
+                                         <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-5">
+                                    <div class="form-group">
+                                          <label for="form-product-barcode">ברקוד</label>
+                                          <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                          <label for="form-product-quantity">כמות</label>
+                                          <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                         <label for="form-product-remarks">הערות למוצר</label>
+                                         <input type="text" class="form-control" id="form-product-remarks" name="productremarks" placeholder="הערות עבור המוצר">
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="submit" value="צור הזמנה" name="neworder" class="btn btn-info btn-block">
+                        </form>
+                    </div>
                 </div>
-
-
-                הערות להזמנה<br>
-                     <input type="text" name="remarks"><br>
-                מוכרן<br>
-                      <select  name="seller" required><br>
-                         {sellerSelect}
-                      </select>
-                <br>
-                <hr>
-                <br>
-                שם המוצר<br>
-                      <input type="text" name="productname" required><br>
-                ברקוד<br>
-                      <input type="text" name="productbarcode" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
-                כמות<br>
-                      <input type="text" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
-
-                <br>
-                הערות למוצר
-                      <input type="text" name="productremarks"><br>
-                <br>
-                      <button type="submit" name="neworder">צור הזמנה</button>
-
-                <br>
-            </form>
+            </div>
         </div>
     </div>
 </main>
 <script type="text/javascript">
     //auto complete client
   function autofill() {
-      var phoneNumber = $("#PhoneNumber").val();
+      var email = 0;
+      var phoneNumber = $("#form-PhoneNumber").val();
       $.ajax({
           url: 'auto-fill.php',
           data: 'phoneNumber='+phoneNumber,
           success: function(data){
               var json = data,
                   obj = JSON.parse(json);
-              $("#FirstName").val(obj.FirstName);
-              $("#LastName").val(obj.LastName);
-              ($("#Email").val(obj.Email));
+              $("#form-FirstName").val(obj.FirstName);
+              $("#form-LastName").val(obj.LastName);
+              $("#form-Email").val(obj.Email);
+              if(obj.Email) {
+                   $('input[name=wantsemail]').attr('checked', true);
+                   document.getElementById("clientwantsemails").className = "open";
+              } else {
+                     $('input[name=wantsemail]').attr('checked', false);
+                    document.getElementById("clientwantsemails").className = "";
+              }
+
           }
       })
   }

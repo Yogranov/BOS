@@ -33,27 +33,45 @@ $PageTemplate .= headerMenu;
 
 $PageTemplate .= <<<PAGE
 <main>
-    <div class="wrapper">
+    <div class="container">
         <div id="new-order">
 
-            <form class="new-order" method="POST">
+            <form method="POST">
                 <center>       {$clientObject->GetId()}  -  עריכת לקוח</center>
                 <br>
-                שם פרטי<br>
-                <input type="text" name="firstname" value="{$clientObject->GetFirstName()}" required><br>
-                שם משפחה<br>
-                <input type="text" name="lastname" value="{$clientObject->GetLastName()}"  required><br>
-                פלאפון<br>
-                <input type="text" name="phonenumber" value="{$clientObject->GetPhoneNumber()}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
-                <br>
-                מעוניין לקבל עדכונים במייל <input type="checkbox" id="checkwantsemails" name="wantsemail" style="display = 'none'" onclick="emailsClick()" {checkedString}><br><br>
-                <div id="clientwantsemails" class="{emailClassString}">
-                :אימייל
-                <input type="text" name="email" value="{$clientObject->GetEmail()}"><br>
+                <div class="form-group">
+                    <label for="client-first-name">שם פרטי</label>
+                    <input type="text" class="form-control" name="firstname" id="client-first-name" value="{$clientObject->GetFirstName()}" required><br>
                 </div>
-                <br>
-                <button type="submit" name="editclient">עדכן לקוח</button>
-                <br>
+                
+                <div class="form-group">
+                    <label for="client-last-name">שם משפחה</label>
+                <input type="text" class="form-control" id="client-last-name" name="lastname" value="{$clientObject->GetLastName()}"  required><br>
+                </div>
+                
+                <div class="form-group">
+                    <label for="client-phone-number">מספר טלפון</label>
+                <input type="text" class="form-control" name="phonenumber" id="client-phone-number" value="{$clientObject->GetPhoneNumber()}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
+                </div>
+                
+                <div class="form-group">
+                    <label for="client-first-name">שם פרטי</label>
+                    <input type="text" class="form-control" name="firstname" id="client-first-name" value="{$clientObject->GetFirstName()}" required><br>
+                </div>
+                <label for="checkwantsemails">מעוניין לקבל עדכונים במייל</label>
+
+                 <input type="checkbox" id="checkwantsemails" name="wantsemail" style="display = 'none'" onclick="emailsClick()" {checkedString}><br><br>
+
+                <div id="clientwantsemails" class="{emailClassString}">
+                <label for="client-wants-email">אימייל</label>
+                <input type="text" class="form-control" id="client-wants-email" name="email" value="{$clientObject->GetEmail()}"><br>
+                </div>
+                
+                <input type="submit" value="עדכן לקוח" name="editclient" class="btn btn-info btn-block">
+
+                
+                
+
             </form>
 
         </div>
