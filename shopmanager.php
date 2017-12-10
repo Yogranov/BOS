@@ -16,10 +16,17 @@ if(!isset($shopId)) {
     header("Location: login.php");
 }
 
+/*
 $manager = $_SESSION["manager"];
 if(!isset($manager)) {
     header("Location: index.php");
 }
+*/
+
+
+$managerPassword = Shop::GetById($shopId)->GetId();
+$managerPassword .= "manager";
+
 
 
 $shopObject = Shop::GetById($shopId);
@@ -174,9 +181,26 @@ if(isset($_POST['addseller'])) {
 }
 ////////
 
-///echo the page
-echo $PageTemplate;
-///
+
+if(isset($_POST["manager-password"])) {
+    $password = $_POST["manager-password"];
+
+    if(!empty($password)) {
+        if ($password != $managerPassword) {
+            echo "סיסמה לא נכונה";
+            //$_SESSION["manager"] = Shop::GetById($shopId)->GetManager();
+            //header("Location: shopmanager.php");
+        } else {
+            ///echo the page
+            echo $PageTemplate;
+            ///
+        }
+    }
+} else {
+    echo "לא הוכנסה סיסמת מנהל";
+}
+
+
 
 
 

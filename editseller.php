@@ -39,21 +39,35 @@ $PageTemplate .= headerMenu;
 $PageTemplate .= <<<PAGE
 
     <main>
-        <div class="wrapper">
+        <div class="container">
             <div id="new-order">
 
-                <form class="new-order" method="POST">
-                    <center>       {$sellerObject->GetId()}  -  עריכת מוכרן</center>
-                    מספר מוכרן<br>
-                    <input type="text" name="sellernumber" value="{$sellerObject->GetId()}" disabled><br>
-                    <br>
-                    שם פרטי<br>
-                    <input type="text" name="firstname" value="{$sellerObject->GetFirstName()}" disabled><br>
-                    שם משפחה<br>
-                    <input type="text" name="lastname" value="{$sellerObject->GetLastName()}" disabled><br>
-                    אימייל<br>
-                    <input type="text" name="email" value="{$sellerObject->GetEmail()}" required><br>
-                    <button type="submit" name="editseller">עדכן מוכרן</button>
+                <form method="POST">
+                    <center>עריכת מוכרן - {$sellerObject->GetId()}</center>
+                
+                    <div class="form-group">
+                        <label for="form-seller-id">מספר עובד</label>
+                        <input type="text" class="form-control" id="form-seller-id" name="sellernumber" value="{$sellerObject->GetId()}" readonly disabled><br>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="form-seller-first-name">שם פרטי</label>
+                    <input type="text" class="form-control" name="firstname" id="form-seller-first-name" value="{$sellerObject->GetFirstName()}" disabled><br>
+                    </div>
+                
+                
+                    <div class="form-group">
+                        <label for="form-seller-last-name">שם משפחה</label>
+                    <input type="text" class="form-control" id="form-seller-last-name" name="lastname" value="{$sellerObject->GetLastName()}" disabled><br>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="form-seller-email">אימייל</label>
+                    <input type="text" class="form-control" id="form-seller-email" name="email" value="{$sellerObject->GetEmail()}" required><br>
+                    </div>
+                
+                    <input type="submit" value="עדכן מוכרן" name="editseller" class="btn btn-info btn-block">
+
 
                     <br>
                 </form>

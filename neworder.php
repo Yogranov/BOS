@@ -50,12 +50,6 @@ $PageTemplate .= <<<PAGE
                                     <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern=".{10,}" maxlength="10" title="10 ספרות" onkeyup="this.value=this.value.replace(/[^\d]/,''); autofill();" required>
                                     </div>                                
                                 </div>
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                      <label for="form-FirstName">שם פרטי</label>
-                                      <input type="text" class="form-control" id="form-FirstName" name="firstname" placeholder="שם פרטי" required>
-                                    </div>                                
-                                </div>
                                 
                                 <div class="col-xs-6 col-sm-6 col-md-6">
                                     <div class="form-group">
@@ -64,7 +58,15 @@ $PageTemplate .= <<<PAGE
                                     </div>
                                 </div>
                                 
+                                
                                 <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                      <label for="form-FirstName">שם פרטי</label>
+                                      <input type="text" class="form-control" id="form-FirstName" name="firstname" placeholder="שם פרטי" required>
+                                    </div>                                
+                                </div>
+                                
+                                <div class="col-sm-12">
                                     <div class="form-check">
                                         <input type="checkbox" name="wantsemail" id="form-checkwantsemails" style="cursor: pointer" onclick="emailsClick()">
                                         <label for="form-checkwantsemails">עדכונים באימייל</label>
@@ -83,6 +85,13 @@ $PageTemplate .= <<<PAGE
                                </div>
                                  <!-- End of client info -->
                                 
+                               <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label for="form-remarks">הערות להזמנה</label>
+                                        <input type="text" class="form-control" id="form-remarks" name="remarks" placeholder="הערות עבור ההזמנה">
+                                    </div>
+                               </div>
+                                
                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="form-seller">מוכרן</label>
@@ -92,38 +101,31 @@ $PageTemplate .= <<<PAGE
                                     </div>
                                </div>
                                 
-                               <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label for="form-remarks">הערות להזמנה</label>
-                                        <input type="text" class="form-control" id="form-remarks" name="remarks" placeholder="הערות עבור ההזמנה">
-                                    </div>
-                               </div>
-                                
                                <div class="col-sm-12">
                                   <hr>
                                </div>
                                 <!--End of order info-->
                                 
-                                <div class="col-sm-5">
-                                    <div class="form-group">
-                                         <label for="form-product-name">שם המוצר</label>
-                                         <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-sm-5">
-                                    <div class="form-group">
-                                          <label for="form-product-barcode">ברקוד</label>
-                                          <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
-                                    </div>
-                                </div>
-                                
                                 <div class="col-sm-2">
-                                    <div class="form-group">
-                                          <label for="form-product-quantity">כמות</label>
-                                          <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
-                                    </div>
-                                </div>
+                                        <div class="form-group">
+                                              <label for="form-product-quantity">כמות</label>
+                                              <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
+                                        </div>
+                                </div>   
+                                    
+                                <div class="col-sm-5">
+                                        <div class="form-group">
+                                              <label for="form-product-barcode">ברקוד</label>
+                                              <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
+                                        </div>
+                                </div>    
+                                    
+                                <div class="col-sm-5">
+                                        <div class="form-group">
+                                             <label for="form-product-name">שם המוצר</label>
+                                             <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר" required>
+                                        </div>
+                                </div>   
                                 
                                 <div class="col-sm-12">
                                     <div class="form-group">
@@ -131,6 +133,7 @@ $PageTemplate .= <<<PAGE
                                          <input type="text" class="form-control" id="form-product-remarks" name="productremarks" placeholder="הערות עבור המוצר">
                                     </div>
                                 </div>
+                                   
                             </div>
                             <input type="submit" value="צור הזמנה" name="neworder" class="btn btn-info btn-block">
                         </form>

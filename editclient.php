@@ -37,7 +37,7 @@ $PageTemplate .= <<<PAGE
         <div id="new-order">
 
             <form method="POST">
-                <center>       {$clientObject->GetId()}  -  עריכת לקוח</center>
+                <center>עריכת לקוח - {$clientObject->GetId()}</center>
                 <br>
                 <div class="form-group">
                     <label for="client-first-name">שם פרטי</label>

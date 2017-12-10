@@ -37,26 +37,26 @@ $PageTemplate .= <<<PAGE
         <div id="new-order">
 
         <form method="POST">
-            <center>{productId} - עריכת פריט</center>
+            <center>עריכת פריט - {productId}</center>
                     
             <div class="form-group">
                     <label for="product-name">שם המוצר</label>
-                     <input type="text" class="form-control input-sm" name="ProductName" value="{productName}" required><br>
+                     <input type="text" class="form-control" name="ProductName" value="{productName}" required><br>
             </div>
    
                <div class="form-group">
                     <label for="product-barcode">ברקוד</label>
-            <input type="text" class="form-control input-sm" id="product-barcode" name="ProductBarcode" value="{productBarcode}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
+            <input type="text" class="form-control" id="product-barcode" name="ProductBarcode" value="{productBarcode}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
             </div>
             
                         <div class="form-group">
                     <label for="product-quantity">כמות</label>
-            <input type="text" class="form-control input-sm" name="Quantity" id="product-quantity" value="{productQuantity}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
+            <input type="text" class="form-control" name="Quantity" id="product-quantity" value="{productQuantity}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
             </div>
             
                         <div class="form-group">
                     <label for="product-remarks">הערות למוצר</label>
-            <input type="text" class="form-control input-sm" id="product-remarks" name="Remarks" value="{productRemarks}"><br>
+            <input type="text" class="form-control" id="product-remarks" name="Remarks" value="{productRemarks}"><br>
             </div>
             
             <input type="submit" value="עדכן פריט" name="editorder" class="btn btn-info btn-block">

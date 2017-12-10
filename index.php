@@ -45,18 +45,8 @@ $PageTemplate .= headerMenu;
 
 $PageTemplate .= <<<INDEX
       <main>
-        <div class="wrapper">
-            <div id="manager-enter">כניסת מנהל
-                <form method="post">
-                    <input type="password" name="password" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');">
-                    <button type="submit" name="manager-entering">כניסה</button>
-                </form>
-                <br>
-                <br>
-                <br>
-                <br>
-                {passwordError}
-            </div>
+        <div class="container">
+
             
       <remindboard>
         <div class="table-users">
@@ -163,26 +153,9 @@ if(isset($_GET['deleteId'])) {
 }
 /////
 
-////Manager enter
-if(isset($_POST['manager-entering'])) {
-    $password = $_POST['password'];
-
-    if(!empty($password)) {
-        if ($password == $managerPassword) {
-            $_SESSION["manager"] = Shop::GetById($shopId)->GetManager();
-            header("Location: shopmanager.php");
-        } else {
-            $passwordError .= "סיסמה לא נכונה";
-        }
-    } else {
-        $passwordError .= "נא להכניס סיסמה";
-    }
-}
-//////
 
 
 /////errors placers
-\Services::setPlaceHolder($PageTemplate,"passwordError", $passwordError);
 \Services::setPlaceHolder($PageTemplate,"reminderError", $reminderError);
 ////
 

@@ -39,7 +39,7 @@ body {
 </head>
 
 <body style="direction: rtl; text-align: right;">
-        <div class="jumbotron">
+        <div class="jumbotron" style="padding: 40px 0">
                 <div class="container"><h1 class="page-header">הזמנה {$orderObj->GetId()}</h1>
             <h2><small>קבלת מידע אודות סטאטוס ההזמנה</small></h2></div>
         </div>
@@ -54,13 +54,14 @@ body {
         <br>
         <br>
         <ul style="list-style-type: none; line-height: 15px">
-              <li>  <b>מספר הזמנה:</b> {OrderId} </li><br>
-              <li>  <b>תאריך:</b> {OrderDate} </li><br>
-              <li>  <b>שם המזמין:</b>  {ClientName} </li><br>
-              <li>  <b>סניף:</b>  {ShopName} </li><br>
-              <li>  <b>כתובת:</b>  {Address} </li><br>
-              <li>  <b>מוכר:</b>  {Seller} </li><br>
-              <li>  <b>טלפון לבירורים:</b> {PhoneNumber} </li><br>
+              <li>  <b>סטאטוס:</b> {$orderObj->GetStatus()->getDesc()} </li><br>
+              <li>  <b>מספר הזמנה:</b> {$orderObj->GetId()} </li><br>
+              <li>  <b>תאריך:</b> {$orderObj->GetTimeStamp()->format("d/m/y H:m")} </li><br>
+              <li>  <b>שם המזמין:</b>  {$orderObj->GetClient()->GetFirstName()} </li><br>
+              <li>  <b>סניף:</b>  {$orderObj->GetShop()->GetShopName()} </li><br>
+              <li>  <b>כתובת:</b>  {$orderObj->GetShop()->GetLocation()} </li><br>
+              <li>  <b>מוכר:</b>  {$orderObj->GetSeller()->GetFirstName()} </li><br>
+              <li>  <b>טלפון לבירורים:</b> {$orderObj->GetShop()->GetPhoneNumber()} </li><br>
         </ul>
         <br>
         מוצרים:
@@ -96,14 +97,6 @@ $productRow = <<<EOF
     <td>{productQuantity}</td>
 </tr>
 EOF;
-
-\Services::setPlaceHolder($PageTemplate,"OrderId",$orderObj->GetId());
-\Services::setPlaceHolder($PageTemplate,"ClientName",$orderObj->GetClient()->GetFirstName());
-\Services::setPlaceHolder($PageTemplate,"OrderDate", $orderObj->GetTimeStamp()->format("d/m/y H:m"));
-\Services::setPlaceHolder($PageTemplate,"ShopName", $orderObj->GetShop()->GetShopName());
-\Services::setPlaceHolder($PageTemplate,"Address", $orderObj->GetShop()->GetLocation());
-\Services::setPlaceHolder($PageTemplate,"Seller", $orderObj->GetSeller()->GetFirstName());
-\Services::setPlaceHolder($PageTemplate,"PhoneNumber", $orderObj->GetShop()->GetPhoneNumber());
 
 
 $productList = "";

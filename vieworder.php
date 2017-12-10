@@ -105,10 +105,10 @@ $PageTemplate .= <<<PAGE
                 </div>
             </div>      
         </div>
+</main>
         
         
-        
-                
+              <!--  
         <br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div id="view-order" dir="rtl">
           <div class="order-title">הזמנת לקוח - $orderId</div>
@@ -163,6 +163,7 @@ $PageTemplate .= <<<PAGE
         </div>
     </div> 
 </main>
+-->
 PAGE;
 //setting footer
 $PageTemplate .= footer;

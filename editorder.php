@@ -36,7 +36,7 @@ $PageTemplate .= <<<PAGE
     <div class="container">
         <div id="new-order">
             <form class="new-order" method="POST">
-                <center> {$orderId} -  עריכת הזמנה</center>
+                <center>עריכת הזמנה - {$orderId}</center>
                 
                 <div class="form-group">
                     <label for="order-remarks">הערות להזמנה</label>

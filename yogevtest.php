@@ -14,7 +14,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$orderObject = Order::GetById(120);
+
+
+$orderObject = Order::GetById(84);
 $clientId = 76;
 $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
 $encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));

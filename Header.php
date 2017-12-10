@@ -70,7 +70,70 @@ Header;
 const headerMenu = <<<HeaderMenu
 <body>
     
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        
+        <logo>
+            <img src="images/logo.png" alt="logo">
+        </logo>
+        
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+         
+
+         
+          <!-- <a class="navbar-brand" href="#">Brand</a> -->
+        </div>
     
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar-collapse-2">
+            <div class="shop-details">שלום, {shopName}
+                <br><a href="logout.php"><img src="images/icons/exit.png" alt="exit"></a>
+          </div>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="oldordersboard.php">הזמנות ישנות <i class="glyphicon glyphicon-inbox"></i></a></li>
+            <li><a href="neworder.php">הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>
+            <li><a href="Ordersboard.php">לוח הזמנות <i class="glyphicon glyphicon-list-alt"></i></a></li>
+            <li><a href="index.php">ראשי <i class="glyphicon glyphicon-home"></i></a></li>
+            <li>
+              <a class="btn btn-default btn-outline btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse2" aria-expanded="false" aria-controls="nav-collapse2">כניסת מנהל</a>
+            </li>
+          </ul>
+          <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse2">
+            <form class="navbar-form navbar-right form-inline" role="form" method="post" action="shopmanager.php">
+              <button type="submit" class="btn btn-success">כניסה</button>
+              <div class="form-group">
+                <label class="sr-only" for="Password">סיסמה</label>
+                <input type="password" name="manager-password" class="form-control" id="Password" placeholder="סיסמה" required />
+              </div>
+            </form>
+          </div>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <!--
               <header>
                   <div class="container-fluid">
                       <logo>
@@ -83,11 +146,11 @@ const headerMenu = <<<HeaderMenu
                         <div id="burger-nav"><img src="images/icons/burger.png"></div>
                           <h2>Main Navigation</h2>
                             <ul>
-                            <!--<li><form id="searchBox" name="searchbox" action="search.php" method="get">
+                            <li><form id="searchBox" name="searchbox" action="search.php" method="get">
                                  <input type="text" placeholder="חיפוש" name="search">
                                 <input type="submit" style="position: relative; left: -9999px; width: 1px; height: 1px;" tabindex="2" />
                                 </form>
-                            </li> -->
+                            </li> 
                              <li><a href="oldordersboard.php" class={oldOrdersClass}">הזמנות ישנות</a></li>
                              <li><a href="neworder.php" class={newOrdersClass}>הזמנה חדשה</a></li>
                              <li><a href="Ordersboard.php" class={ordersBoardClass}>לוח הזמנות</a></li>
@@ -96,7 +159,7 @@ const headerMenu = <<<HeaderMenu
                       </nav>
                   </div>
               </header>
-              
+              -->
 
 HeaderMenu;
 

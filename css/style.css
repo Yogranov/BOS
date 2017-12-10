@@ -18,7 +18,7 @@ body, ul li {
     margin: 0px;
     padding: 0px;
     font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
-
+    font-style: normal !important;
 
 }
 
@@ -58,7 +58,7 @@ header h1{
 .shop-details {
     position: absolute;
     width: 160px;
-    margin: -15px 200px;
+    margin: 0px 200px;
     font-size: 18px;
     color: #4e4e4e;
     font-weight: 500;
@@ -140,7 +140,7 @@ header nav li a.current{
 }
 
 logo{
-    margin:  -30px;
+    margin:  -5px;
     padding-left: 50px;
     position: absolute;
     z-index:2;
@@ -996,11 +996,16 @@ Remider Table
 }
 
 .order-products-info table {
+    text-align: center;
     margin-top: -11px;
     border: 1px solid rgba(0,0,0,0.3);
     border-radius: 5px;
     background: #fff;
 
+}
+
+.order-products-info th {
+    text-align: center;
 }
 
 .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
@@ -1062,6 +1067,7 @@ Remider Table
 
 @media (max-width:960px) {
 
+    .logo
 
     header nav ul li{
         float:none;
@@ -1133,7 +1139,7 @@ Remider Table
     }
 
     .shop-details {
-        margin-left: 150px !important;
+        margin: 150px !important;
     }
 
     #new-order {
@@ -1206,6 +1212,10 @@ Remider Table
 Code snippet by maridlcrmn for Bootsnipp.com
 Follow me on Twitter @maridlcrmn
 */
+
+#navbar-collapse-2 {
+    font-size: 18px;
+}
 
 .navbar-brand { position: relative; z-index: 2; }
 
