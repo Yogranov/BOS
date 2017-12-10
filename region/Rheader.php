@@ -43,6 +43,13 @@ const headerTemplate = <<<Header
         
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   
+          <!-- Bootstrap 3 -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
     <!--site main js-->
     <script src="../js/main.js"></script>
     <script src="../js/jqueryMain.js"></script>
@@ -53,7 +60,40 @@ const headerTemplate = <<<Header
 Header;
 
 const headerMenu = <<<HeaderMenu
-    <body>
+<body>
+        <nav class="navbar navbar-default">
+      <div class="container-fluid">        
+          <logo>
+              <img src="../images/logo.png" alt="logo">
+          </logo>
+        
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse-2">
+              <div class="shop-details">שלום, {regionName}
+                <br><a href="../logout.php"><img src="../images/icons/exit.png" alt="exit"></a>
+              </div>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown {manageTools}"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-menu-down"></i> כלי ניהול <i class="glyphicon glyphicon-briefcase"></i></a>
+                <ul class="dropdown-menu"  style="text-align: center">
+                    <li><a href="addshop.php">הוספת סניף</a></li>
+                    <li><a href="#">הוספת עובד</a></li>
+                </ul>
+            </li>
+            <li class="{shopsPageClass}"><a href="rshops.php">סניפים <i class="glyphicon glyphicon-home"></i></a></li>
+            <li class="{mainPageClass}"><a href="rindex.php">ראשי <i class="glyphicon glyphicon-list-alt"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+   
+    <!--
               <header>
 
               <div class="wrapper">
@@ -73,6 +113,7 @@ const headerMenu = <<<HeaderMenu
                   </nav>
                   </div>
               </header>
+-->
 HeaderMenu;
 
 const footer = <<<Footer

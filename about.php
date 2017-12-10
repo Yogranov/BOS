@@ -34,6 +34,14 @@ $html = <<<EOF
         integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" 
         crossorigin="anonymous"></script>
   
+          <!-- Bootstrap 3 -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  
     <!--site main js-->
     <script src="js/main.js"></script>
     <script src="js/jqueryMain.js"></script>
@@ -41,6 +49,30 @@ $html = <<<EOF
     <meta name="viewport" content="width=device-width">
 </head>
 <body>
+
+        <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <logo>
+            <img src="images/logo.png" alt="logo">
+        </logo>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse-2">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="about.php">אודות <i class="glyphicon glyphicon-comment"></i></a></li>
+            <li><a href="login.php">כניסה <i class="glyphicon glyphicon-log-in"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+<!--
     <header>
        <div class="wrapper">
           <logo>
@@ -55,7 +87,8 @@ $html = <<<EOF
               </ul>
           </nav>
       </div>
-    </header>       
+    </header>
+    -->       
     <main>
             <div class="wrapper">     
                 <div id="container" style="direction: rtl;">
@@ -117,15 +150,15 @@ $html = <<<EOF
                                    
                                </ul>
                             </li>
+
+                    <li class="q"><img src="images/icons/arrow.png"> מערכת ניהול ובקרה</li>
+                    <li class="a">למערכת ישנה מערכת משנה המתנהלת על ידי מנהלי איזור, לכל מנהל איזור יש סניפים עם התראות במקרים חריגים וניתוח סטאטיסטי.</li>
                     
-                    <li class="q"><img src="images/icons/arrow.png"> למי זה מיועד?</li>
-                    <li class="a">לכל חנות או רשת המעוניינת להגדיל את המכירות ולא רוצה לפספס הזדמנויות מכירה על גבי סחורה שלא קיימת באותו הרגע.</li>
+                    <li class="q"><img src="images/icons/arrow.png"> מערכת שליחת מיילים</li>
+                    <li class="a">בפתיחת ההזמנה הלקוח מקבל הודעה למייל עם פרטי הזמנה ומעקב אחר סטאטוס הזמנה.
+                     כשהמוצר מגיע לסניף הלקוח מקבל הודעה שהמוצר הגיע, ברגע שהלקוח יפתח את המייל המערכת תתעדכן אוטומטי שהלקוח קרא ומעודכן שההזמנה מוכנה לו בסניף.</li>
                     
-                    <li class="q"><img src="images/icons/arrow.png"> מה מיוחד במערכת?</li>
                     <li class="a">המערכת מאופיינת בצורה טובה, נוחה ומהירה. בנוסף עוזרת לשמור על קצב ההזמנות סדיר ללא המתנות.</li>
-                  
-                          <li class="q"><img src="images/icons/arrow.png"> ככה תראה המערכת?</li>
-                    <li class="a">המערכת בשלבי סיום הפיתוח, לאחר מכן נעבור לעבוד על העיצוב שיהיה יותר נח ומזמין.</li>
              
                               <li class="q"><img src="images/icons/arrow.png"> מה צופן העתיד?</li>
                     <li class="a">                    יש עוד הרבה תכניות לעתיד, כגון - <ul>

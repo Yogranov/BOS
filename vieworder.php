@@ -34,7 +34,7 @@ $PageTemplate = headerTemplate;
 //setting menu bar
 $PageTemplate .= headerMenu;
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "'current'");
+\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
 ///
 
 
@@ -66,7 +66,7 @@ $PageTemplate .= <<<PAGE
                                     </form></li>
                                 <li><span>עדכון אחרון:</span> {$orderInfo->GetUpdateTime()->format("d/m/y H:i")}</li>
                            </ul> 
-                        <div class="order-button" style="float: left; margin: -34px 0 0 3px; padding: 1px" onclick="document.location ='editorder.php?orderId={$orderId}';">ערוך הזמנה </div>
+                        <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}';">ערוך הזמנה </div>
                     </div>
                 </div>
                 <div class="col-sm-6" style="height: 250px;">
@@ -78,7 +78,7 @@ $PageTemplate .= <<<PAGE
                                <li><span> לקוח מעוניין בעדכון ע"י אימייל:</span>&nbsp;<span style="font-weight: normal" id="ClientWantEmails" data-value="{clientWantsEmailsBool}">{ClientWantsEmails}</span></li>
                                <li><span> אימייל:</span>    {$orderInfo->GetClient()->GetEmail()}</li>
                             </ul>
-                         <div class="order-button" style="float: left; margin: 3px; padding: 1px" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}';">ערוך לקוח </div>
+                         <div class="btn btn-primary" style="float: left; margin: 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}';">ערוך לקוח </div>
                     </div>
                 </div>
             </div>

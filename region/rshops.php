@@ -26,14 +26,13 @@ $PageTemplate = headerTemplate;
 //setting menu bar
 $PageTemplate .= headerMenu;
 \Services::setPlaceHolder($PageTemplate, "regionName", $regionObj->GetManager()->GetFirstName());
-\Services::setPlaceHolder($PageTemplate, "shopsPageClass", "'current'");
+\Services::setPlaceHolder($PageTemplate, "shopsPageClass", "active");
 ///
 
 $PageTemplate .= <<<INDEX
 <main>
     <div class="wrapper" style="direction: rtl">
     <h1 style="direction: rtl">סניפים</h1>
-<a style="text-decoration: none;cursor: pointer ;color: #fff; background-color: #2b686e; padding: 5px; direction: rtl !important; border-radius: 5px; border: 1px solid rgba(0,0,0,0.3);" href="addshop.php">צור סניף</a>
         <div id="region-shops-list">
         {shopBlock}
         </div>

@@ -28,7 +28,7 @@ $PageTemplate = headerTemplate;
 //setting menu bar
 $PageTemplate .= headerMenu;
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObj->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "newOrdersClass", "'current'");
+\Services::setPlaceHolder($PageTemplate, "newOrdersClass", "active");
 ///
 
 

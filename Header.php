@@ -84,23 +84,17 @@ const headerMenu = <<<HeaderMenu
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </button>
-         
-
-         
-          <!-- <a class="navbar-brand" href="#">Brand</a> -->
+          </button> 
         </div>
-    
-        <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-collapse-2">
             <div class="shop-details">שלום, {shopName}
                 <br><a href="logout.php"><img src="images/icons/exit.png" alt="exit"></a>
           </div>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="oldordersboard.php">הזמנות ישנות <i class="glyphicon glyphicon-inbox"></i></a></li>
-            <li><a href="neworder.php">הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>
-            <li><a href="Ordersboard.php">לוח הזמנות <i class="glyphicon glyphicon-list-alt"></i></a></li>
-            <li><a href="index.php">ראשי <i class="glyphicon glyphicon-home"></i></a></li>
+            <li class="{oldOrdersClass}"><a href="oldordersboard.php">הזמנות ישנות <i class="glyphicon glyphicon-inbox"></i></a></li>
+            <li class="{newOrdersClass}"><a href="neworder.php">הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>
+            <li class="{ordersBoardClass}"><a href="Ordersboard.php">לוח הזמנות <i class="glyphicon glyphicon-list-alt"></i></a></li>
+            <li class="{mainPageClass}"><a href="index.php">ראשי <i class="glyphicon glyphicon-home"></i></a></li>
             <li>
               <a class="btn btn-default btn-outline btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse2" aria-expanded="false" aria-controls="nav-collapse2">כניסת מנהל</a>
             </li>
@@ -114,24 +108,10 @@ const headerMenu = <<<HeaderMenu
               </div>
             </form>
           </div>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container -->
+        </div>
+      </div>
     </nav>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     <!--
               <header>

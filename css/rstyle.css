@@ -20,45 +20,11 @@
     direction: rtl;
     margin: 20px auto;
     background-color: #e5e5e5;
-    width: 30%;
-    padding: 20px;
+    width: 70%;
+    padding: 20px 40px;
     border: 1px solid rgba(0,0,0,0.3);
     border-radius: 10px;
-}
-
-#edit-shop form {
-    text-align: right;
-    position: relative;
-    width: 95%;
-    margin: 20px 0;
-    font-size: 20px;
-    color: #4e4e4e;
-    font-weight: bold;
-}
-
-#edit-shop input[type=text], #edit-shop input[type=password] {
-    width: 90%;
-    padding: 10px 20px;
-    margin: 5px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    text-align: right;
-}
-
-#edit-shop button[type=submit] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 4px;
-    margin: 0 auto;
-    cursor: pointer;
-    width: 50%;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-#edit-shop button[type=submit]:hover {
-    opacity: 0.8;
+    font-size: 18px;
 }
 
 div .region-shop-details {
@@ -79,12 +45,13 @@ svg {
 
 #notificationBoard {
     direction: rtl;
-    width: 50%;
+    width: 60%;
     margin: 20px auto;
     padding: 10px;
     background-color: rgba(173, 7, 0, 0.22);
     border: 1px solid rgba(0,0,0,0.4);
     border-radius: 10px;
+    font-size: 16px;
 }
 
 #notificationBoard li a {

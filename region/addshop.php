@@ -28,42 +28,55 @@ $PageTemplate = headerTemplate;
 //setting menu bar
 $PageTemplate .= headerMenu;
 \Services::setPlaceHolder($PageTemplate, "regionName", $regionObj->GetManager()->GetFirstName());
-\Services::setPlaceHolder($PageTemplate, "shopsPageClass", "'current'");
+\Services::setPlaceHolder($PageTemplate, "manageTools", "active");
 ///
 
 
 $PageTemplate .= <<<INDEX
 <main>
-    <div class="wrapper">
+    <div class="container">
        <div id="edit-shop">
-        <form method="POST">
-        <center>הוסף סניף חדש</center>
-        <br>
-        מספר סניף<br>
-           <input type="text" name="shopId" required>
-           
-         <br>
-        סיסמה<br>
-           <input type="password" name="shopPassword" required>
-           <br>
-          שם הסניף <br>
-           <input type="text" name="shopName" required>
-           <br>
-              כתובת<br>
-           <input type="text" name="shopLocation" required>
-           <br>
-                 מספר טלפון<br>
-           <input type="text" name="shopPhoneNumber" required>
-           <br>
-                 (מנהל(מס' עובד<br>
-           <input type="text" name="shopManager" required>
-           <br>
-                 אימייל<br>
-           <input type="text" name="shopEmail" required>
-           <br>
-                  <br>
-                            <button type="submit" name="addShop">צור חנות</button>
-        </form>
+            <form method="POST">
+            <center>הוסף סניף חדש</center>
+            
+            <div class="form-group">
+                <label for="form-shop-id">מספר סניף</label>
+                <input type="text" class="form-control" id="form-shop-id" name="shopId" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-shop-password">סיסמה</label>
+               <input type="password" class="form-control" id="form-shop-password" name="shopPassword" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-shop-name">שם הסניף</label>
+               <input type="text" class="form-control" id="form-shop-name" name="shopName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-shop-address">כתובת</label>
+               <input type="text" class="form-control" id="form-shop-address" name="shopLocation" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-shop-phone-number">מספר טלפון</label>
+                <input type="text" class="form-control" id="form-shop-phone-number" name="shopPhoneNumber" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-shop-manager-id">מנהל (מספר עובד)</label>
+                <input type="text" class="form-control" id="form-shop-manager-id" name="shopManager" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-shop-email">אימייל חנות</label>
+                <input type="text" class="form-control" id="form-shop-email" name="shopEmail" required>
+            </div>
+            
+            <input type="submit" value="צור חנות" name="addShop" class="btn btn-info btn-block">
+            </form>
+        </div>
     </div>
 </main>
 INDEX;

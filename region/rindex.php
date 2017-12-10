@@ -27,7 +27,7 @@ $PageTemplate = headerTemplate;
 //setting menu bar
 $PageTemplate .= headerMenu;
 \Services::setPlaceHolder($PageTemplate, "regionName", $regionObj->GetManager()->GetFirstName());
-\Services::setPlaceHolder($PageTemplate, "mainPageClass", "'current'");
+\Services::setPlaceHolder($PageTemplate, "mainPageClass", "active");
 ///
 
 
@@ -42,9 +42,11 @@ $PageTemplate .= <<<INDEX
 INDEX;
 
 $notificationBoard = <<<BOARD
-<div id="notificationBoard">
-    <h2 style="text-align: center; margin: -10px 0 0 0;">לוח התראות</h2>
-            {notificationLists}
+<div class="container">
+    <div id="notificationBoard">
+        <h2 style="text-align: center; margin: -10px 0 0 0; padding-bottom: 10px;">לוח התראות</h2>
+                {notificationLists}
+    </div>
 </div>
 BOARD;
 
