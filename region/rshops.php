@@ -6,7 +6,6 @@
  * Time: 10:08
  */
 namespace BugOrderSystem;
-
 require_once "../Classes/BugOrderSystem.php";
 
 session_start();

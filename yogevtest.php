@@ -18,7 +18,7 @@ error_reporting(E_ALL);
 
 
 
-\Services::dump(BugOrderSystem::GetDB()->get("shops",null,["Id,Name"]));
+\Services::dump($checkManager = BugOrderSystem::GetDB()->where("Id",1898)->getOne(Seller::TABLE_NAME));
 
 
 
