@@ -7,23 +7,7 @@ $(document).ready(function(){
         event.preventDefault();
         history.back(1);
     });
-/*
-    $("#OrderBoard[class='table']").DataTable( {
-        "order": [[ 7, "desc" ]],
-        "paging":   false,
-        "info":     false
-    });
 
-    $("#PreOrderBoard[class='table']").DataTable({
-        "order": [[ 7, "desc" ]]
-    });
-
-    $("#OldOrderBoard[class='table']").DataTable({
-        "order": [[ 7, "desc" ]]
-    });
-*/
-
-//TODO: charts doenst works with datatable JS.
 
     $("#orderstatus").change(function(){
         var selectedStatus = parseInt($(this).val());
@@ -41,7 +25,7 @@ $(document).ready(function(){
                         $("#changeStatus > #SendEmail").val(1);
                         $( this ).dialog( "close" );
                     },
-                    "בטל": function() {
+                    "אל תשלח": function() {
                         $("#changeStatus > #SendEmail").val(0);
                         $( this ).dialog( "close" );
                     }

@@ -162,7 +162,7 @@ $PageTemplate .= <<<PAGE
                    document.getElementById("clientwantsemails").className = "open";
               } else {
                      $('input[name=wantsemail]').attr('checked', false);
-                    document.getElementById("clientwantsemails").className = "";
+                    document.getElementById("clientwantsemails").className = "form-group";
               }
 
           }
@@ -182,7 +182,7 @@ foreach ($shopObj->GetActiveSellers() as $sellerId => $sellerObj) {
     $orderSellersString .= ">".$sellerObj->GetFullName()."</option>";
 }
 \Services::setPlaceHolder($PageTemplate, "sellerSelect", $orderSellersString);
-
+/////
 
 //Take form filed and make them variable.
 if(isset($_POST['neworder']))  {

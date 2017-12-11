@@ -173,13 +173,15 @@ class Seller {
 
     /**
      * @param array $sellerData
-     * @return Seller|mixed
+     * @return Seller
      * @throws DBException
      * @throws Exception
      * @throws \Exception
      */
     public static function Add(array $sellerData){
         $sqlObject = BugOrderSystem::GetDB();
+        if($sqlObject->where("Id",$sellerData["Id"])->getOne(self::TABLE_NAME))
+            throw new Exception("לא ניתן לבצע פעולה זו, עובד {0} כבר קיים במערכת",$sellerData, $sellerData["Id"]);
         $success = $sqlObject->insert(self::TABLE_NAME, $sellerData);
         if (!$success)
             throw new DBException("Unable to add seller!", $sellerData);

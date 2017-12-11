@@ -45,8 +45,8 @@ $shopBlock = "";
 foreach ($regionObj->GetShops() as $shop) {
 
     $numSellers = count($shop->GetSellers());
-    $arrivedOrders = count(Order::GetArrivedOrders($shop));
-    $canceledOrders = count(Order::GetCanceledOrders($shop));
+    $arrivedOrders = count(Order::GetArrivedOrders($shop,new \DateTime("-1 month")));
+    $canceledOrders = count(Order::GetCanceledOrders($shop,new \DateTime("-1 month")));
 
     $chartsArray = array();
 
@@ -69,8 +69,8 @@ foreach ($regionObj->GetShops() as $shop) {
             <span>מנהל: </span>{$shop->GetManager()->GetFullName()}<br>
             <span>טלפון: </span>{$shop->GetPhoneNumber()} <br>
             <span>מספר עובדים: </span>{$numSellers} <br>
-            <span>מספר הזמנות שנאספו:</span> {$arrivedOrders}<br>
-            <span>מספר הזמנות שבוטלו: </span>{$canceledOrders}<br><br>
+            <span>נאספו החודש:</span> {$arrivedOrders}<br>
+            <span>בוטלו החודש: </span>{$canceledOrders}<br><br>
             <div class="order-button" style="width: 80px" onclick="document.location = 'reditshop.php?id={$shop->GetId()}';"> ערוך חנות </div>
             <div class="order-button" style="width: 80px; margin-right: 5px; background-color: #eb5756;" onclick="document.location = 'rorderboard.php?shopid={$shop->GetId()}';"> לוח הזמנות </div>
 

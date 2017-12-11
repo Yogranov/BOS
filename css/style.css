@@ -372,7 +372,11 @@ logo{
     padding: 10px;
     border-radius: 10px 10px 0 0;
     border-bottom: 1px solid #dde0e8;
+    font-size: 18px;
+}
 
+.login-form-top input{
+    font-size: 16px;
 }
 
 .login-form-bottom {
@@ -418,7 +422,8 @@ New Order
 
 }
 
-#new-order h3 {
+#new-order .panel-default {
+    border-radius: 0 0 10px 10px;
 
 }
 
@@ -433,11 +438,14 @@ New Order
 
 #new-order h3 {
     width: 100%;
-    background: #dddddd;
-    padding: 5px;
+    background: #167f92;
+    color: #FFFFFF;
+    padding: 20px;
     border: 1px solid rgba(0,0,0,0.3);
-    border-radius: 5px;
+    border-radius: 10px 10px 0 0;
     text-align: center;
+    margin: 0;
+    letter-spacing: 3px;
 }
 
 

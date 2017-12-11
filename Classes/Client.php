@@ -120,10 +120,12 @@ class Client {
         BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
     }
 
+
     /**
      * @param string $message
      * @param string $subject
      * @param string $AttachedFile
+     * @throws Exception
      * @throws \Exception
      */
     public function SendEmail(string $message, string $subject, string $AttachedFile = "") {

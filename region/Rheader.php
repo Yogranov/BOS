@@ -83,7 +83,7 @@ const headerMenu = <<<HeaderMenu
             <li class="dropdown {manageTools}"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-menu-down"></i> כלי ניהול <i class="glyphicon glyphicon-briefcase"></i></a>
                 <ul class="dropdown-menu"  style="text-align: center">
                     <li><a href="addshop.php">הוספת סניף</a></li>
-                    <li><a href="#">הוספת עובד</a></li>
+                    <li><a href="raddemployee.php">הוספת עובד</a></li>
                 </ul>
             </li>
             <li class="{shopsPageClass}"><a href="rshops.php">סניפים <i class="glyphicon glyphicon-home"></i></a></li>
@@ -120,7 +120,7 @@ const footer = <<<Footer
 
 </body>
 <footer>
-        <div id="footer"> ~Beta 1.0~ </div>
+        <div id="footer"> ~Beta 2.0~ </div>
 </footer>
 </html>
 Footer;

@@ -169,7 +169,7 @@ const footer = <<<Footer
 
 </body>
 <footer>
-        <div id="footer"> ~Beta 1.0~ </div>
+        <div id="footer"> ~Beta 2.0~ </div>
 </footer>
 </html>
 Footer;

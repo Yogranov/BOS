@@ -6,7 +6,7 @@ Font Set
 
 
 .responstable {
-    margin: 1em 0;
+    margin: 50px 0;
     width: 100%;
     overflow: hidden;
     background: #FFF;
@@ -237,12 +237,17 @@ Font Set
     width: 100%;
     font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
     font-size: 16px;
+}
 
+.table-users .glyphicon {
+    font-size: 24px;
 }
 .table-users table td, table th {
     color: #2b686e;
     padding: 10px;
     font-size: 18px;
+    text-align: center;
+
 }
 .table-users table td {
     text-align: center;
@@ -262,6 +267,46 @@ Font Set
 }
 .table-users table tr:nth-child(2n+1) {
     background-color: #edf7f8;
+}
+
+.table-users form {
+    background-color: #167d90;
+    display: inline;
+    width: 100%;
+    direction: rtl;
+    float: right;
+    padding-right: 10px;
+    text-align: center;
+    font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
+    font-size: 16px;
+    color: #fff;
+
+}
+
+.table-users input[type=text] {
+    width: 40%;
+    padding: 10px 20px;
+    margin: 5px 10px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    text-align: right;
+    border-radius: 5px;
+    color: black;
+
+}
+
+.table-users select {
+    width: 20%;
+    padding: 10px 20px;
+    margin: 5px 10px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    text-align: right;
+    border-radius: 5px;
+    color: black;
+
 }
 
 
@@ -342,65 +387,7 @@ Font Set
 }
 
 
-.table-users form {
-    background-color: #167d90;
-    display: inline;
-    width: 100%;
-    direction: rtl;
-    float: right;
-    padding-right: 10px;
-    text-align: center;
-    font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
-    font-size: 16px;
-    color: #fff;
 
-}
-
-.table-users input[type=text] {
-    width: 40%;
-    padding: 10px 20px;
-    margin: 5px 10px;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    text-align: right;
-    border-radius: 5px;
-}
-
-.table-users select {
-    width: 20%;
-    padding: 10px 20px;
-    margin: 5px 10px;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    text-align: right;
-    border-radius: 5px;
-
-}
-
-.table-users button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 3px 0;
-    margin: 0 10px;
-    cursor: pointer;
-    width: 12%;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.table-users button:hover {
-    opacity: 0.8;
-}
-
-.table-users button:active {
-    transform: translateY(4px);
-
-
-
-
-}
 
 @media screen and (max-width: 480px) {
 

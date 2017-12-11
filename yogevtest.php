@@ -16,6 +16,28 @@ error_reporting(E_ALL);
 
 
 
+
+
+\Services::dump(BugOrderSystem::GetDB()->get("shops",null,["Id,Name"]));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 $orderObject = Order::GetById(84);
 $clientId = 76;
 $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
@@ -38,8 +60,6 @@ echo $orderSummery;
 
 
 
-
-/*
 
 $order = Order::GetById(91);
 $encode = base64_encode($order->GetShop()->GetId() . "_" . $order->GetId() . "_" . $order->GetTimeStamp()->format("U"));

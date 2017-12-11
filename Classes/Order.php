@@ -191,12 +191,14 @@ class Order
      * @throws Exception
      * @throws \Exception
      */
-    public static function GetArrivedOrders(Shop $shop) {
+    public static function GetArrivedOrders(Shop $shop, \DateTime $since = null) {
         $shopOrdersOld = array();
-        Order::LoopAll(function (Order $order) use ($shop, &$shopOrdersOld) {
+        Order::LoopAll(function (Order $order) use ($shop, &$shopOrdersOld, $since) {
             if ($order->GetShop() === $shop) {
                 if($order->GetStatus() == EOrderStatus::Delivered()) {
-                    array_push($shopOrdersOld, $order);
+                    if (empty($since) || ($order->GetTimeStamp() >= $since)) {
+                        array_push($shopOrdersOld, $order);
+                    }
                 }
             }
         });

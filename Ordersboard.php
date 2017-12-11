@@ -34,7 +34,7 @@ $PageTemplate .= <<<PAGE
 <main>
   <orderboard>
     <div class="wrapper">
-        <div class="responstable" style="margin-top: 30px">
+        <div class="responstable">
                 <table id="OrderBoard">
                   <thead>
                     <tr>

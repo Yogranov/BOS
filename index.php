@@ -74,7 +74,7 @@ $PageTemplate .= <<<INDEX
                 <select name="selleraddreminder">
                   {selectSellers}
                 </select>&nbsp;
-                <button type="submit" name="addremind">
+                <button class="btn btn-success" type="submit" name="addremind">
                 הוסף תזכורת 
                 </button>
                 {reminderError}
@@ -114,10 +114,10 @@ EOF;
 
 $shopReminds = Reminder::GetShopReminders($shopObject);
 
-$remindsBoard = (count($shopReminds) > 0) ? "" : "<tr colspan='7'><div id='no-orders-available'>אין תזכירים </div></tr>";
+$remindsBoard = (count($shopReminds) > 0) ? "" : "<tr colspan='7'><div id='no-orders-available'>אין תזכורות </div></tr>";
 foreach ($shopReminds as $remind) {
     $remindsBoard .= $RemindBoard_Table_Temlplate;
-    \Services::setPlaceHolder($remindsBoard, "delete",'<div class="delete-reminder" onclick="document.location =\'index.php?deleteId=' . $remind->GetId() . '\'' .'"> <img src="images/icons/garbage.png"> </div>');
+    \Services::setPlaceHolder($remindsBoard, "delete",'<div class="delete-reminder" onclick="document.location =\'index.php?deleteId=' . $remind->GetId() . '\'' .'"> <i class="glyphicon glyphicon-trash"></i> ');
     \Services::setPlaceHolder($remindsBoard, "seller", $remind->GetSeller()->GetFullName());
     \Services::setPlaceHolder($remindsBoard, "remind", $remind->GetRemind());
     \Services::setPlaceHolder($remindsBoard, "remindTime", $remind->GetTimestamp()->format("d/m/Y H:i"));

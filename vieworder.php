@@ -131,7 +131,7 @@ $PageTemplate .= <<<PAGE
              <ul>                     
                  <li><span> תאריך פתיחה: </span> {$orderInfo->GetTimeStamp()->format("d.m.y H:i")}</li>
                  
-                 <li><span> מוכרן: </span> {SellerName}</li>
+                 <li><span> מוכרן: </span> {SelleDELETErName}</li>
                               
                  <li><span> הערות להזמנה: </span> {$orderInfo->GetRemarks()}</li>
                  
@@ -139,7 +139,7 @@ $PageTemplate .= <<<PAGE
                    <span>סטאטוס הזמנה:</span>
                       <input type="hidden" name="SendEmail" id="SendEmail" value=0>
                       <select id="orderstatus" name="orderstatus" required>
-                      {orderStatusEnum}
+                      {orderDELETEStatusEnum}
                       </select>
                     <br>
                  </form></li>
@@ -154,7 +154,7 @@ $PageTemplate .= <<<PAGE
                 <span> מוצרים: </span> <br> 
                 <ul>
                     <br>         
-                    {producsList}
+                    {proDELETEducsList}
                     <br>
                 </ul>
             <br>
@@ -187,11 +187,22 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
     \Services::setPlaceHolder($productList, "productRemarks", $product->GetRemarks());
     \Services::setPlaceHolder($productList, "productTimestamp", $product->GetTimestamp()->format("d/m/Y"));
-    \Services::setPlaceHolder($productList, "editProduct","<img src='images/icons/edit.png' height='30px' style='cursor: pointer' onclick=\"document.location = 'editproduct.php?id={$orderId}&productId={$product->GetId()}';\"></span>");
+    \Services::setPlaceHolder($productList, "editProduct","<img src='images/icons/edit.png' height='30px' style='cursor: pointer' onclick='document.location = /'editproduct.php?id={$orderId}&productId={$product->GetId()}/''>");
+
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
+//set seller name - can be change or delete
+try {
+    $orderSeller = $orderObject->GetSeller()->GetFullName();
+    \Services::setPlaceHolder($PageTemplate, "SellerName", $orderSeller);
+} catch (\Exception $e) {
+    $errorMsg = $e->getMessage();
+    \Services::setPlaceHolder($PageTemplate, "SellerName", "מוכר לא ידוע");
+}
+///
 
+///set order change status
 $orderStatusString = "";
 foreach (EOrderStatus::toArray() as $status) {
     $orderStatusString .= "<option value='".$status[0]."' ";
@@ -201,9 +212,10 @@ foreach (EOrderStatus::toArray() as $status) {
 
 }
 \Services::setPlaceHolder($PageTemplate, "orderStatusEnum", $orderStatusString);
+/////
 
 
-
+//set if the client wants email or not
 if ($orderInfo->GetClient()->IsWantEmail()) {
     $wantEmail =  'כן';
     $wantEmailBool = 1;
@@ -213,8 +225,9 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
 }
 \Services::setPlaceHolder($PageTemplate, "ClientWantsEmails", $wantEmail);
 \Services::setPlaceHolder($PageTemplate, "clientWantsEmailsBool", $wantEmailBool);
+////
 
-
+/*
 $producsList = <<<LIST
 <tr onclick="document.location = 'editproduct.php?id=$orderId&productId={productId}';">
     <li><span> שם המוצר: </span> {productName}</li>
@@ -278,7 +291,7 @@ try {
     $errorMsg = $e->getMessage();
     \Services::setPlaceHolder($PageTemplate, "SellerName", "מוכר לא ידוע");
 }
-
+*/
 
 echo $PageTemplate;
 
@@ -310,7 +323,7 @@ if(isset($_POST['orderstatus'])) {
                     echo $errorMsg;
                     echo "לא ניתן לשלוח מייל";
 
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $errorMsg = $e->getMessage();
                     echo $errorMsg;
                     echo "לא ניתן לשלוח מייל";
@@ -321,7 +334,8 @@ if(isset($_POST['orderstatus'])) {
     header("Location: Ordersboard.php");
 }
 
-
+/*
+ //set product change status
 foreach ($allProducts as $product) {
 
     if(isset($_POST['productstatus'.$product->GetId()])) {
@@ -335,5 +349,5 @@ foreach ($allProducts as $product) {
     }
 
 }
-
+*/
 ?>
