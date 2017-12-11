@@ -22,6 +22,7 @@ $shopObject = Shop::GetById($shopId);
 $orderId = $_GET["id"];
 $orderInfo = Order::GetById($orderId);
 $clientObject = Order::GetById($orderId)->GetClient();
+$clientExtendPhoneNumber = substr_replace(substr_replace($clientObject->GetPhoneNumber(), '-' , 3,0),'-',7,0);
 
 //select order status
 $orderObject = Order::GetById($orderId);
@@ -74,7 +75,7 @@ $PageTemplate .= <<<PAGE
                         <span><h4> פרטי לקוח </h4></span>
                              <ul>
                                <li><span> שם הלקוח:</span> {$orderInfo->GetClient()->GetFullName()}</li>
-                               <li><span> פלאפון:</span> {$orderInfo->GetClient()->GetPhoneNumber()}</li>
+                               <li><span> פלאפון:</span> {$clientExtendPhoneNumber}</li>
                                <li><span> לקוח מעוניין בעדכון ע"י אימייל:</span>&nbsp;<span style="font-weight: normal" id="ClientWantEmails" data-value="{clientWantsEmailsBool}">{ClientWantsEmails}</span></li>
                                <li><span> אימייל:</span>    {$orderInfo->GetClient()->GetEmail()}</li>
                             </ul>

@@ -110,7 +110,7 @@ foreach ($shopOrders as $order) {
         \Services::setPlaceHolder($orderBoard, "orderSellerName", "מוכר לא ידוע");
 
     }    \Services::setPlaceHolder($orderBoard, "orderRemarks", $order->GetRemarks());
-    \Services::setPlaceHolder($orderBoard, "clientCellPhone", $order->GetClient()->GetPhoneNumber());
+    \Services::setPlaceHolder($orderBoard, "clientCellPhone", substr_replace(substr_replace($order->GetClient()->GetPhoneNumber(), '-' , 3,0),'-',7,0));
     \Services::setPlaceHolder($orderBoard, "clientName", $order->GetClient()->GetFullName());
     \Services::setPlaceHolder($orderBoard, "orderDate", $order->GetTimeStamp()->format("d/m"));
 

@@ -440,12 +440,13 @@ New Order
     width: 100%;
     background: #167f92;
     color: #FFFFFF;
-    padding: 20px;
+    padding: 10px 20px 10px 20px;
     border: 1px solid rgba(0,0,0,0.3);
     border-radius: 10px 10px 0 0;
     text-align: center;
     margin: 0;
     letter-spacing: 3px;
+    font-weight: bold;
 }
 
 
@@ -1213,16 +1214,13 @@ Remider Table
 }
 
 
-
-
-
-/*
-Code snippet by maridlcrmn for Bootsnipp.com
-Follow me on Twitter @maridlcrmn
-*/
-
 #navbar-collapse-2 {
     font-size: 18px;
+}
+
+#navbar-collapse-2 .btn:hover,
+#navbar-collapse-2 .btn:focus {
+    background-position: 0 -30px;
 }
 
 .navbar-brand { position: relative; z-index: 2; }
@@ -1245,6 +1243,10 @@ Follow me on Twitter @maridlcrmn
     background-color: rgb(111, 84, 153);
     border-color: rgb(111, 84, 153);
     color: rgb(111, 84, 153);
+}
+
+.navbar-nav.navbar-right .btn:not(.collapsed):focus {
+    color:rgb(255, 255, 255);
 }
 
 .navbar.navbar-default .nav-collapse,

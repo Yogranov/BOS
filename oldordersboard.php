@@ -34,7 +34,7 @@ $PageTemplate .= headerMenu;
 $PageTemplate .= <<<PAGE
 <main>
     <oldorderboard>
-    <div class="wrapper" style="margin-top:35px">
+    <div class="wrapper" style="margin-top:45px">
         <div class="form-group" style="direction: rtl">
             <div style="width: 200px; float: left">
                 <input type="text" name="search" placeholder="חיפוש" id="search" class="form-control">
