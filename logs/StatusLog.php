@@ -3,7 +3,7 @@ session_start();
 
 $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
-    header("Location: login.php");
+    header("Location: ../login.php");
 }
 ?>
 

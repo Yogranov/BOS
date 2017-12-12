@@ -128,6 +128,14 @@ if(preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hipto
 
 if($orderObj->GetShop()->GetId() == $shopId && $orderObj->GetTimeStamp()->format("U") == $unixTime) {
     echo $PageTemplate;
+
+
+    //Log the status changing
+    $timeNow = new \DateTime( "now", new \DateTimeZone("Asia/Jerusalem"));
+    $logFile = fopen("logs/StatusCheckLog.php", "a");
+    fwrite($logFile, "\n" . "<br>" . "{$timeNow->format("d/m/Y H:i:s")} - הלקוח <b>{$orderObj->GetClient()->GetFullName()}</b> צפה בהזמנה מספר <b><a href='https://bugtest.845.co.il/vieworder.php?id={$orderObj->GetId()}'>{$orderObj->GetId()}</a></b>.");
+    fclose($logFile);
+
 } else {
     echo "<h2>לא ניתן להציג דף זה, נא להכניס מספר הזמנה חוקי</h2>";
 }
