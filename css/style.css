@@ -1004,6 +1004,12 @@ Remider Table
     border-radius: 5px 5px 0 0;
 }
 
+.order-products-info .btn {
+    float: left;
+    padding: 2px 5px;
+    margin-top: -3px;
+}
+
 .order-products-info table {
     text-align: center;
     margin-top: -11px;

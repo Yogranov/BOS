@@ -86,7 +86,8 @@ $PageTemplate .= <<<PAGE
             <div class="row">
                 <div class="col-sm-12" style="height: auto;">
                     <div class="order-products-info">
-                        <span><h4> רשימת מוצרים </h4></span>
+                        <span><h4> רשימת מוצרים 
+                        <span class="btn btn-primary" onclick="document.location = 'addproduct.php?orderid={$orderId}';"> הוסף מוצר </span></h4></span>
                           <table class="table table-striped">
                              <thead style="background: rgba(216,246,210,0.2)">
                                <tr>
@@ -188,7 +189,7 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
     \Services::setPlaceHolder($productList, "productRemarks", $product->GetRemarks());
     \Services::setPlaceHolder($productList, "productTimestamp", $product->GetTimestamp()->format("d/m/Y"));
-    \Services::setPlaceHolder($productList, "editProduct","<img src='images/icons/edit.png' height='30px' style='cursor: pointer' onclick='document.location = /'editproduct.php?id={$orderId}&productId={$product->GetId()}/''>");
+    \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productId={$product->GetId()}\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
 
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);

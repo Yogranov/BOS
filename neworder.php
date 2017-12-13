@@ -42,7 +42,7 @@ $PageTemplate .= <<<PAGE
             <div class="col-12">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <form role="form" style="font-size: 18px">
+                        <form method="post" role="form" style="font-size: 18px">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group">

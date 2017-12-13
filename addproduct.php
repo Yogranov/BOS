@@ -34,22 +34,36 @@ $PageTemplate .= headerMenu;
 
 $PageTemplate .= <<<PAGE
 <main>
-    <div class="wrapper">
+    <div class="container">
         <div id="new-order">
-            <form class="new-order" method="POST">
+            <form method="POST">
                 <center>{$orderId} - הוספת פריט להזמנה </center>
-                <br>
-                שם המוצר<br>
-                <input type="text" name="ProductName" required><br>
-                ברקוד<br>
-                <input type="text" name="ProductBarcode" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
-                כמות<br>
-                <input type="text" name="Quantity" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
-                <br>
-                :הערות למוצר
-                <input type="text" name="Remarks" ><br>
-                <br>
-                <button type="submit" name="addproduct">הוסף מוצר</button>
+                
+                
+            <div class="form-group">
+                <label for="form-product-name">שם המוצר</label>
+                <input type="text" class="form-control" id="form-product-name" placeholder="שם המוצר" name="ProductName" required><br>
+              </div>
+            
+            
+            <div class="form-group">
+                <label for="form-product-barcode">ברקוד</label>
+                <input type="text" class="form-control" id="form-product-barcode" placeholder="ברקוד" name="ProductBarcode" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
+            </div>
+                
+            <div class="form-group">
+                <label for="form-product-quantity">כמות</label>
+                <input type="text" class="form-control" id="form-product-quantity" placeholder="כמות" value="1" name="Quantity" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
+            </div>    
+                
+             <div class="form-group">
+                <label for="form-product-remarks">הערות למוצר</label>
+                <input type="text" class="form-control" id="form-product-remarks" placeholder="הערות עבור המוצר" name="Remarks" ><br>
+            </div>   
+                
+            <input type="submit" value="הוסף מוצר" name="addproduct" class="btn btn-info btn-block">
+
+   
                 <br>
             </form>
         </div>
