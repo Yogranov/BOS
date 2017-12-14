@@ -68,7 +68,7 @@ $PageTemplate .= <<<PAGE
                                 
                                 <div class="col-sm-12">
                                     <div class="form-check">
-                                        <input type="checkbox" name="wantsemail" id="form-checkwantsemails" style="cursor: pointer" onclick="emailsClick()">
+                                        <input type="checkbox" name="wantsemail" id="form-checkwantsemails" style="cursor: pointer" onclick="emailsClick()" value="1">
                                         <label for="form-checkwantsemails">עדכונים באימייל</label>
                                     </div>
                                 </div>
@@ -186,51 +186,40 @@ foreach ($shopObj->GetActiveSellers() as $sellerId => $sellerObj) {
 
 //Take form filed and make them variable.
 if(isset($_POST['neworder']))  {
+    try {
+        $client_first_name = $_POST['firstname'];
+        $client_last_name = $_POST['lastname'];
+        $client_phone_number = $_POST['phonenumber'];
 
-    $client_first_name = $_POST['firstname'];
-    $client_last_name = $_POST['lastname'];
-    $client_phone_number = $_POST['phonenumber'];
+        $client_wants_emails = 0;
+        if (isset($_POST['wantsemail']))
+            $client_wants_emails = 1;
 
-    if(!isset($_POST['wantsemail'])) {
-        $client_wants_emails = "0";
-    } else {
-        $client_wants_emails = "1";
-    }
+        $client_email = $_POST['email'];
+        $product_name = $_POST['productname'];
+        $product_barcode = $_POST['productbarcode'];
+        $product_quantity = $_POST['quantity'];
+        $order_seller = $_POST['seller'];
+        $client_remarks = $_POST['remarks'];
+        $client_product_remarks = $_POST['productremarks'];
 
-    $client_email = $_POST['email'];
-    $product_name = $_POST['productname'];
-    $product_barcode = $_POST['productbarcode'];
-    $product_quantity = $_POST['quantity'];
-    $order_seller = $_POST['seller'];
-    $client_remarks = $_POST['remarks'];
-    $client_product_remarks = $_POST['productremarks'];
+        if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number)
+            && !empty($product_name) && !empty($product_barcode) && !empty($order_seller)) {
+            //starting create order//
+            //create client//
+            $clientId = Client::isPhoneExist($client_phone_number);
+            if (empty($clientId)) {
+                $newClient = Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
 
-    if(!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number)
-        && !empty($product_name) && !empty($product_barcode) && !empty($order_seller)) {
+                $clientId = $newClient->GetId();
 
-        //starting create order//
-        //create client//
-        $clientId = Client::isPhoneExist($client_phone_number);
-        if (empty($clientId)) {
-            $newClient = Client::Add(
-                array(
-                    "FirstName" => $client_first_name,
-                    "LastName" => $client_last_name,
-                    "PhoneNumber" => $client_phone_number,
-                    "Email" => $client_email,
-                    "ClientWantsMails" => $client_wants_emails
-                )
-            );
+            }
 
-            $clientId = $newClient->GetId();
+            //create order//
+            if (!is_integer($clientId))
+                throw new Exception("לא ניתן לבצע הזמנה - בעיית שיוך לקוח {0} להזמנה!", null, $clientId);
 
-        }
 
-        //create order//
-        if (!is_integer($clientId))
-            throw new Exception("לא ניתן לבצע הזמנה - בעיית שיוך לקוח {0} להזמנה!", null, $clientId);
-
-        try {
             $orderObject = Order::Add(
                 array("ClientId" => $clientId,
                     "ShopId" => $shopId,
@@ -243,38 +232,37 @@ if(isset($_POST['neworder']))  {
             if ($orderProductsObject) {
 
                 //Send order summery to client
-                if (count($client_email) != 0) {
+                if (!empty($client_email)) {
                     $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
                     $encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
 
-                    \Services::setPlaceHolder($orderSummery,"OrderId",$orderObject->GetId());
-                    \Services::setPlaceHolder($orderSummery,"ClientName",$orderObject->GetClient()->GetFirstName());
-                    \Services::setPlaceHolder($orderSummery,"StatusCheckURL", $encode);
-                    \Services::setPlaceHolder($orderSummery,"OrderDate", $orderObject->GetTimeStamp()->format("d/m/y H:m"));
-                    \Services::setPlaceHolder($orderSummery,"ShopName", $orderObject->GetShop()->GetShopName());
-                    \Services::setPlaceHolder($orderSummery,"Address", $orderObject->GetShop()->GetLocation());
-                    \Services::setPlaceHolder($orderSummery,"Seller", $orderObject->GetSeller()->GetFirstName());
-                    \Services::setPlaceHolder($orderSummery,"PhoneNumber", $orderObject->GetShop()->GetPhoneNumber());
-                    \Services::setPlaceHolder($orderSummery,"ShopName", $orderObject->GetShop()->GetShopName());
+                    \Services::setPlaceHolder($orderSummery, "OrderId", $orderObject->GetId());
+                    \Services::setPlaceHolder($orderSummery, "ClientName", $orderObject->GetClient()->GetFirstName());
+                    \Services::setPlaceHolder($orderSummery, "StatusCheckURL", $encode);
+                    \Services::setPlaceHolder($orderSummery, "OrderDate", $orderObject->GetTimeStamp()->format("d/m/y H:m"));
+                    \Services::setPlaceHolder($orderSummery, "ShopName", $orderObject->GetShop()->GetShopName());
+                    \Services::setPlaceHolder($orderSummery, "Address", $orderObject->GetShop()->GetLocation());
+                    \Services::setPlaceHolder($orderSummery, "Seller", $orderObject->GetSeller()->GetFirstName());
+                    \Services::setPlaceHolder($orderSummery, "PhoneNumber", $orderObject->GetShop()->GetPhoneNumber());
+                    \Services::setPlaceHolder($orderSummery, "ShopName", $orderObject->GetShop()->GetShopName());
 
                     //set client object
                     $clientObj = Client::GetById($clientId);
 
-                    $clientObj->SendEmail($orderSummery,"סיכום הזמנה");
+                    $clientObj->SendEmail($orderSummery, "סיכום הזמנה");
 
                 }
-
-                    $locationToorder = $orderObject->GetId();
-                    header("Location:vieworder.php?id=$locationToorder");
+                $locationToorder = $orderObject->GetId();
+                header("Location: vieworder.php?id=$locationToorder");
 
             }
 
-        } catch (Exception $e) {
-            echo $e->getMessage() . "<br>";
+        } else {
+            echo "אנא מלא את כל השדות הנדרשים";
         }
-
-    } else {
-        echo "אנא מלא את כל השדות הנדרשים";
+    } catch (\Throwable $e) {
+        $errorMsg = $e->getMessage();
+        echo $errorMsg;
     }
 }
 

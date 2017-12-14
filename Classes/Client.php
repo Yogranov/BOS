@@ -73,18 +73,46 @@ class Client {
         return $res;
     }
 
-
     /**
-     * @param array $clientData
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $phoneNumber
+     * @param string $email
+     * @param bool $clientWantsMails
      * @return Client
      * @throws DBException
+     * @throws Exception
      * @throws \Exception
      */
-    public static function Add(array $clientData) {
+    public static function Add(string $firstName, string $lastName, string $phoneNumber, string $email, bool $clientWantsMails) {
+        if(empty($firstName))
+            throw new Exception("לא הוכנס שם פרטי");
+
+        if(empty($lastName))
+            throw new Exception("לא הוכנס שם משפחה");
+
+        if(empty($phoneNumber))
+            throw new Exception("לא הוכנס מספר טלפון ");
+
+        if(self::isPhoneExist($phoneNumber))
+            throw new Exception("לא ניתן להוסיף לקוח, הלקוח {0} כבר קיים במערכת",null, $phoneNumber);
+
+        if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL))
+            throw new Exception("אימייל {0} לא חוקי",null, $email);
+
+        $clientData = array(
+            "FirstName" => $firstName,
+            "LastName" => $lastName,
+            "PhoneNumber" => $phoneNumber,
+            "Email" => $email,
+            "ClientWantsMails" => $clientWantsMails
+        );
+
         $sqlObject = BugOrderSystem::GetDB();
         $success = $sqlObject->insert(self::TABLE_NAME, $clientData);
         if (!$success)
             throw new DBException("Unable to add client!", $clientData);
+
         $res = &self::getById($success);
         return $res;
     }

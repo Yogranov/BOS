@@ -60,7 +60,7 @@ $PageTemplate .= <<<PAGE
                 </div>
                 <label for="checkwantsemails">מעוניין לקבל עדכונים במייל</label>
 
-                 <input type="checkbox" id="checkwantsemails" name="wantsemail" style="display = 'none'" onclick="emailsClick()" {checkedString}><br><br>
+                 <input type="checkbox" id="checkwantsemails" value=1 name="wantsemail" style="display = 'none'" onclick="emailsClick()" {checkedString}><br><br>
 
                 <div id="clientwantsemails" class="{emailClassString}">
                 <label for="client-wants-email">אימייל</label>
@@ -96,11 +96,9 @@ if ($clientObject->IsWantEmail()) {
 
 if(isset($_POST['editclient'])) {
 
-    if (!isset($_POST['wantsemail'])) {
-        $client_wants_emails = 0;
-    } else {
+    $client_wants_emails = 0;
+    if (isset($_POST['wantsemail']))
         $client_wants_emails = 1;
-    }
 
     $arrayToUpdate = array(
         "SetFirstName" => $_POST['firstname'],
