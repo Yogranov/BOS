@@ -164,7 +164,7 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
 \Services::setPlaceHolder($PageTemplate, "clientWantsEmailsBool", $wantEmailBool);
 
 $productRow = <<<EOF
-<tr>
+<tr style="cursor: pointer;" onclick="document.location = 'editproduct.php?id={$orderId}&productId={productId}'">
     <td>{productName}</td>
     <td>{productQuantity}</td>
     <td>{productBarcode}</td>
@@ -179,6 +179,7 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productName", $product->getProductName());
     \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
     \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
+    \Services::setPlaceHolder($productList, "productId", $product->GetId());
 
     $remarks = $product->GetRemarks();
     /*
