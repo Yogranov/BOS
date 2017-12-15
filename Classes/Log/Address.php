@@ -15,7 +15,7 @@ class Address
      * @param int $query
      * @throws \Exception
      */
-    function __construct($ip, $port, $query=0) {
+    function __construct($ip, $port, $query = 0) {
         if(($this->setIp($ip))!== False) {
             $ret=$this->setPort($port);
             $ret2=$this->setQuery($query);
@@ -25,6 +25,7 @@ class Address
             else
                 return True;
         }
+
         throw new \Exception("Error Creating Address Object");
     }
 
@@ -42,10 +43,7 @@ class Address
 			return True;
         }
         else
-        {
-			//$this->error=$ip." is not a valid IP address!";
 			return False;
-        }
     }
 
     /**
@@ -60,9 +58,7 @@ class Address
 			return true;
         }
         else
-        {
 			return false;
-        }
     }
 
     /**
@@ -77,9 +73,7 @@ class Address
             return true;
         }
         else
-        {
             return false;
-        }
     }
 
     /**
@@ -91,15 +85,13 @@ class Address
 		if ($this->ip != "" && $this->port > 0)
         {
 			$what_array=array('{ip}','{port}','{query}');
-			$replacedValues=array($this->ip,$this->port,$this->query);
-			$addr=str_replace($what_array,$replacedValues,$format);
+			$replacedValues=array($this->ip, $this->port, $this->query);
+			$addr=str_replace($what_array, $replacedValues, $format);
 
 		    return $addr;
         }
         else
-        {
 		    return False;
-        }
     }
 
     /**
@@ -108,14 +100,14 @@ class Address
      */
     public static function ValidateIp($ip)
     {
-		if (filter_var($ip, FILTER_VALIDATE_IP) !== false)
-        {
+        $options = array(
+            'flags' => FILTER_FLAG_IPV4
+        );
+
+		if (filter_var($ip, FILTER_VALIDATE_IP, $options) !== false)
 			return True;
-        }
         else
-        {
 			return False;
-        }
     }
 
 }

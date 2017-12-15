@@ -10,6 +10,8 @@ namespace BugOrderSystem;
 
 require_once "OrderProducts.php";
 
+use Log\ELogLevel;
+
 class Order
 {
 
@@ -47,8 +49,8 @@ class Order
         $this->remarks = $orderData["Remarks"];
         $this->status = $orderData["Status"];
         $this->timeStamp = new \DateTime($orderData["Timestamp"]);
-        $this->updateTime = new \DateTime($orderData["updateTime"]);
-
+        if ($orderData["updateTime"] !== "0000-00-00 00:00:00")
+            $this->updateTime = new \DateTime($orderData["updateTime"]);
 
         $orderArray = BugOrderSystem::GetDB()->where("OrderId", $orderData["OrderId"])->get("orderproducts", null);
         foreach ($orderArray as $orderProduct) {
@@ -103,22 +105,32 @@ class Order
     }
 
     /**
-     * @param array $OrderData
+     * @param Client $client
+     * @param Shop $shop
+     * @param Seller $seller
+     * @param string $remarks
      * @return Order
      * @throws Exception
      * @throws \Exception
      */
-    public static function Add(array $OrderData)
+    public static function Add(Client $client, Shop $shop, Seller $seller, string $remarks = "")
     {
-        $sqlObject = BugOrderSystem::GetDB();
-        $success = $sqlObject->insert(self::TABLE_NAME, $OrderData);
+        $OrderData= array(
+            "ClientId" => $client->GetId(),
+            "ShopId" => $shop->GetId(),
+            "SellerId" => $seller->GetId(),
+            "Remarks" => $remarks
+        );
 
+        $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $OrderData);
         if (!$success)
-            throw new Exception("Unable to Add new order.", $OrderData);
+            throw new Exception("Unable to Add new order", $OrderData);
+
+        $logText = "הזמנה חדשה מספר {orderId} נוספה ל{shop} על-ידי {seller}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderId" => $success, "shop" => $shop, "seller" => $seller));
 
         $res = &self::GetById($success);
         return $res;
-
     }
 
     /**
@@ -289,13 +301,17 @@ class Order
      * @param string $ProductBarcode
      * @param string $Remarks
      * @throws Exception
+     * @throws \Exception
      */
     public function AddOrderProduct(string $ProductName, string $ProductBarcode, string $Remarks) {
-        if (array_key_exists($this->id,$this->orderProducts))
+        if (array_key_exists($this->id, $this->orderProducts))
             throw new Exception("המוצר {0} כבר קיים בהזמנה של הלקוח ולכן לא ניתן להוסיפו!", $this->orderProducts, $ProductName);
 
         $orderProductObject = new OrderProducts($this->id, $ProductName, $ProductBarcode, $Remarks);
         $this->orderProducts[$this->id] = $orderProductObject;
+
+        $logText = "נוסף המוצר {orderProductObject} ל{Order}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProductObject" => $orderProductObject, "Order" => $this));
     }
 
     /**
@@ -308,7 +324,6 @@ class Order
     /**
      * @return Shop
      * @throws \Exception
-     * @throws Exception
      */
     public function GetShop() {
         $shop = &Shop::GetById($this->shopId);
@@ -390,7 +405,7 @@ class Order
         BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
 
         $logText = "סטטוס {$this} השתנה";
-        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array($status));
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array(EOrderStatus::search($status)->getDesc()));
 
         $this->status = $status;
         return $this->status;
@@ -434,7 +449,7 @@ class Order
             throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
 
         $logText = "הלקוח ".$this." עודכן";
-        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), $updateArray);
     }
 
 

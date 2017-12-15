@@ -79,13 +79,13 @@ class Log
     public function Write(string $logText, $level = null, array $context = [], bool $showUserName = true, bool $showIp = true) {
         //Todo: formal the log message
         if (empty($logText))
-            throw new \Exception("Unable to write log without log text!");
+            throw new Exception("Unable to write log without log text!");
 
         if (empty($level))
             $level = \Log\ELogLevel::DEBUG();
 
         if (!$this->loggerObject->isHandling($level->getValue()))
-            throw new \Exception("no Handler has been assigned to handle the requested Log minimum level!");
+            throw new Exception("no Handler has been assigned to handle the requested Log minimum level!");
 
         $username = "";
         if ($showUserName)

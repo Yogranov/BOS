@@ -203,36 +203,27 @@ if(isset($_POST['neworder']))  {
         $client_remarks = $_POST['remarks'];
         $client_product_remarks = $_POST['productremarks'];
 
-        if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number)
-            && !empty($product_name) && !empty($product_barcode) && !empty($order_seller)) {
+        if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number) && !empty($product_name) && !empty($product_barcode) && !empty($order_seller)) {
             //starting create order//
             //create client//
             $clientId = Client::isPhoneExist($client_phone_number);
-            if (empty($clientId)) {
-                $newClient = Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
-
-                $clientId = $newClient->GetId();
-
+            if ($clientId == False) {
+                $NewClientObj = Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
+                $clientId = $NewClientObj->GetId();
+            }
+            else {
+                $NewClientObj = &Client::GetById($clientId);
             }
 
             //create order//
-            if (!is_integer($clientId))
-                throw new Exception("לא ניתן לבצע הזמנה - בעיית שיוך לקוח {0} להזמנה!", null, $clientId);
-
-
-            $orderObject = Order::Add(
-                array("ClientId" => $clientId,
-                    "ShopId" => $shopId,
-                    "SellerId" => $order_seller,
-                    "Remarks" => $client_remarks)
-            );
+            $orderObject = Order::Add($NewClientObj, Shop::GetById($shopId), Seller::GetById($order_seller), $client_remarks);
 
             //Add products to order.
             $orderProductsObject = new OrderProducts($orderObject->GetId(), $product_name, $product_barcode, $client_product_remarks, $product_quantity);
             if ($orderProductsObject) {
 
                 //Send order summery to client
-                if (!empty($client_email)) {
+                if (!empty($client_email) && $NewClientObj->IsWantEmail()) {
                     $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
                     $encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
 
@@ -246,14 +237,11 @@ if(isset($_POST['neworder']))  {
                     \Services::setPlaceHolder($orderSummery, "PhoneNumber", $orderObject->GetShop()->GetPhoneNumber());
                     \Services::setPlaceHolder($orderSummery, "ShopName", $orderObject->GetShop()->GetShopName());
 
-                    //set client object
-                    $clientObj = Client::GetById($clientId);
-
-                    $clientObj->SendEmail($orderSummery, "סיכום הזמנה");
-
+                    $NewClientObj->SendEmail($orderSummery, "סיכום הזמנה");
                 }
-                $locationToorder = $orderObject->GetId();
-                header("Location: vieworder.php?id=$locationToorder");
+
+                $LocationToOrder = $orderObject->GetId();
+                header("Location: vieworder.php?id=$LocationToOrder");
 
             }
 

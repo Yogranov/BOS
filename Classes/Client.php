@@ -59,7 +59,7 @@ class Client {
      */
     public static function &GetById(int $clientId) {
         if (empty($clientId))
-            throw new Exception("Illegal Id! ({0})",null,$clientId);
+            throw new Exception("Illegal Id! ({0})",null, $clientId);
 
         $res = @self::$clients[$clientId];
 
@@ -105,11 +105,9 @@ class Client {
             "LastName" => $lastName,
             "PhoneNumber" => $phoneNumber,
             "Email" => $email,
-            "ClientWantsMails" => $clientWantsMails
+            "ClientWantsMails" => (int)$clientWantsMails
         );
-
-        $sqlObject = BugOrderSystem::GetDB();
-        $success = $sqlObject->insert(self::TABLE_NAME, $clientData);
+        $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $clientData);
         if (!$success)
             throw new DBException("Unable to add client!", $clientData);
 
@@ -120,7 +118,7 @@ class Client {
     /**
      * @param string $phoneNumber
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public static function isPhoneExist(string $phoneNumber) {
         $data = BugOrderSystem::GetDB()->where("PhoneNumber", $phoneNumber)->getOne(self::TABLE_NAME);
@@ -134,6 +132,8 @@ class Client {
     }
 
     /**
+     * @throws DBException
+     * @throws Exception
      * @throws \Exception
      */
     public function Remove() {
@@ -158,7 +158,7 @@ class Client {
      */
     public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
         if (!$this->wantEmail)
-            exit;
+            return;
 
         if (empty($this->email))
             throw new Exception("Email not exist!", $this);

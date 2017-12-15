@@ -8,11 +8,12 @@
 
 namespace BugOrderSystem;
 
+use Log\ELogLevel;
+
 class OrderProducts {
 
     const TABLE_KEY_COLUMN = "ProductId";
     const TABLE_NAME = "orderproducts";
-    const MAX_QUANTITY = 100;
 
     private static $orderProduct = array();
 
@@ -22,6 +23,9 @@ class OrderProducts {
     private $remarks;
     private $timestamp;
     private $quantity;
+    /**
+     * @var EProductStatus
+     */
     private $status;
 
     /**
@@ -46,11 +50,9 @@ class OrderProducts {
                 "Status" => EProductStatus::Created[0]
             );
 
-            $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $orderProductArray);
-            $productInfoId = BugOrderSystem::GetDB()->getInsertId();
-
-            if (!$success)
-                throw new Exception("לא ניתן לייצר הזמנה כרגע.", $orderProductArray);
+            $productInfoId = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $orderProductArray);
+            if (!$productInfoId)
+                throw new Exception("לא ניתן לייצר הזמנה כרגע", $orderProductArray);
         }
         else {
             $productInfoId = $res[self::TABLE_KEY_COLUMN];
@@ -88,17 +90,19 @@ class OrderProducts {
     }
 
     /**
-     * @param $status
+     * @param EProductStatus $newStatus
      * @return EProductStatus
-     * @throws \Exception
-     * Todo: change method input type to EProductStatus Enum
+     * @throws Exception
      */
-    public function ChangeStatus($status) {
-        $info = array("Status" => $status);
-        BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
+    public function ChangeStatus(EProductStatus $newStatus) {
+        $info = array("Status" => $newStatus->getValue());
+        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
+        if (!$success)
+            throw new Exception("לא ניתן לשנות מסטטוס {0} לסטטוס {1} את הפריט {2}", null, $this->status, $newStatus, $this);
+
+        $this->status = $newStatus;
         return $this->status;
     }
-
 
     /**
      * @param int $Quantity
@@ -106,8 +110,8 @@ class OrderProducts {
      * @throws \Exception
      */
     public function ChangeQuantity(int $Quantity) {
-        if ($Quantity < 1 || $Quantity > self::MAX_QUANTITY)
-            throw new Exception("כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $Quantity, self::MAX_QUANTITY);
+        if ($Quantity < 1 || $Quantity > Constant::ORDER_MAX_QUANTITY)
+            throw new Exception("כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $Quantity, Constant::ORDER_MAX_QUANTITY);
         $this->quantity = $Quantity;
         $this->Update();
     }
@@ -196,7 +200,7 @@ class OrderProducts {
      * @throws \Exception
      */
     public function SetQuantity($quantity, bool $update = true) {
-        if($quantity < 1 || $quantity > self::MAX_QUANTITY)
+        if($quantity < 1 || $quantity > Constant::ORDER_MAX_QUANTITY)
             throw new Exception("לא ניתן להוסיף {0} מוצרים, מקסימום {1}",null,$quantity);
         $this->quantity = $quantity;
         if ($update)

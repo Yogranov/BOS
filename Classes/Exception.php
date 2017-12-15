@@ -8,6 +8,8 @@
 
 namespace BugOrderSystem;
 
+use Log\ELogLevel;
+
 class Exception extends \Exception
 {
     public function __construct($message = "", $dumpVar = null, ...$vars) {

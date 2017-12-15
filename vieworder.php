@@ -57,7 +57,7 @@ $PageTemplate .= <<<PAGE
                             <ul>                     
                                 <li><span> תאריך פתיחה: </span> {$orderInfo->GetTimeStamp()->format("d/m/y H:i")}</li>
                                 <li><span> מוכרן: </span> {SellerName}</li>      
-                                <li><span> הערות להזמנה: </span> {$orderInfo->GetRemarks()}</li>
+                                <li><span> הערות להזמנה: </span> {OrderRemarks}</li>
                                 <li><form method="POST" name="changeStatus" id="changeStatus" >
                                        <span>סטאטוס הזמנה:</span>
                                           <input type="hidden" name="SendEmail" id="SendEmail" value=0>
@@ -65,7 +65,7 @@ $PageTemplate .= <<<PAGE
                                            {orderStatusEnum}
                                            </select>
                                     </form></li>
-                                <li><span>עדכון אחרון:</span> {$orderInfo->GetUpdateTime()->format("d/m/y H:i")}</li>
+                                <li><span>עדכון אחרון:</span> {OrderLastUpdate}</li>
                            </ul> 
                         <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}';">ערוך הזמנה </div>
                     </div>
@@ -77,7 +77,7 @@ $PageTemplate .= <<<PAGE
                                <li><span> שם הלקוח:</span> {$orderInfo->GetClient()->GetFullName()}</li>
                                <li><span> פלאפון:</span> {$clientExtendPhoneNumber}</li>
                                <li><span> לקוח מעוניין בעדכון ע"י אימייל:</span>&nbsp;<span style="font-weight: normal" id="ClientWantEmails" data-value="{clientWantsEmailsBool}">{ClientWantsEmails}</span></li>
-                               <li><span> אימייל:</span>    {$orderInfo->GetClient()->GetEmail()}</li>
+                               <li><span> אימייל:</span>    {ClientEmail}</li>
                             </ul>
                          <div class="btn btn-primary" style="float: left; margin: 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}';">ערוך לקוח </div>
                     </div>
@@ -108,91 +108,26 @@ $PageTemplate .= <<<PAGE
             </div>      
         </div>
 </main>
-        
-        
-              <!--  
-        <br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <div id="view-order" dir="rtl">
-          <div class="order-title">הזמנת לקוח - $orderId</div>
-          <br>
-          <div id="order-client-info">
-          <br>
-           <span> פרטי לקוח: </span>
-           <ul>
-               <li><span> שם הלקוח:</span> {$orderInfo->GetClient()->GetFullName()}</li>
-               <li><span> פלאפון:</span> {$orderInfo->GetClient()->GetPhoneNumber()}</li>
-               <li><span> לקוח מעוניין בעדכון ע"י אימייל:</span>&nbsp;<span id="ClientWantEmails" data-value="{clientWantsEmailsBool}">{ClientWantsEmails}</span></li>
-               <li><span> אימייל:</span>    {$orderInfo->GetClient()->GetEmail()}</li>
-            </ul>
-            <div class="order-button" style="margin: 0 40%" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}';">ערוך לקוח </div>
-            <br>
-           </div>
-           <div id="order-order-info">
-             <br>
-             <span> פרטי הזמנה: </span>
-             <ul>                     
-                 <li><span> תאריך פתיחה: </span> {$orderInfo->GetTimeStamp()->format("d.m.y H:i")}</li>
-                 
-                 <li><span> מוכרן: </span> {SelleDELETErName}</li>
-                              
-                 <li><span> הערות להזמנה: </span> {$orderInfo->GetRemarks()}</li>
-                 
-                 <li><form method="POST" name="changeStatus" id="changeStatus" >
-                   <span>סטאטוס הזמנה:</span>
-                      <input type="hidden" name="SendEmail" id="SendEmail" value=0>
-                      <select id="orderstatus" name="orderstatus" required>
-                      {orderDELETEStatusEnum}
-                      </select>
-                    <br>
-                 </form></li>
-                 <br>
-                 <li><span>עדכון אחרון:</span> {$orderInfo->GetUpdateTime()->format("d.m.y H:i")}</li>
-             </ul> 
-             <div class="order-button" style="margin: 0 40%" onclick="document.location ='editorder.php?orderId={$orderId}';">ערוך הזמנה </div>
-             <br>
-           </div>
-            <div id="order-products-info">
-                <br>
-                <span> מוצרים: </span> <br> 
-                <ul>
-                    <br>         
-                    {proDELETEducsList}
-                    <br>
-                </ul>
-            <br>
-            <div class="add-product-button" onclick="document.location = 'addproduct.php?orderid={$orderId}';"> הוסף מוצר </div>
-            </div>
-        </div>
-    </div> 
-</main>
--->
 PAGE;
-//setting footer
-$PageTemplate .= footer;
 
-$productRow = <<<EOF
-<tr>
-    <td>{productName}</td>
-    <td>{productQuantity}</td>
-    <td>{productBarcode}</td>
-    <td>{productRemarks}</td>
-    <td>{productTimestamp}</td>
-    <td>{editProduct}</td>
-</tr>
-EOF;
+$orderRemarks = $orderObject->GetRemarks();
+/*
+if (empty($orderRemarks))
+    $orderRemarks = "ללא";
+*/
+\Services::setPlaceHolder($PageTemplate, "OrderRemarks", $orderRemarks);
 
-$productList = "";
-foreach ($orderObject->GetOrderProducts() as $product) {
-    $productList .= $productRow;
-    \Services::setPlaceHolder($productList, "productName", $product->getProductName());
-    \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
-    \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
-    \Services::setPlaceHolder($productList, "productRemarks", $product->GetRemarks());
-    \Services::setPlaceHolder($productList, "productTimestamp", $product->GetTimestamp()->format("d/m/Y"));
-    \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productId={$product->GetId()}\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
+$updatedTime = $orderInfo->GetUpdateTime();
+if ($updatedTime instanceof \DateTime)
+    $OrderLastUpdate = $updatedTime->format("d/m/Y h:i");
+else
+    $OrderLastUpdate = "ללא עדכון";
+\Services::setPlaceHolder($PageTemplate, "OrderLastUpdate", $OrderLastUpdate);
 
-}
-\Services::setPlaceHolder($PageTemplate, "productsList", $productList);
+$clientEmail = $orderObject->GetClient()->GetEmail();
+if (empty($clientEmail))
+    $clientEmail = "לא הוזן";
+\Services::setPlaceHolder($PageTemplate, "ClientEmail", $clientEmail);
 
 //set seller name - can be change or delete
 try {
@@ -227,76 +162,41 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
 }
 \Services::setPlaceHolder($PageTemplate, "ClientWantsEmails", $wantEmail);
 \Services::setPlaceHolder($PageTemplate, "clientWantsEmailsBool", $wantEmailBool);
-////
 
-/*
-$producsList = <<<LIST
-<tr onclick="document.location = 'editproduct.php?id=$orderId&productId={productId}';">
-    <li><span> שם המוצר: </span> {productName}</li>
-    <br>         
-    <li><span> כמות: </span> {productQuantity}</li>
-    <br>         
-    <li><span>  ברקוד: </span> {productBarcode}</li>
-    <br>         
-    <li><span> הערות למוצר: </span> {productRemarks}</li>
-    <br>         
-    <li><span> תאריך הוספה: </span>{productTimestamp}</li>
-    <br>                         
-    <li>
-        <form method="POST" id="changeStatus">
-        <span> סטאטוס מוצר:</span>
-        <select name="productstatus{productId}" onchange="this.form.submit()">
-        {productStatusEnum}
-         </select>     
-         </form>
-    </li>
-    <br>
-    <div class="order-button" onclick="document.location = 'editproduct.php?id={$orderId}&productId={productId}';"> ערוך מוצר </div>
+$productRow = <<<EOF
+<tr>
+    <td>{productName}</td>
+    <td>{productQuantity}</td>
+    <td>{productBarcode}</td>
+    <td>{productRemarks}</td>
+    <td>{productTimestamp}</td>
+    <td>{editProduct}</td>
 </tr>
-<br>
-<br>
-<br>                          
-LIST;
+EOF;
+$productList = "";
+foreach ($orderObject->GetOrderProducts() as $product) {
+    $productList .= $productRow;
+    \Services::setPlaceHolder($productList, "productName", $product->getProductName());
+    \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
+    \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
 
+    $remarks = $product->GetRemarks();
+    /*
+    if (empty($remarks))
+        $remarks = "לא קיים";
+    */
+    \Services::setPlaceHolder($productList, "productRemarks", $remarks);
 
-$allProducts = Order::GetById($orderId)->GetOrderProducts();
-
-$productBoard = (count($allProducts) > 0) ? "" : "<tr colspan='7'>אין מוצרים</tr>";
-foreach ($allProducts as $product) {
-$productBoard .= $producsList;
-\Services::setPlaceHolder($productBoard, "productId", $product->GetId());
-\Services::setPlaceHolder($productBoard, "productName", $product->getProductName());
-\Services::setPlaceHolder($productBoard, "productQuantity", $product->GetQuantity());
-\Services::setPlaceHolder($productBoard, "productBarcode", $product->GetProductBarcode());
-\Services::setPlaceHolder($productBoard, "productRemarks", $product->GetRemarks());
-\Services::setPlaceHolder($productBoard, "productTimestamp", $product->GetTimestamp()->format("d.m.y H:i"));
-//\Services::setPlaceHolder($productBoard, "productStatus", $product->GetStatus()->getDesc());
-$productId = $product->GetId();
-    $productStatusString = "";
-    foreach (EProductStatus::toArray() as $status) {
-        $productStatusString .= "<option value='".$status[0]."' ";
-        if ($product->GetStatus()->getValue() == $status[0]){
-            $productStatusString .= "selected='selected'";}
-        $productStatusString .= ">".$status[1]."</option>";
-    }
-    \Services::setPlaceHolder($productBoard, "productStatusEnum", $productStatusString);
+    \Services::setPlaceHolder($productList, "productTimestamp", $product->GetTimestamp()->format("d/m/Y"));
+    \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productId={$product->GetId()}\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
 
 }
+\Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
-\Services::setPlaceHolder($PageTemplate, "producsList", $productBoard);
-
-
-try {
-    $orderSeller = $orderObject->GetSeller()->GetFullName();
-    \Services::setPlaceHolder($PageTemplate, "SellerName", $orderSeller);
-} catch (\Exception $e) {
-    $errorMsg = $e->getMessage();
-    \Services::setPlaceHolder($PageTemplate, "SellerName", "מוכר לא ידוע");
-}
-*/
+//setting footer
+$PageTemplate .= footer;
 
 echo $PageTemplate;
-
 
 if(isset($_POST['orderstatus'])) {
     $order_status = $_POST['orderstatus'];

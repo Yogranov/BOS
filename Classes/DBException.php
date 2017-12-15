@@ -8,6 +8,7 @@
 
 namespace BugOrderSystem;
 
+use Log\ELogLevel;
 
 class DBException extends \Exception
 {
@@ -18,6 +19,9 @@ class DBException extends \Exception
         $data["lastQuery"] = BugOrderSystem::GetDb()->getLastQuery();
         $data["lasetErrorCode"] = $code;
         $data["lastError"] = BugOrderSystem::GetDb()->getLastError();
+
+        $trace = debug_backtrace();
+        unset($trace[0]);
         //IsrTG::GetDb()->commit();
 
         $res = \Services::dump($data, false);
@@ -31,7 +35,7 @@ class DBException extends \Exception
         }
 
         $message = "DB Exception: ".$message;
-        BugOrderSystem::GetLog()->Write($message, ELogLevel::ERROR(), $data);
+        BugOrderSystem::GetLog()->Write($message, ELogLevel::ERROR(), array($data, $trace));
 
         $message = $message."<BR>".$res."<BR>".$dumpVarRes;
 

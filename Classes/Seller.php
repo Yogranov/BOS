@@ -284,4 +284,12 @@ class Seller {
             throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
     }
 
+    /**
+     * @return string
+     */
+    public function __toString() {
+        return $this->GetFullName() .' ('. $this->id .')';
+    }
+
+
 }

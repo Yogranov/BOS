@@ -69,7 +69,7 @@ foreach ($regionObj->GetShops() as $Shop) {
     $notificationInnerListHandler = "";
     foreach ($shopOrders as $order) {
         $timeDiff = \Services::DateDiff($order->GetTimeStamp(), "now", "%a");
-        if($timeDiff >= 14) {
+        if($timeDiff >= Constant::ORDER_ALERT_DAYS_REGION) {
             $hasNotification = true;
             $notificationInnerListHandler .= $notificationInnerList;
             $notification = "הזמנה <a href='rvieworder.php?id={$order->GetId()}'>{$order->GetId()}</a> בסטאטוס '{$order->GetStatus()->getDesc()}' פתוחה כ-{$timeDiff} ימים בסניף {$order->GetShop()->GetShopName()}.";
