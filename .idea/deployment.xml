@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="Rimon">
+  <component name="PublishConfigData" autoUpload="Always" serverName="BugOrderSystem Test">
     <serverData>
-      <paths name="Rimon">
+      <paths name="845.co.il">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="BugOrderSystem">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/public_html/BugOrderSystem" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="BugOrderSystem Test">
         <serverdata>
           <mappings>
             <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
