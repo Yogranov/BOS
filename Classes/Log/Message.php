@@ -8,35 +8,110 @@
 
 namespace Log;
 
-//require_once __DIR__ . "/Address.php";
+require_once __DIR__ . "/Address.php";
 require_once __DIR__. '/ELogLevel.php';
 
 class Message
 {
-    const DEFAULT_MESSAGE_FORMAT = "(%context.ip%_%context.username%) %message%";
-    const DEFAULT_FORMAT = "[%datetime%] %channel%.%level_name%: " . self::DEFAULT_MESSAGE_FORMAT . " %context% %extra%\r\n";
     const DEFAULT_DATETIME = "Y-m-d H:i:s";
+    const DEFAULT_INTERNAL_SPACER = "*";
+    const DEFAULT_SPACER = "\x9"; //ascii for TAB
+    const DEFAULT_LINE_END = "\xA"; //ascii for new line
+
+    private static $defaultFormat = "[%datetime%] %channel%*%level_name% %context.ip%*%context.username% %message% %context% %extra%" . self::DEFAULT_LINE_END;
     private $message;
     private $time;
+    private $microseconds;
     private $level;
     private $channel;
     private $ip;
     private $context;
-    private $user;
+    private $extra;
+    private $username;
 
     /**
      * Message constructor.
      * @param string $message
-     * TODO: need to finalize the constructor - match the message with the format map
+     * @throws \Exception
      */
     public function __construct(string $message) {
         //\Services::dump($message);
-
-        $format = str_replace("%", "", self::DEFAULT_FORMAT);
-        //\Services::dump($format);
+        $replace = array( "%" => "", self::DEFAULT_LINE_END => "");
 
         $formatMap = $this->getFormatMap();
-        //\Services::dump($formatMap);
+
+        $message = str_replace(array_keys($replace), $replace, $message);
+        $splitedLine = explode(self::DEFAULT_SPACER, $message);
+
+        $MessageData = array();
+        for ($i = 0; $i < count($splitedLine); $i++) {
+            preg_replace("/^(\()|(\))$/i", "", $splitedLine[$i]);
+            preg_match_all("/[a-z_.0-9\-:\sא-ת\(\)\,\"]+/i", $splitedLine[$i], $innerData);
+            $innerData = $innerData[0];
+            $map = $formatMap[$i];
+
+            if (is_array($map)) {
+                foreach ($map as $num => $innerMap) {
+                    if (empty($innerData[$num]))
+                        $innerData[$num] = null;
+                    $MessageData[$innerMap] = $innerData[$num];
+                }
+            }
+            else {
+                if (empty($innerData[0]))
+                    $innerData[0] = null;
+                $MessageData[$map] = $innerData[0];
+            }
+        }
+
+        //todo: need to redo - need to do with more style!
+        foreach ($MessageData as $propertyName => $propertyValue) {
+            switch ($propertyName) {
+                case "datetime":
+                    $this->time = new \DateTime($propertyValue);
+                    break;
+
+                case "context.ip":
+                    $this->ip = new Address($propertyValue);
+                    break;
+
+                case "context.username":
+                    $this->username = $propertyValue;
+                    break;
+
+                case "level_name":
+                    $this->SetLevel(ELogLevel::searchByKey($propertyValue));
+                    break;
+
+                case "context":
+                    if (!empty($propertyValue) && $propertyValue != "null") {
+                        $propertyExplode = @explode(",", $propertyValue);
+                        $contextDataArray = array();
+                        foreach ($propertyExplode as $contextData) {
+                            $contextData = str_replace('"', '', $contextData);
+                            $innerContextDataArray = @explode(":", $contextData);
+                            if (count($innerContextDataArray) > 1)
+                                $contextDataArray[$innerContextDataArray[0]] = $innerContextDataArray[1];
+                            else
+                                $contextDataArray[0] = $innerContextDataArray[0];
+                        }
+                        $this->context = $contextDataArray;
+                    }
+                    break;
+
+                default:
+                    if (property_exists($this, $propertyName))
+                        $this->$propertyName = $propertyValue;
+            }
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function GetDefaultFormat() {
+        $format = str_replace(" ", self::DEFAULT_SPACER, self::$defaultFormat);
+        return $format;
     }
 
     /**
@@ -44,22 +119,20 @@ class Message
      */
     private function getFormatMap() {
         $formatMapArray = array();
-        $FormatMapData = explode(" ", self::DEFAULT_FORMAT);
+        $FormatMapData = explode(self::DEFAULT_SPACER, self::GetDefaultFormat());
 
         foreach ($FormatMapData as $var) {
-            $string = "";
-            $stringFound = false;
-            foreach (str_split($var) as $char) {
-                if (ctype_alpha($char) || ($stringFound && $char == ".")) {
-                    $string .= $char;
-                    $stringFound = true;
-                }
-                else if ($stringFound) {
-                    array_push($formatMapArray, $string);
-                    $string = "";
-                    $stringFound = false;
-                }
-            }
+            unset($data);
+            preg_match_all("/%[a-z_.]+%/", $var, $matches);
+
+            if (count($matches[0]) > 1)
+                $data = $matches[0];
+            else
+                $data = $matches[0][0];
+
+            $replace = array( "%" => "", self::DEFAULT_LINE_END => "", '"' => "'");
+            $data = str_replace(array_keys($replace), $replace, $data);
+            array_push($formatMapArray, $data);
         }
 
         return $formatMapArray;
@@ -68,7 +141,8 @@ class Message
     /**
      * @param \DateTime $time
      */
-    public function SetTime(\DateTime $time) {
+    public function SetTime(\DateTime $time, int $microseconds = 0) {
+        $this->microseconds = $microseconds;
         $this->time = $time;
     }
 
@@ -95,10 +169,10 @@ class Message
     }
 
     /**
-     * @return \DateTime
+     * @return array
      */
     public function GetTime() {
-        return $this->time;
+        return array($this->time, $this->microseconds);
     }
 
     /**
@@ -133,6 +207,6 @@ class Message
      * @return string
      */
     public function GetUser() {
-        return $this->user;
+        return $this->username;
     }
 }

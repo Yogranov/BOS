@@ -16,25 +16,31 @@ require_once "Classes/BugOrderSystem.php";
 use Log\ELogLevel;
 
 //echo 12344;
+//\Services::dump(new \DateTime("1512506414"));
 try
 {
     BugOrderSystem::GetLog();
     //BugOrderSystem::GetLog()->Write("BlaBla2");
-    foreach(BugOrderSystem::$logReadHandlers as $handler) {
+    foreach(BugOrderSystem::$logReadHandlers as $where => $handler) {
+        \Services::dump($where);
         \Services::dump($handler->Read(0, new \DateTime("2017-12-02 14:35")));
     }
     //$data = &Region::GetById(0);
 }
-catch (\Exception $e) {
+catch (\Throwable $e) {
     echo $e->getMessage();
     BugOrderSystem::GetLog()->Write($e->getMessage(), ELogLevel::ERROR(), debug_backtrace());
 }
-
 /*
 \Services::dump(EOrderStatus::Arrived[0]);
 
-$orderId = 84;
-$orderObject = Order::GetById($orderId);
+
+
+$orderId = 130;
+$orderObject = &Order::GetById($orderId);
+\Services::dump($orderObject);
+
+
 $clientObject = $orderObject->GetClient();
 $shopObject = $orderObject->GetShop();
 

@@ -74,9 +74,10 @@ class BugOrderSystem {
             else {
                 self::$log = new \Log(Constant::LOG_SYSTEM_NAME, $username, new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
                 $LogsBaseDir = \Services::GetBaseDir(Constant::SYSTEM_NAME) . Constant::LOG_SUBFOLDER;
-                self::$logReadHandlers[] = self::$log->AddFileHandler(ELogLevel::DEBUG(), $LogsBaseDir, null, true,Constant::LOG_DEFAULT_MAX_FILE);
-                self::$logReadHandlers[] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB());
+                self::$logReadHandlers["file"] = self::$log->AddFileHandler(ELogLevel::DEBUG(), $LogsBaseDir, null, true,Constant::LOG_DEFAULT_MAX_FILE);
+                self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB());
                 self::$log->AddEmailHandler(ELogLevel::CRITICAL(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
+                self::$log->AddLogglyHandler(ELogLevel::DEBUG(), Constant::LOG_LOGGLY_TOKEN);
 
                 return self::$log;
             }

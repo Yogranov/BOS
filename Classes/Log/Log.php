@@ -15,6 +15,7 @@ use \Monolog\Formatter\LineFormatter;
 use Monolog\Handler\DeduplicationHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\NativeMailerHandler;
+use Monolog\Handler\LogglyHandler;
 use MySQLHandler\MySQLHandler;
 use Tylercd100\Monolog\Handler\PlivoHandler;
 use Tylercd100\Monolog\Handler\TwilioHandler;
@@ -55,7 +56,7 @@ class Log
         $this->loggerObject->pushProcessor(new PsrLogMessageProcessor);
         $this->loggerObject->setTimezone($timeZone);
 
-        $this->formatter = new LineFormatter(Message::DEFAULT_FORMAT, Message::DEFAULT_DATETIME, false, true);
+        $this->formatter = new LineFormatter(Message::GetDefaultFormat(), Message::DEFAULT_DATETIME, false, true);
 
         $this->name = $name;
     }
@@ -284,6 +285,24 @@ class Log
         $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
         //$this->loggerObject->pushHandler(new DeduplicationHandler($handler, null, Logger::ERROR, 600));
+
+        return $this->getReturnedData($handler);
+    }
+
+    /**
+     * @param \Log\ELogLevel $minlevel
+     * @param string $Token
+     * @param bool $bubble
+     * @return object|void
+     * @throws Exception
+     */
+    public function AddLogglyHandler(\Log\ELogLevel $minlevel, string $Token, $bubble = true) {
+        if (empty($Token))
+            throw new Exception("Unable to set sms handler without provider Token!");
+
+        $handler = new \Monolog\Handler\LogglyHandler($Token.'/tag/monolog', $minlevel->getValue(), $bubble);
+        $handler->setFormatter($this->formatter);
+        $this->loggerObject->pushHandler($handler);
 
         return $this->getReturnedData($handler);
     }

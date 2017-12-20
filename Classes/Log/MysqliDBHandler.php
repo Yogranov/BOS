@@ -16,6 +16,7 @@ require __DIR__ . '/vendor/autoload.php';
 class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
 {
     const DEFAULT_DB_TABLE_NAME = "monolog";
+    const TIME_COLUMN_FORMAT = "Ymdhis.u";
 
     private $dbTable;
     private $initialized = false;
@@ -50,7 +51,7 @@ class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
             'channel' => $record['channel'],
             'level' => $record['level'],
             'message' => $record['formatted'],
-            'time' => $record['datetime']->format('U'),
+            'time' => $record['datetime']->format(self::TIME_COLUMN_FORMAT)
         );
 
         $Success = $this->mysqliDb->insert($this->dbTable, $data);
@@ -64,12 +65,10 @@ class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
      * @throws Exception
      */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
-        // TODO: Implement Message Class to hold the message object
-
         if ($TimeFrom !== null)
-            $this->mysqliDb->where("time", $TimeFrom->format("U"), ">=");
+            $this->mysqliDb->where("time", $TimeFrom->format(self::TIME_COLUMN_FORMAT), ">=");
         if ($TimeTo !== null)
-            $this->mysqliDb->where("time", $TimeTo->format("U"), "<=");
+            $this->mysqliDb->where("time", $TimeTo->format(self::TIME_COLUMN_FORMAT), "<=");
 
         $this->mysqliDb->orderBy("time", "Desc");
 
@@ -80,11 +79,7 @@ class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
         $export = $this->mysqliDb->get($this->dbTable, $rows);
         foreach ($export as $dbLogLine) {
             if (!empty($dbLogLine)) {
-                //Services::dump($dbLogLine);
                 $messageObject = new \Log\Message($dbLogLine["message"]);
-                $messageObject->SetChannel($dbLogLine["channel"]);
-                $messageObject->SetLevel(\Log\ELogLevel::search($dbLogLine["level"]));
-                $messageObject->SetTime(new DateTime($dbLogLine["time"]));
                 array_push($content, $messageObject);
             }
         }

@@ -15,7 +15,7 @@ class Address
      * @param int $query
      * @throws \Exception
      */
-    function __construct($ip, $port, $query = 0) {
+    function __construct($ip, $port = 0, $query = 0) {
         if(($this->setIp($ip))!== False) {
             $ret=$this->setPort($port);
             $ret2=$this->setQuery($query);
@@ -52,7 +52,7 @@ class Address
      */
     private function setPort($port)
     {
-        if (is_numeric($port) && $port > 0)
+        if (is_numeric($port))
         {
 			$this->port=$port;
 			return true;
