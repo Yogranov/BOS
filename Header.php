@@ -66,13 +66,13 @@ const headerTemplate = <<<Header
     <!--site main js-->
     <script src="js/main.js"></script>
     <script src="js/jqueryMain.js"></script>
+    <script src="js/jqueryDialog.js"></script>
     
 </head>
 
 Header;
 
 const headerMenu = <<<HeaderMenu
-<body>
     
     <nav class="navbar navbar-default">
       <div class="container-fluid">
@@ -115,7 +115,6 @@ const headerMenu = <<<HeaderMenu
         </div>
       </div>
     </nav>
-
     
     <!--
               <header>
@@ -147,6 +146,18 @@ const headerMenu = <<<HeaderMenu
 
 HeaderMenu;
 
+const headerBody = <<<HeaderBody
+<body>
+    <div id="BOS_Dialog">
+        <iframe seamless='seamless'>
+            <p>Your browser does not support iframes.</p>
+        </iframe>
+    </div>
+    {HeaderMenu}
+</body>
+HeaderBody;
+
+
 /*
 const shopMenu = <<<ShopMenu
                       <ul>
@@ -170,8 +181,6 @@ RegionMenu;
 */
 
 const footer = <<<Footer
-
-</body>
 <footer>
         <div id="footer"> ~Beta 2.0~ </div>
 </footer>

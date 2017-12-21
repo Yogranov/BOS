@@ -24,10 +24,17 @@ require_once "Header.php";
 $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "עריכת הזמנה");
+
 //setting menu bar
-$PageTemplate .= headerMenu;
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObj->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
+$PageTemplate .= headerBody;
+$data = "";
+if (is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) {
+    //setting menu bar
+    $data = headerMenu;
+    \Services::setPlaceHolder($data, "shopName", $shopObj->GetShopName());
+    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
+}
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
 
@@ -62,7 +69,8 @@ $PageTemplate .= <<<PAGE
 </main>
 PAGE;
 //setting footer
-$PageTemplate .= footer;
+if (is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"])
+    $PageTemplate .= footer;
 
 
 

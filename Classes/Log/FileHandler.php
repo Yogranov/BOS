@@ -39,6 +39,7 @@ class FileHandler extends RotatingFileHandler implements ILogRead
      * @return array
      */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
+        //TODO: get all the log files in the directory and loop over them
         $object = new SplFileObject($this->getTimedFilename(),"a+");
         $contents = array();
         while(!$object->eof()) {

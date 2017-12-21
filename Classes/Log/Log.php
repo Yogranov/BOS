@@ -70,7 +70,6 @@ class Log
      * @throws Exception
      */
     public function Write(string $logText, $level = null, array $context = [], bool $showUserName = true, bool $showIp = true) {
-        //Todo: formal the log message
         if (empty($logText))
             throw new Exception("Unable to write log without log text!");
 

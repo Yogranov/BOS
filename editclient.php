@@ -25,9 +25,15 @@ $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "עריכת לקוח");
 //setting menu bar
-$PageTemplate .= headerMenu;
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
+$PageTemplate .= headerBody;
+$data = "";
+if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+    //setting menu bar
+    $data = headerMenu;
+    \Services::setPlaceHolder($data, "shopName", $shopObject->GetShopName());
+    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
+}
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
 
@@ -80,7 +86,8 @@ $PageTemplate .= <<<PAGE
 PAGE;
 
 //setting footer
-$PageTemplate .= footer;
+if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
+    $PageTemplate .= footer;
 
 $checkedString = "";
 $emailClassString = "";

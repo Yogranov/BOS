@@ -25,7 +25,8 @@ $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "לוח הזמנות");
 //setting menu bar
-$PageTemplate .= headerMenu;
+$PageTemplate .= headerBody;
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", headerMenu);
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
 \Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
 ///
@@ -62,8 +63,27 @@ PAGE;
 //setting footer
 $PageTemplate .= footer;
 
+/*
 $OrderBoard_Table_Temlplate = <<<EOF
 <tr onclick="document.location = 'vieworder.php?id={orderId}';">
+    <td class="{flashClass}" style="color: {rowClass} !important; font-weight: 600;"><span>{orderStatus}</span></td>
+    <td>{orderSellerName}</td>
+    <td>{orderRemarks}</td>
+    <td>
+        <ul>{barcodeTemplate}</ul>
+    </td>
+    <td>
+        <ul>{productTemplate}</ul>
+    </td>
+    <td>{clientCellPhone}</td>
+    <td>{clientName}</td>
+    <td>{orderDate}</td>
+</tr>
+EOF;
+*/
+
+$OrderBoard_Table_Temlplate = <<<EOF
+<tr data-action="OpenBOSDialog" data-page="vieworder.php" data-dialogTitle="הזמנה {orderId}" data-variables="id={orderId}&ShowHeaderFooter=0">
     <td class="{flashClass}" style="color: {rowClass} !important; font-weight: 600;"><span>{orderStatus}</span></td>
     <td>{orderSellerName}</td>
     <td>{orderRemarks}</td>

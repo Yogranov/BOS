@@ -32,11 +32,16 @@ require_once "Header.php";
 $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "הזמנה: ".$_GET["id"]);
-//setting menu bar
-$PageTemplate .= headerMenu;
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
-///
+
+$PageTemplate .= headerBody;
+$data = "";
+if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+    //setting menu bar
+    $data = headerMenu;
+    \Services::setPlaceHolder($data, "shopName", $shopObject->GetShopName());
+    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
+}
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 
 
 $PageTemplate .= <<<PAGE
@@ -67,7 +72,7 @@ $PageTemplate .= <<<PAGE
                                     </form></li>
                                 <li><span>עדכון אחרון:</span> {OrderLastUpdate}</li>
                            </ul> 
-                        <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}';">ערוך הזמנה </div>
+                        <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}&ShowHeaderFooter=0';">ערוך הזמנה </div>
                     </div>
                 </div>
                 <div class="col-sm-6" style="height: 250px;">
@@ -79,7 +84,7 @@ $PageTemplate .= <<<PAGE
                                <li><span> לקוח מעוניין בעדכון ע"י אימייל:</span>&nbsp;<span style="font-weight: normal" id="ClientWantEmails" data-value="{clientWantsEmailsBool}">{ClientWantsEmails}</span></li>
                                <li><span> אימייל:</span>    {ClientEmail}</li>
                             </ul>
-                         <div class="btn btn-primary" style="float: left; margin: 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}';">ערוך לקוח </div>
+                         <div class="btn btn-primary" style="float: left; margin: 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0';">ערוך לקוח </div>
                     </div>
                 </div>
             </div>
@@ -87,7 +92,7 @@ $PageTemplate .= <<<PAGE
                 <div class="col-sm-12" style="height: auto;">
                     <div class="order-products-info">
                         <span><h4> רשימת מוצרים 
-                        <span class="btn btn-primary" onclick="document.location = 'addproduct.php?orderid={$orderId}';"> הוסף מוצר </span></h4></span>
+                        <span class="btn btn-primary" onclick="document.location = 'addproduct.php?orderid={$orderId}&ShowHeaderFooter=0';"> הוסף מוצר </span></h4></span>
                           <table class="table table-striped">
                              <thead style="background: rgba(216,246,210,0.2)">
                                <tr>
@@ -195,7 +200,9 @@ foreach ($orderObject->GetOrderProducts() as $product) {
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
 //setting footer
-$PageTemplate .= footer;
+if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+    $PageTemplate .= footer;
+}
 
 echo $PageTemplate;
 
@@ -234,7 +241,7 @@ if(isset($_POST['orderstatus'])) {
         }
     }
 
-    header("Location: Ordersboard.php");
+    //header("Location: Ordersboard.php");
 }
 
 /*
