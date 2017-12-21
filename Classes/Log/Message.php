@@ -18,7 +18,19 @@ class Message
     const DEFAULT_SPACER = "\x9"; //ascii for TAB
     const DEFAULT_LINE_END = "\xA"; //ascii for new line
 
+    const MESSAGE_REGEX_PATTERN = "/[a-z_.0-9\-:#\sא-ת\(\)\,\/\"]+/i";
     private static $defaultFormat = "[%datetime%] %channel%*%level_name% %context.ip%*%context.username% %message% %context% %extra%" . self::DEFAULT_LINE_END;
+
+    /*
+     * TODO: need to make conversion Map array in order to be more robust and replace the switch statement at lines 79-115
+     *
+    private $conversionMap = array(
+        "datetime" => array("time", "new \DateTime({value})"),
+        "level_name" => array("level", "SetLevel(ELogLevel::searchByKey({value}))"),
+        "context.ip" => array("ip", "new \DateTime({value})"),
+    );
+    */
+
     private $message;
     private $time;
     private $microseconds;
@@ -35,7 +47,6 @@ class Message
      * @throws \Exception
      */
     public function __construct(string $message) {
-        //\Services::dump($message);
         $replace = array( "%" => "", self::DEFAULT_LINE_END => "");
 
         $formatMap = $this->getFormatMap();
@@ -46,7 +57,7 @@ class Message
         $MessageData = array();
         for ($i = 0; $i < count($splitedLine); $i++) {
             preg_replace("/^(\()|(\))$/i", "", $splitedLine[$i]);
-            preg_match_all("/[a-z_.0-9\-:\sא-ת\(\)\,\"]+/i", $splitedLine[$i], $innerData);
+            preg_match_all(self::MESSAGE_REGEX_PATTERN, $splitedLine[$i], $innerData);
             $innerData = $innerData[0];
             $map = $formatMap[$i];
 
@@ -71,16 +82,16 @@ class Message
                     $this->time = new \DateTime($propertyValue);
                     break;
 
+                case "level_name":
+                    $this->SetLevel(ELogLevel::searchByKey($propertyValue));
+                    break;
+
                 case "context.ip":
                     $this->ip = new Address($propertyValue);
                     break;
 
                 case "context.username":
                     $this->username = $propertyValue;
-                    break;
-
-                case "level_name":
-                    $this->SetLevel(ELogLevel::searchByKey($propertyValue));
                     break;
 
                 case "context":
@@ -169,10 +180,10 @@ class Message
     }
 
     /**
-     * @return array
+     * @return \DateTime
      */
     public function GetTime() {
-        return array($this->time, $this->microseconds);
+        return $this->time;
     }
 
     /**

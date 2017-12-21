@@ -49,6 +49,12 @@ class FileHandler extends RotatingFileHandler implements ILogRead
             }
         }
 
+        usort($contents, function(\Log\Message $a, \Log\Message $b) {
+            if(  $a->GetTime() ==  $b->GetTime() ){ return 0 ; }
+            return ($a->GetTime() < $b->GetTime()) ? 1 : -1;
+        });
+
         return $contents;
     }
+
 }

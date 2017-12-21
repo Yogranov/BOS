@@ -29,7 +29,7 @@ try
 }
 catch (\Throwable $e) {
     echo $e->getMessage();
-    BugOrderSystem::GetLog()->Write($e->getMessage(), ELogLevel::ERROR(), debug_backtrace());
+    BugOrderSystem::GetLog()->LogException($e);
 }
 /*
 \Services::dump(EOrderStatus::Arrived[0]);

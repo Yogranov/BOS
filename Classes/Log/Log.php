@@ -62,14 +62,6 @@ class Log
     }
 
     /**
-     * @param string $userName
-     */
-    public function SetUserName(string $userName) {
-        if (!empty($userName))
-            $this->userName = $userName;
-    }
-
-    /**
      * @param string $logText
      * @param null $level
      * @param array $context
@@ -106,15 +98,20 @@ class Log
     }
 
     /**
-     * @param $handler
-     * @return void | object
+     * @param Throwable $e
+     * @param null $dumpVar
+     * @throws Exception
      */
-    private function getReturnedData(&$handler) {
-        $reflection = new \ReflectionClass($handler);
-        if ($reflection->implementsInterface(self::READ_INTERFACE))
-            return $handler;
-        else
-            return;
+    public function LogException(Throwable $e, $dumpVar = null) {
+        $this->Write($e->getMessage(), \Log\ELogLevel::ERROR(), array($e->getTrace(), $dumpVar));
+    }
+
+    /**
+     * @param string $userName
+     */
+    public function SetUserName(string $userName) {
+        if (!empty($userName))
+            $this->userName = $userName;
     }
 
     /**
@@ -306,4 +303,17 @@ class Log
 
         return $this->getReturnedData($handler);
     }
+
+    /**
+     * @param $handler
+     * @return void | object
+     */
+    private function getReturnedData(&$handler) {
+        $reflection = new \ReflectionClass($handler);
+        if ($reflection->implementsInterface(self::READ_INTERFACE))
+            return $handler;
+        else
+            return;
+    }
+
 }

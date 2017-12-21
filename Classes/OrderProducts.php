@@ -38,7 +38,7 @@ class OrderProducts {
      * @throws Exception
      * @throws \Exception
      */
-    public function __construct(int $OrderId, string $ProductName, string $ProductBarcode, string $remarks = null, $Quantity = 1) {
+    public function __construct(int $OrderId, string $ProductName, string $ProductBarcode, string $remarks = null, int $Quantity = 1) {
         $res = BugOrderSystem::GetDB()->where("OrderId", $OrderId)->where("ProductBarcode", $ProductBarcode)->getOne(self::TABLE_NAME, self::TABLE_KEY_COLUMN);
         if (BugOrderSystem::GetDB()->count == 0) {
             $orderProductArray = array(
