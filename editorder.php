@@ -10,12 +10,16 @@ namespace BugOrderSystem;
 session_start();
 require_once "Classes/BugOrderSystem.php";
 
+$localUrl = 'https://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+if ($_SERVER["HTTP_REFERER"] !== $localUrl)
+    $_SESSION["REFERER"] = $_SERVER["HTTP_REFERER"];
+
 $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
     header("Location: login.php");
 }
 $orderId = $_GET["orderId"];
-$orderObject = Order::GetById($orderId);
+$orderObject = &Order::GetById($orderId);
 $shopObj = &Shop::GetById($shopId);
 
 
@@ -106,7 +110,10 @@ if(isset($_POST['editorder'])) {
                 $orderObject->$func($attr, false);
             }
             $orderObject->Update();
-            header("Location: vieworder.php?id=$orderId");
+            if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
+                header("Location: ".$_SESSION["REFERER"]);
+            else
+                echo "<script>window.location.href = '{$_SESSION["REFERER"]}';</script>";
         } catch (\Exception $e) {
             $errorMsg = $e->getMessage();
             echo $errorMsg;

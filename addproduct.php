@@ -12,14 +12,19 @@ namespace BugOrderSystem;
 session_start();
 
 require_once "Classes/BugOrderSystem.php";
+
+$localUrl = 'https://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+if ($_SERVER["HTTP_REFERER"] !== $localUrl)
+    $_SESSION["REFERER"] = $_SERVER["HTTP_REFERER"];
+
 $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
     header("Location: login.php");
 }
 
 $orderId = $_GET["orderid"];
-$orderObject = Order::GetById($orderId);
-$shopObject = Shop::GetById($orderObject->GetShop()->GetId());
+$orderObject = &Order::GetById($orderId);
+$shopObject = &Shop::GetById($orderObject->GetShop()->GetId());
 
 //setting header
 require_once "Header.php";
@@ -27,9 +32,15 @@ $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "עריכת פריט");
 //setting menu bar
-$PageTemplate .= headerMenu;
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
+$PageTemplate .= headerBody;
+$data = "";
+if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+    //setting menu bar
+    $data = headerMenu;
+    \Services::setPlaceHolder($data, "shopName", $shopObject->GetShopName());
+    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
+}
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
 $PageTemplate .= <<<PAGE
@@ -71,7 +82,8 @@ $PageTemplate .= <<<PAGE
 </main>
 PAGE;
 //setting footer
-$PageTemplate .= footer;
+if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
+    $PageTemplate .= footer;
 
 
 //Take form filed and make them variable.
@@ -85,7 +97,10 @@ if(isset($_POST['addproduct'])) {
     if(!empty($product_name) && !empty($product_barcode) && !empty($product_quantity)) {
         try {
             $orderProductsObject = new OrderProducts($orderObject->GetId(), $product_name, $product_barcode, $product_remarks, $product_quantity);
-            header("Location: vieworder.php?id=$orderId");
+            if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
+                header("Location: ".$_SESSION["REFERER"]);
+            else
+                echo "<script>window.location.href = '{$_SESSION["REFERER"]}';</script>";
         } catch (\Exception $e) {
             $errorMsg = $e->getMessage();
             echo $errorMsg;

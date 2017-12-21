@@ -10,6 +10,10 @@ namespace BugOrderSystem;
 session_start();
 require_once "Classes/BugOrderSystem.php";
 
+$localUrl = 'https://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+if ($_SERVER["HTTP_REFERER"] !== $localUrl)
+    $_SESSION["REFERER"] = $_SERVER["HTTP_REFERER"];
+
 $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
     header("Location: login.php");
@@ -36,7 +40,6 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset
 \Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
-
 $PageTemplate .= <<<PAGE
 <main>
     <div class="container">
@@ -60,10 +63,6 @@ $PageTemplate .= <<<PAGE
                 <input type="text" class="form-control" name="phonenumber" id="client-phone-number" value="{$clientObject->GetPhoneNumber()}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
                 </div>
                 
-                <div class="form-group">
-                    <label for="client-first-name">שם פרטי</label>
-                    <input type="text" class="form-control" name="firstname" id="client-first-name" value="{$clientObject->GetFirstName()}" required><br>
-                </div>
                 <label for="checkwantsemails">מעוניין לקבל עדכונים במייל</label>
 
                  <input type="checkbox" id="checkwantsemails" value=1 name="wantsemail" style="display = 'none'" onclick="emailsClick()" {checkedString}><br><br>
@@ -121,7 +120,12 @@ if(isset($_POST['editclient'])) {
                 $clientObject->$func($attr, false);
             }
             $clientObject->Update();
-            header("Location: Ordersboard.php");
+
+            if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
+                header("Location: ".$_SESSION["REFERER"]);
+            else
+                echo "<script>window.location.href = '{$_SESSION["REFERER"]}';</script>";
+
         } catch (\Exception $e) {
             $errorMsg = $e->getMessage();
             echo $errorMsg;

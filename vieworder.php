@@ -85,6 +85,7 @@ $PageTemplate .= <<<PAGE
                                <li><span> אימייל:</span>    {ClientEmail}</li>
                             </ul>
                          <div class="btn btn-primary" style="float: left; margin: 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0';">ערוך לקוח </div>
+                         <!-- <div class="btn btn-primary" style="float: left; margin: 3px;" data-action="OpenBOSDialog" data-page="editclient.php" data-dialogTitle="עריכת לקוח" data-variables="clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0">ערוך לקוח </div> -->
                     </div>
                 </div>
             </div>
@@ -169,7 +170,7 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
 \Services::setPlaceHolder($PageTemplate, "clientWantsEmailsBool", $wantEmailBool);
 
 $productRow = <<<EOF
-<tr style="cursor: pointer;" onclick="document.location = 'editproduct.php?id={$orderId}&productId={productId}'">
+<tr style="cursor: pointer;" onclick="document.location = 'editproduct.php?id={$orderId}&productId={productId}&ShowHeaderFooter=0'">
     <td>{productName}</td>
     <td>{productQuantity}</td>
     <td>{productBarcode}</td>
@@ -194,7 +195,7 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productRemarks", $remarks);
 
     \Services::setPlaceHolder($productList, "productTimestamp", $product->GetTimestamp()->format("d/m/Y"));
-    \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productId={$product->GetId()}\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
+    \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productId={$product->GetId()}&ShowHeaderFooter=0\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
 
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
@@ -241,7 +242,14 @@ if(isset($_POST['orderstatus'])) {
         }
     }
 
-    //header("Location: Ordersboard.php");
+    if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+        //Not in dialog
+        header("Location: Ordersboard.php");
+    }
+    else {
+        //in dialog
+        echo "<script>window.location.href = 'vieworder.php?id={$orderId}&ShowHeaderFooter=0';</script>";
+    }
 }
 
 /*

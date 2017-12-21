@@ -96,7 +96,7 @@ const headerMenu = <<<HeaderMenu
           </div>
           <ul class="nav navbar-nav navbar-right">
             <li class="{oldOrdersClass}"><a href="oldordersboard.php">הזמנות ישנות <i class="glyphicon glyphicon-inbox"></i></a></li>
-            <li class="{newOrdersClass}"><a href="neworder.php">הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>
+            <li class="{newOrdersClass}"><a href="neworder.php" >הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>
             <li class="{ordersBoardClass}"><a href="Ordersboard.php">לוח הזמנות <i class="glyphicon glyphicon-list-alt"></i></a></li>
             <li class="{mainPageClass}"><a href="index.php">ראשי <i class="glyphicon glyphicon-home"></i></a></li>
             <li>
@@ -148,12 +148,13 @@ HeaderMenu;
 
 const headerBody = <<<HeaderBody
 <body>
+    {HeaderMenu}
     <div id="BOS_Dialog">
         <iframe seamless='seamless'>
             <p>Your browser does not support iframes.</p>
         </iframe>
     </div>
-    {HeaderMenu}
+    
 </body>
 HeaderBody;
 

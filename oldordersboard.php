@@ -25,7 +25,8 @@ $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "הזמנות ישנות");
 //setting menu bar
-$PageTemplate .= headerMenu;
+$PageTemplate .= headerBody;
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", headerMenu);
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
 \Services::setPlaceHolder($PageTemplate, "oldOrdersClass", "active");
 ///
@@ -153,7 +154,7 @@ $PageTemplate .= footer;
 
 
 $OrderBoard_Table_Temlplate = <<<EOF
-<tr onclick="document.location = 'vieworder.php?id={orderId}';">
+<tr data-action="OpenBOSDialog" data-page="vieworder.php" data-dialogTitle="הזמנה {orderId}" data-variables="id={orderId}&ShowHeaderFooter=0">
     <td>{orderStatus}</td>
     <td>{orderSellerName}</td>
     <td>{orderRemarks}</td>
