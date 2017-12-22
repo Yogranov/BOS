@@ -233,6 +233,12 @@ logo{
     background-image: var(--Body_Background-image);
 }
 
+.ui-dialog-buttonset {
+    float: none !important;
+    text-align: center !important;
+    margin: auto !important;
+}
+
 /*
 ############
  FAQ

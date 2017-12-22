@@ -2,7 +2,6 @@
 var action = 'click';
 var speed = "500";
 
-var WindowDialogSize = 0.6;
 var windowWidth = window.innerWidth;
 var windowHeight = window.innerHeight;
 
