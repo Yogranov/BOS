@@ -18,14 +18,14 @@ if(!isset($shopId)) {
 }
 
 
-$shopObject = Shop::GetById($shopId);
+$shopObject = &Shop::GetById($shopId);
 $orderId = $_GET["id"];
-$orderInfo = Order::GetById($orderId);
-$clientObject = Order::GetById($orderId)->GetClient();
+$orderInfo = &Order::GetById($orderId);
+$clientObject = $orderInfo->GetClient();
 $clientExtendPhoneNumber = substr_replace(substr_replace($clientObject->GetPhoneNumber(), '-' , 3,0),'-',7,0);
 
 //select order status
-$orderObject = Order::GetById($orderId);
+$orderObject = $orderInfo;
 
 //setting header
 require_once "Header.php";
@@ -44,13 +44,68 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset
 \Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 
 
+
+if (isset($_REQUEST["ProductId"])) {
+    $productId = $_REQUEST["ProductId"];
+    $productStatus = $_REQUEST["productstatus_" . $productId];
+
+    $orderProductArray = $orderObject->GetOrderProducts();
+    $newStatus = EProductStatus::search($productStatus);
+
+    if ($orderProductArray[$productId]->ChangeStatus($newStatus)) {
+        if ($newStatus == EProductStatus::Arrived()) {
+            $arrivedCount = 0;
+            $allOrderProducts = $orderObject->GetOrderProducts();
+            foreach ($orderObject->GetOrderProducts() as $innerProductId => $productObject) {
+                if ($productObject->GetStatus() == EProductStatus::Arrived())
+                    $arrivedCount++;
+            }
+
+            if ($arrivedCount == count($allOrderProducts)) {
+                if ($orderObject->GetClient()->IsWantEmail())
+                    $confType = "dialog-EmailConfirm";
+                else
+                    $confType = "dialog-ManualConfirm";
+
+                $ApiUrl = Constant::API_URL.'?method=OrderInformClient&data='.$orderObject->GetId();
+                echo "<span id='InformClient' data-ApiUrl = '{$ApiUrl}' data-confirmationType = '{$confType}' data-orderId = '{$orderObject->GetId()}' style='display: none;'></span>";
+            }
+        }
+        else {
+            if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+                //Not in dialog
+                header("Location: Ordersboard.php");
+            }
+            else {
+                //in dialog
+                echo "<script>window.location.href = 'vieworder.php?id={$orderId}&ShowHeaderFooter=0';</script>";
+            }
+        }
+    }
+}
+else if(isset($_REQUEST["SetAsClientInformed"])) {
+    foreach ($orderObject->GetOrderProducts() as $productId => $productObject) {
+        if ($productObject->GetStatus()->getValue() == EProductStatus::Arrived[0]) {
+            $productObject->ChangeStatus(EProductStatus::Client_Informed());
+        }
+    }
+}
+
+
+
 $PageTemplate .= <<<PAGE
       <main>
-        <div id="dialog-confirm" title="לשלוח אימייל ללקוח?" style="display: none; direction: rtl; float: right;">
+        <div id="dialog-EmailConfirm" title="לשלוח אימייל ללקוח?" style="display: none; direction: rtl; float: right;">
             <p>
                 <span class="ui-icon ui-icon-info" style="float:right; margin:12px 12px 20px 0; direction: rtl;"></span>
-                לחיצה על כפתור שליחת האימייל מטה תודיע ללקוח על הגעת המוצרים!<br/>
+                לחיצה על כפתור אישור מטה תודיע ללקוח באימייל על הגעת כלל המוצרים!<br/>
                 שים לב! פעולה זו אינה הפיכה!
+            </p>
+        </div>
+        <div id="dialog-ManualConfirm" title="הודעה אישית ללקוח" style="display: none; direction: rtl; float: right;">
+            <p>
+                <span class="ui-icon ui-icon-info" style="float:right; margin:12px 12px 20px 0; direction: rtl;"></span>
+                <br/>כלל הפריטים הגיעו! נא לעדכן את הלקוח טלפונית!
             </p>
         </div>
         <div class="container" style="margin-top: 20px">
@@ -63,14 +118,8 @@ $PageTemplate .= <<<PAGE
                                 <li><span> תאריך פתיחה: </span> {$orderInfo->GetTimeStamp()->format("d/m/y H:i")}</li>
                                 <li><span> מוכרן: </span> {SellerName}</li>      
                                 <li><span> הערות להזמנה: </span> {OrderRemarks}</li>
-                                <li><form method="POST" name="changeStatus" id="changeStatus" >
-                                       <span>סטאטוס הזמנה:</span>
-                                          <input type="hidden" name="SendEmail" id="SendEmail" value=0>
-                                          <select id="orderstatus" name="orderstatus" required>
-                                           {orderStatusEnum}
-                                           </select>
-                                    </form></li>
-                                <li><span>עדכון אחרון:</span> {OrderLastUpdate}</li>
+                                <li><span>סטטוס הזמנה מחושב:</span> {OrderStatus}</li>
+                                <li><span>עדכון הזמנה אחרון:</span> {OrderLastUpdate}</li>
                            </ul> 
                         <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}&ShowHeaderFooter=0';">ערוך הזמנה </div>
                     </div>
@@ -93,13 +142,16 @@ $PageTemplate .= <<<PAGE
                 <div class="col-sm-12" style="height: auto;">
                     <div class="order-products-info">
                         <span><h4> רשימת מוצרים 
-                        <span class="btn btn-primary" onclick="document.location = 'addproduct.php?orderid={$orderId}&ShowHeaderFooter=0';"> הוסף מוצר </span></h4></span>
+                            <span class="btn btn-primary" onclick="document.location = 'addproduct.php?orderid={$orderId}&ShowHeaderFooter=0';"> הוסף מוצר </span>
+                            {ClientInformedButton}
+                        </h4></span>
                           <table class="table table-striped">
                              <thead style="background: rgba(216,246,210,0.2)">
                                <tr>
                                   <th>שם המוצר</th>
                                   <th>כמות</th>
                                   <th>ברקוד</th>
+                                  <th>סטטוס</th>
                                   <th>הערות</th>
                                   <th>תאריך</th>
                                   <th></th>
@@ -125,7 +177,7 @@ if (empty($orderRemarks))
 
 $updatedTime = $orderInfo->GetUpdateTime();
 if ($updatedTime instanceof \DateTime)
-    $OrderLastUpdate = $updatedTime->format("d/m/Y h:i");
+    $OrderLastUpdate = $updatedTime->format("d/m/Y H:i");
 else
     $OrderLastUpdate = "ללא עדכון";
 \Services::setPlaceHolder($PageTemplate, "OrderLastUpdate", $OrderLastUpdate);
@@ -145,17 +197,10 @@ try {
 }
 ///
 
-///set order change status
-$orderStatusString = "";
-foreach (EOrderStatus::toArray() as $status) {
-    $orderStatusString .= "<option value='".$status[0]."' ";
-    if ($orderObject->GetStatus()->getValue() == $status[0]){
-        $orderStatusString .= "selected='selected'";}
-    $orderStatusString .= ">".$status[1]."</option>";
-
-}
-\Services::setPlaceHolder($PageTemplate, "orderStatusEnum", $orderStatusString);
-/////
+///order status
+$orderStatusString = $orderObject->GetStatus()->getDesc();
+\Services::setPlaceHolder($PageTemplate, "OrderStatus", $orderStatusString);
+//
 
 
 //set if the client wants email or not
@@ -169,14 +214,37 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
 \Services::setPlaceHolder($PageTemplate, "ClientWantsEmails", $wantEmail);
 \Services::setPlaceHolder($PageTemplate, "clientWantsEmailsBool", $wantEmailBool);
 
+//Show ClientInformed Button according to status
+$ClientInformedButtonText = "";
+if($orderObject->GetStatus()->getValue() < EProductStatus::Client_Informed[0]) {
+    foreach ($orderObject->GetOrderProducts() as $productObject) {
+        if ($productObject->GetStatus()->getValue() == EProductStatus::Arrived[0]) {
+            //check if at least one product arrived and show inform button
+            $ClientInformedButtonText = "<span class='btn btn-warning' id='ClientInformed' data-SubmitPage = 'vieworder.php?id={$orderObject->GetId()}&ShowHeaderFooter=0&SetAsClientInformed=1' data-orderId='{$orderObject->GetId()}'> לקוח מעודכן </span>";
+            break;
+        }
+    }
+}
+\Services::setPlaceHolder($PageTemplate, "ClientInformedButton", $ClientInformedButtonText);
+
+$onclickEditJS = "onclick=\"document.location = 'editproduct.php?id={$orderId}&productId={productId}&ShowHeaderFooter=0'\"";
 $productRow = <<<EOF
-<tr style="cursor: pointer;" onclick="document.location = 'editproduct.php?id={$orderId}&productId={productId}&ShowHeaderFooter=0'">
-    <td>{productName}</td>
-    <td>{productQuantity}</td>
-    <td>{productBarcode}</td>
-    <td>{productRemarks}</td>
-    <td>{productTimestamp}</td>
-    <td>{editProduct}</td>
+<!-- <tr style="cursor: pointer;" $onclickEditJS> -->
+<tr style="cursor: pointer;">
+    <td $onclickEditJS>{productName}</td>
+    <td $onclickEditJS>{productQuantity}</td>
+    <td $onclickEditJS>{productBarcode}</td>
+    <td>
+        <form method="POST" id="changeProductStatus_{productId}" name="changeProductStatus_{productId}">
+              <input type="hidden" name="ProductId" id="ProductId" value={productId}>
+              <select class="productstatus" name="productstatus_{productId}" data-ProductId="{productId}" data-OrderId="{$orderObject->GetId()}" required>
+               {productStatusOptions}
+               </select>
+        </form>
+    </td>
+    <td $onclickEditJS>{productRemarks}</td>
+    <td $onclickEditJS>{productTimestamp}</td>
+    <td $onclickEditJS>{editProduct}</td>
 </tr>
 EOF;
 $productList = "";
@@ -185,6 +253,16 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productName", $product->getProductName());
     \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
     \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
+
+    $productStatusString = "";
+    foreach (EProductStatus::toArray() as $status) {
+        $productStatusString .= "<option value='".$status[0]."' ";
+        if ($product->GetStatus()->getValue() == $status[0]){
+            $productStatusString .= "selected='selected'";}
+        $productStatusString .= ">".$status[1]."</option>";
+    }
+    \Services::setPlaceHolder($productList, "productStatusOptions", $productStatusString);
+
     \Services::setPlaceHolder($productList, "productId", $product->GetId());
 
     $remarks = $product->GetRemarks();
@@ -207,65 +285,4 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset
 
 echo $PageTemplate;
 
-if(isset($_POST['orderstatus'])) {
-    $order_status = $_POST['orderstatus'];
-    $clientWantEmail = $_POST['SendEmail'];
-
-    //Log the status changing
-    $oldStatus = EOrderStatus::search($order_status)->getDesc();
-    $timeNow = new \DateTime( "now", new \DateTimeZone("Asia/Jerusalem"));
-    $logFile = fopen("logs/StatusLog.php", "a");
-    fwrite($logFile, "\n" . "<br>" . "{$timeNow->format("Y/m/d H:i:s")} - סניף <b>{$orderObject->GetShop()->GetShopName()}</b> - הזמנה מספר <b>{$orderObject->GetId()}</b> עברה מסטאטוס <b>{$orderObject->GetStatus()->getDesc()}</b> לסטאטוס <b>{$oldStatus}</b>.");
-    fclose($logFile);
-
-    //Update Status
-    if(Order::GetById($orderId)->ChangeStatus($order_status)) {
-
-        if ($clientObject->IsWantEmail() && $clientWantEmail == 1) {
-                $subject = "הזמנתך בבאג מחכה לך בסניף {$orderObject->GetShop()->GetShopName()}";
-                $message = Constant::EMAIL_CLIENT_ORDER_ARRIVED . "<img src='bug.845.co.il/Mailchecker.php/?orderId={$orderId}'>";
-                \Services::setPlaceHolder($message,"Name", $clientObject->GetFullName());
-                \Services::setPlaceHolder($message, "ShopName", $shopObject->GetShopName());
-
-                try{
-                    $clientObject->SendEmail($message, $subject);
-                } catch (Exception $e) {
-                    $errorMsg = $e->getMessage();
-                    echo $errorMsg;
-                    echo "לא ניתן לשלוח מייל";
-
-                } catch (Exception $e) {
-                    $errorMsg = $e->getMessage();
-                    echo $errorMsg;
-                    echo "לא ניתן לשלוח מייל";
-                }
-        }
-    }
-
-    if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
-        //Not in dialog
-        header("Location: Ordersboard.php");
-    }
-    else {
-        //in dialog
-        echo "<script>window.location.href = 'vieworder.php?id={$orderId}&ShowHeaderFooter=0';</script>";
-    }
-}
-
-/*
- //set product change status
-foreach ($allProducts as $product) {
-
-    if(isset($_POST['productstatus'.$product->GetId()])) {
-        $product_order_status = $_POST['productstatus'.$product->GetId()];
-        \Services::dump($product_order_status);
-        //Update Product Status
-        $productObject = $product->ChangeStatus($product_order_status);
-        if($productObject) {
-            header("Location: Ordersboard.php");
-        }
-    }
-
-}
-*/
 ?>

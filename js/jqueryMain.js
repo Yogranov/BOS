@@ -11,39 +11,11 @@ $(document).ready(function(){
         history.back(1);
     });
 
-
-    $("#orderstatus").change(function(){
-        var selectedStatus = parseInt($(this).val());
-        var ClientsWantEmails = $("#ClientWantEmails").attr("data-value");
-        if (selectedStatus === 4 && ClientsWantEmails == "1") {
-            //client want email
-            $( "#dialog-confirm" ).dialog({
-                resizable: false,
-                height: "auto",
-                width: 400,
-                modal: true,
-                buttons: {
-                    "שלח אימייל": function() {
-                        //sending email//
-                        $("#changeStatus > #SendEmail").val(1);
-                        $( this ).dialog( "close" );
-                    },
-                    "אל תשלח": function() {
-                        $("#changeStatus > #SendEmail").val(0);
-                        $( this ).dialog( "close" );
-                    }
-                },
-                close: function() {
-                    document.getElementById('changeStatus').submit();
-                }
-            });
-        }
-        else {
-            document.getElementById('changeStatus').submit();
-        }
-
+    $(".productstatus").change(function(){
+        var productId = $(this).attr("data-ProductId");
+        var submitLoc = "changeProductStatus_" + productId;
+        document.getElementById(submitLoc).submit();
     });
-
 
     //Question handler
     $('li.q').on(action, function(){
@@ -104,8 +76,7 @@ function GetCharts() {
             dataType: 'json',
             //async: false,
             error: function() {
-                alert('Failed!');
-                return;
+                console.log("Failed!");
             },
             success: function(data) {
                 //console.log(data);
@@ -157,4 +128,16 @@ function drawChart(chartObject, ajaxData) {
     if (chart !== "") {
         chart.draw(data, options);
     }
+}
+
+function SetButtonIcon(buttonJquery, buttonInnerText, newIconClass) {
+    var IconText = "<span class='buttonUserIcon'>&nbsp;&nbsp;<span class='"+newIconClass+"'></span></span>";
+    var ButtonDOM = buttonJquery.children("button:contains('"+buttonInnerText+"')");
+
+    ButtonDOM.children(".buttonUserIcon").remove(); //remove old userIcon if exist
+    ButtonDOM.removeClass('ui-button-text-only')
+        .addClass('ui-button-text-icon-primary')
+        .append(IconText);
+
+    //console.log("Icon of the button that contain the text '"+buttonInnerText+"' as assign the class '"+newIconClass+"'!");
 }

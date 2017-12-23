@@ -95,25 +95,16 @@ class OrderProducts {
      * @throws Exception
      */
     public function ChangeStatus(EProductStatus $newStatus) {
+        //\Services::dump($newStatus);
+        unset($info);
         $info = array("Status" => $newStatus->getValue());
+        //\Services::dump($newStatusValue);
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
         if (!$success)
             throw new Exception("לא ניתן לשנות מסטטוס {0} לסטטוס {1} את הפריט {2}", null, $this->status, $newStatus, $this);
 
         $this->status = $newStatus;
         return $this->status;
-    }
-
-    /**
-     * @param int $Quantity
-     * @throws Exception
-     * @throws \Exception
-     */
-    public function ChangeQuantity(int $Quantity) {
-        if ($Quantity < 1 || $Quantity > Constant::ORDER_MAX_QUANTITY)
-            throw new Exception("כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $Quantity, Constant::ORDER_MAX_QUANTITY);
-        $this->quantity = $Quantity;
-        $this->Update();
     }
 
     /**
@@ -124,13 +115,6 @@ class OrderProducts {
     public function ChangeRemarks(string $Remarks) {
         $this->remarks = $Remarks;
         $this->Update();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString() {
-        return $this->id.": ".$this->productName." (".$this->productBarcode.")";
     }
 
     /**
@@ -195,13 +179,15 @@ class OrderProducts {
     }
 
     /**
-     * @param $quantity
+     * @param int $quantity
+     * @param bool $update
      * @throws Exception
      * @throws \Exception
      */
-    public function SetQuantity($quantity, bool $update = true) {
+    public function SetQuantity(int $quantity, bool $update = true) {
         if($quantity < 1 || $quantity > Constant::ORDER_MAX_QUANTITY)
-            throw new Exception("לא ניתן להוסיף {0} מוצרים, מקסימום {1}",null,$quantity);
+            throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::ORDER_MAX_QUANTITY);
+
         $this->quantity = $quantity;
         if ($update)
             $this->Update();
@@ -234,4 +220,10 @@ class OrderProducts {
         BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $data);
     }
 
+    /**
+     * @return string
+     */
+    public function __toString() {
+        return $this->id.": ".$this->productName." (".$this->productBarcode.")";
+    }
 }

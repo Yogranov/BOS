@@ -26,10 +26,13 @@ class Order
     private $shopId;
     private $sellerId;
     private $remarks;
-    private $status = 0;
     private $timeStamp;
     private $updateTime;
-
+    private $OrderInnerStatus;
+    /**
+     * @var EOrderStatus[]
+     */
+    private $status;
     /**
      * @var OrderProducts[]
      */
@@ -42,12 +45,12 @@ class Order
      */
     private function __construct(array $orderData)
     {
+        //\Services::dump($orderData);
         $this->id = $orderData["OrderId"];
         $this->clientId = $orderData["ClientId"];
         $this->shopId = $orderData["ShopId"];
         $this->sellerId = $orderData["SellerId"];
         $this->remarks = $orderData["Remarks"];
-        $this->status = $orderData["Status"];
         $this->timeStamp = new \DateTime($orderData["Timestamp"]);
         if ($orderData["updateTime"] !== "0000-00-00 00:00:00")
             $this->updateTime = new \DateTime($orderData["updateTime"]);
@@ -56,6 +59,10 @@ class Order
         foreach ($orderArray as $orderProduct) {
             $this->orderProducts[$orderProduct["ProductId"]] = new OrderProducts($this->id, $orderProduct["ProductName"], $orderProduct["ProductBarcode"]);
         }
+
+        if (in_array($orderData["Status"], EOrderStatus::toArray()))
+            $this->OrderInnerStatus = EOrderStatus::search($orderData["Status"]);
+        $this->status = $this->GetStatus();
     }
 
     /**
@@ -119,7 +126,8 @@ class Order
             "ClientId" => $client->GetId(),
             "ShopId" => $shop->GetId(),
             "SellerId" => $seller->GetId(),
-            "Remarks" => $remarks
+            "Remarks" => $remarks,
+            "Status" => 0
         );
 
         $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $OrderData);
@@ -360,8 +368,30 @@ class Order
      * @throws \Exception
      */
     public function GetStatus() {
-        $statusEnum = EOrderStatus::search($this->status);
-        return $statusEnum;
+        //status calculation//
+        if (is_array($this->orderProducts) && count($this->orderProducts) > 0) {
+            $leastProductStatus = "";
+            $mapKeys = array_keys(Constant::ORDER_PRODUCT_STATUS_TO_ORDER_STATUS_MAP);
+            foreach ($this->orderProducts as $product) {
+                $ProductStatus = $product->GetStatus();
+                if (!empty($leastProductStatus)) {
+                    $currentProductLoc = @array_search($ProductStatus->getName(), $mapKeys);
+                    if ($currentProductLoc !== false && $currentProductLoc > @array_search($leastProductStatus->getName(), $mapKeys))
+                        continue;
+                }
+
+                $leastProductStatus = $ProductStatus;
+            }
+
+            if (!empty($leastProductStatus)) {
+                $orderCalculatedStatusKey = Constant::ORDER_PRODUCT_STATUS_TO_ORDER_STATUS_MAP[$leastProductStatus->getName()];
+                $this->status = EOrderStatus::$orderCalculatedStatusKey();
+                return $this->status;
+            }
+        }
+
+        $this->status = EOrderStatus::Unknown();
+        return $this->status;
     }
 
     /**
@@ -379,13 +409,6 @@ class Order
     }
 
     /**
-     * @return string
-     */
-    public function __toString() {
-        return "הזמנה " . $this->id;
-    }
-
-    /**
      * @return Client
      * @throws \Exception
      */
@@ -395,13 +418,13 @@ class Order
     }
 
     /**
-     * @param $status
-     * @return int
+     * @param EOrderStatus $status
+     * @return EOrderStatus|EOrderStatus[]|static
+     * @throws Exception
      * @throws \Exception
-     * Todo: change method input type to EOrderStatus Enum
      */
-    public function ChangeStatus($status) {
-        $info = array("Status" => $status);
+    public function ChangeStatus(EOrderStatus $status) {
+        $info = array("Status" => $status->getValue());
         BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
 
         $logText = "סטטוס {$this} השתנה";
@@ -440,9 +463,11 @@ class Order
      * @throws \Exception
      */
     public function Update() {
+        $now = new \DateTime("now", new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
         $updateArray = array(
             "SellerId" => $this->sellerId,
-            "Remarks" => $this->remarks
+            "Remarks" => $this->remarks,
+            "updateTime" => $now->format("Y-m-d H:i:s")
         );
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
@@ -452,10 +477,10 @@ class Order
         BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), $updateArray);
     }
 
-
-
-
-
-
-
+    /**
+     * @return string
+     */
+    public function __toString() {
+        return "הזמנה " . $this->id;
+    }
 }

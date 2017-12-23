@@ -11,9 +11,13 @@ namespace BugOrderSystem;
 
 class EProductStatus extends \Enum
 {
-    const Created = array(1, "המוצר נוסף להזמנה");
-    const Ordered = array(2, "המוצר הוזמן עבור הלקוח");
-    const Enroute = array(3, "המוצר בדרכו אל הסניף");
-    const Arrived = array(4, "המוצר הגיע אל הסניף");
-    const Delivered = array(5, "המוצר נאסף על ידי הלקוח");
+    const Created = array(1, "הזמנה פתוחה");
+    const Ordered = array(3, "הוזמן לסניף");
+    const Enroute = array(4, "בדרך לסניף");
+    const Arrived = array(5, "הגיע לסניף");
+    const Client_Informed = array(6, "לקוח מעודכן");
+    const Delivered = array(7, "המוצר נאסף");
+    const Aborted = array(8, "בוטל");
+    const Pre_order = array(9, "הזמנה מוקדמת");
+
 }

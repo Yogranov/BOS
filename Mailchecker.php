@@ -13,9 +13,13 @@ $orderId = $_GET['orderId'];
 $orderObj = Order::GetById($orderId);
 $oldStatus = $orderObj->GetStatus()->getDesc();
 
-if (count($orderId) != 0 && $orderObj->GetStatus() != EOrderStatus::Client_Informed){
+if (count($orderId) != 0 && $orderObj->GetStatus() != EOrderStatus::Client_Informed()){
         if ($orderObj->GetStatus() == EOrderStatus::Arrived()) {
-            $orderObj->ChangeStatus(EOrderStatus::Client_Informed[0]);
+
+            foreach ($orderObj->GetOrderProducts() as $productId => $orderProducts) {
+                if ($orderProducts->GetStatus() == EProductStatus::Arrived())
+                    $orderProducts->ChangeStatus(EProductStatus::Client_Informed());
+            }
 
             //Log the status changing
             $timeNow = new \DateTime( "now", new \DateTimeZone("Asia/Jerusalem"));
