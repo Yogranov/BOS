@@ -22,7 +22,7 @@ foreach ($allShops  as $oneShop) {
 
 
     foreach ($shopOrders as $order) {
-        if($order->GetStatus()->getValue() == 1){
+        if($order->GetStatus() == EOrderStatus::Open()){
             if(\Services::DateDiff($order->GetTimeStamp(), "now", "%a") == 1){
 
                 $Subject = "נא לעדכן הזמנה {$order->GetId()} בהקדם! ";

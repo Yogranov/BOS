@@ -54,7 +54,7 @@ body {
         <br>
         <br>
         <ul style="list-style-type: none; line-height: 15px">
-              <li>  <b>סטאטוס:</b> {$orderObj->GetStatus()->getDesc()} </li><br>
+              <li>  <b>סטאטוס הזמנה:</b> {$orderObj->GetStatus()->getDesc()} </li><br>
               <li>  <b>מספר הזמנה:</b> {$orderObj->GetId()} </li><br>
               <li>  <b>תאריך:</b> {$orderObj->GetTimeStamp()->format("d/m/y H:m")} </li><br>
               <li>  <b>שם המזמין:</b>  {$orderObj->GetClient()->GetFirstName()} </li><br>
@@ -67,11 +67,12 @@ body {
         מוצרים:
         <br>
         <br>
-          <table class="table table-striped">
+          <table class="table table-striped" style="text-align: center">
                 <thead class="thead-light">
                   <tr>
                     <th>שם המוצר</th>
                     <th>כמות</th>
+                    <th>סטאטוס מוצר</th>
                   </tr>
                 </thead>
                   <tbody>
@@ -90,11 +91,11 @@ body {
 </body>
 PAGE;
 
-
 $productRow = <<<EOF
-<tr>
+<tr class="{flashClass}" style="color: {rowClass} !important;">
     <td>{productName}</td>
     <td>{productQuantity}</td>
+    <td>{productStatus}</td>
 </tr>
 EOF;
 
@@ -102,8 +103,19 @@ EOF;
 $productList = "";
 foreach ($orderObj->GetOrderProducts() as $product) {
     $productList .= $productRow;
+    if (array_key_exists($product->GetStatus()->getValue(),Constant::PRODUCTS_STATUS_STYLE)) {
+        \Services::setPlaceHolder($productList, "rowClass", Constant::PRODUCTS_STATUS_STYLE[$product->GetStatus()->getValue()][0]);
+        \Services::setPlaceHolder($productList, "flashClass", Constant::PRODUCTS_STATUS_STYLE[$product->GetStatus()->getValue()][1]);
+    }
+    else {
+        \Services::setPlaceHolder($productList, "rowClass", Constant::PRODUCTS_STATUS_STYLE["default"][0]);
+        \Services::setPlaceHolder($productList, "flashClass", Constant::PRODUCTS_STATUS_STYLE["default"][1]);
+    }
+
     \Services::setPlaceHolder($productList, "productName", $product->getProductName());
     \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
+    \Services::setPlaceHolder($productList, "productStatus", $product->GetStatus()->getDesc());
+
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
@@ -126,7 +138,7 @@ if(preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hipto
 
 
 
-if($orderObj->GetShop()->GetId() == $shopId && $orderObj->GetTimeStamp()->format("U") == $unixTime) {
+if($orderObj->GetShop()->GetId() == $shopId && $orderObj->GetTimeStamp()->format("U") == $unixTime && $orderObj->GetStatus()->getValue() !== EOrderStatus::Aborted[0]) {
     echo $PageTemplate;
 
 
@@ -137,7 +149,7 @@ if($orderObj->GetShop()->GetId() == $shopId && $orderObj->GetTimeStamp()->format
     fclose($logFile);
 
 } else {
-    echo "<h2>לא ניתן להציג דף זה, נא להכניס מספר הזמנה חוקי</h2>";
+    echo "<h2>אירע שגיאה, לא ניתן להציג דף זה</h2>";
 }
 
 

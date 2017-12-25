@@ -30,7 +30,7 @@ $PageTemplate .= headerBody;
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
 \Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
 ///
-
+//TODO: Change direction from LTR to RTL and fix style issues after that.
 $PageTemplate .= <<<PAGE
 <main>
   <orderboard>
@@ -84,7 +84,7 @@ EOF;
 
 $OrderBoard_Table_Temlplate = <<<EOF
 <tr data-action="OpenBOSDialog" data-page="vieworder.php" data-dialogTitle="הזמנה {orderId}" data-variables="id={orderId}&ShowHeaderFooter=0">
-    <td class="{flashClass}" style="color: {rowClass} !important; font-weight: 600;"><span>{orderStatus}</span></td>
+    <td class="{flashClass}" style="{rowClass} !important; font-weight: 600;"><span>{orderStatus}</span></td>
     <td>{orderSellerName}</td>
     <td>{orderRemarks}</td>
     <td>
@@ -100,7 +100,7 @@ $OrderBoard_Table_Temlplate = <<<EOF
 EOF;
 
 $productOrderTemplate_Quantity_More_Then_One = "<li><span style='color: indianred'> {ProductQuantity} X </span>{ProductName}</li>";
-$productOrderTemplate_Quantity_One = "<li>{ProductName}</li>";
+$productOrderTemplate_Quantity_One = "<li style='{productColor}'>{ProductName}</li>";
 
 $productOrderTemplate_Quantity_One_Code = "<li>{ProductCode}</li>";
 
@@ -139,9 +139,35 @@ foreach ($shopOrders as $order) {
         if ($orderProduct->GetQuantity() > 1) {
             $orderProductString .= $productOrderTemplate_Quantity_More_Then_One;
             \Services::setPlaceHolder($orderProductString, "ProductQuantity", $orderProduct->GetQuantity());
+
+            //Add color to product name if arrived
+            if(count($order->GetOrderProducts()) > 1) {
+                if ($orderProduct->GetStatus()->getValue() == 5) {
+                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Arrived[0]][0]);
+                }
+                else if($orderProduct->GetStatus()->getValue() == 7) {
+                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Delivered[0]][0]);
+                } else {
+                    \Services::setPlaceHolder($orderProductString, "productColor", "");
+                }
+            }
+
         } else {
             $orderProductString .= $productOrderTemplate_Quantity_One;
-        }
+
+            //Add color to product name if arrived
+            if(count($order->GetOrderProducts()) > 1) {
+                if ($orderProduct->GetStatus()->getValue() == 5) {
+                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Arrived[0]][0]);
+                }
+                else if($orderProduct->GetStatus()->getValue() == 7) {
+                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Delivered[0]][0]);
+                } else {
+                    \Services::setPlaceHolder($orderProductString, "productColor", "");
+                }
+            }
+
+            }
         \Services::setPlaceHolder($orderProductString, "ProductName", $orderProduct->getProductName());
     }
     \Services::setPlaceHolder($orderBoard, "productTemplate", $orderProductString);
