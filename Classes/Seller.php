@@ -8,6 +8,7 @@
 
 namespace BugOrderSystem;
 
+use Log\ELogLevel;
 
 class Seller {
 
@@ -51,11 +52,11 @@ class Seller {
         $this->sellerStatus = ESellerStatus::search($sellerData["Status"]);
     }
 
-
     /**
      * @param int $sellerId
      * @param array $sellerData
-     * @return Seller
+     * @return mixed
+     * @throws DBException
      * @throws Exception
      */
     private static function addSellerBySellerData(int $sellerId, array $sellerData){
@@ -64,7 +65,7 @@ class Seller {
             throw new Exception("Seller {0} already exists on this array",null,$sellerId);
 
         if(count($sellerData) == 0)
-            throw new Exception("Seller {0} doesn't exists on DB",null,$sellerId);
+            throw new DBException("Seller {0} doesn't exists on DB",null,$sellerId);
 
         self::$sellers[$sellerId] = new Seller($sellerData);
         return self::$sellers[$sellerId];
@@ -177,15 +178,21 @@ class Seller {
      * @throws DBException
      * @throws Exception
      * @throws \Exception
+     * Todo: need to change the array property to proper variables properties
      */
     public static function Add(array $sellerData){
         $sqlObject = BugOrderSystem::GetDB();
         if($sqlObject->where("Id",$sellerData["Id"])->getOne(self::TABLE_NAME))
-            throw new Exception("לא ניתן לבצע פעולה זו, עובד {0} כבר קיים במערכת",$sellerData, $sellerData["Id"]);
+            throw new Exception("לא ניתן לבצע פעולה זו, עובד {0} כבר קיים במערכת", $sellerData, $sellerData["Id"]);
         $success = $sqlObject->insert(self::TABLE_NAME, $sellerData);
         if (!$success)
             throw new DBException("Unable to add seller!", $sellerData);
         $res = &self::getById($sellerData["Id"]);
+
+        $logText = "המוכר {seller} נוסף לחנות {shop}";
+        $shop = &Shop::GetById($sellerData["ShopId"]);
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $res, "shop" => $shop, "data" => $sellerData));
+
         return $res;
     }
 
@@ -217,6 +224,9 @@ class Seller {
             throw new DBException("Unable to remove seller {0}", null, $this);
 
         unset(self::$sellers[$this->id]);
+
+        $logText = "המוכר {seller} נמחק מהמערכת";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $this));
     }
 
     /**
@@ -233,7 +243,6 @@ class Seller {
         $this->email = $newEmail;
         $this->update();
     }
-
 
     /**
      * @param string $message
@@ -257,16 +266,6 @@ class Seller {
             throw new Exception($emailObject->ErrorInfo);
     }
 
-
-/*
-    public function Update(array $sellerData) {
-        if (empty($sellerData))
-            throw new Exception("לא ניתן לעדכן מוכרן, חסר מידע");
-
-        BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $sellerData);
-    }
-*/
-
     /**
      * @throws DBException
      * @throws \Exception
@@ -282,6 +281,9 @@ class Seller {
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
             throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
+
+        $logText = "המוכר ".$this." עודכן";
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
     }
 
     /**

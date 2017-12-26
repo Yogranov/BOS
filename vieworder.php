@@ -114,7 +114,8 @@ $PageTemplate .= <<<PAGE
                 <br/>כלל הפריטים הגיעו! נא לעדכן את הלקוח טלפונית!
             </p>
         </div>
-        <div class="container" style="margin-top: 20px">
+        <!-- <div class="container" style="margin-top: 20px"> -->
+        <div class="container">
             <h2 style="text-align: center">הזמנה {$orderObject->GetId()}</h2>
             <div class="row">
                 <div class="col-sm-6" style="height: 250px;">
@@ -272,14 +273,6 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productName", $product->getProductName());
     \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
     \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
-
-    /*
-    if ($product->GetStatus() == EProductStatus::Delivered())
-        $strikeThrough = "style='text-decoration: line-through;'";
-    else
-        $strikeThrough = "";
-    \Services::setPlaceHolder($productList, "strikeLine", $strikeThrough);
-    */
 
     $productStatusString = "";
     foreach (EProductStatus::toArray() as $status) {

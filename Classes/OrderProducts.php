@@ -91,8 +91,9 @@ class OrderProducts {
 
     /**
      * @param EProductStatus $newStatus
-     * @return EProductStatus
+     * @return EProductStatus|static
      * @throws Exception
+     * @throws \Exception
      */
     public function ChangeStatus(EProductStatus $newStatus) {
         //\Services::dump($newStatus);
@@ -102,6 +103,9 @@ class OrderProducts {
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
         if (!$success)
             throw new Exception("לא ניתן לשנות מסטטוס {0} לסטטוס {1} את הפריט {2}", null, $this->status, $newStatus, $this);
+
+        $logText = "הסטטוס של המוצר {product} השתנה מ-{oldStatus} ל-{newStatus}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status, "newStatus" => $newStatus));
 
         $this->status = $newStatus;
         return $this->status;
@@ -210,14 +214,6 @@ class OrderProducts {
 
         $logText = "המוצר ".$this." עודכן";
         BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
-    }
-
-    /**
-     * @param array $data
-     * @throws \Exception
-     */
-    public function ProductUpdate(array $data){
-        BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $data);
     }
 
     /**
