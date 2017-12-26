@@ -46,7 +46,7 @@ body {
     <br>
     <div class="container" style="margin-top: -20px">
         שלום {$orderObj->GetClient()->GetFirstName()},<br>
-        ההזמנה שביצעת בתאריך {$orderObj->GetTimeStamp()->format("d/m/y")} בסניף {$orderObj->GetShop()->GetShopName()} נמצאת כרגע בסטאטוס: <b>{$orderObj->GetStatus()->getDesc()}</b>.<br>
+        ההזמנה שביצעת בתאריך {$orderObj->GetTimeStamp()->format("d/m/Y")} בסניף {$orderObj->GetShop()->GetShopName()} נמצאת כרגע בסטאטוס: <b>{$orderObj->GetStatus()->getDesc()}</b>.<br>
         לפרטים נוספים או בכל שאלה ניתן ליצור קשר עם הסניף בטלפון מספר {$orderObj->GetShop()->GetPhoneNumber()}.
         <br>
         <br>

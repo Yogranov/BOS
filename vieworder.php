@@ -90,7 +90,13 @@ else if(isset($_REQUEST["SetAsClientInformed"])) {
         }
     }
 }
-
+else if(isset($_REQUEST["SetAsProductsOrdered"])) {
+    foreach ($orderObject->GetOrderProducts() as $productId => $productObject) {
+        if ($productObject->GetStatus() == EProductStatus::Created()) {
+            $productObject->ChangeStatus(EProductStatus::Ordered());
+        }
+    }
+}
 
 
 $PageTemplate .= <<<PAGE
@@ -144,6 +150,7 @@ $PageTemplate .= <<<PAGE
                         <span><h4> רשימת מוצרים 
                             <span class="btn btn-primary" onclick="document.location = 'addproduct.php?orderid={$orderId}&ShowHeaderFooter=0';"> הוסף מוצר </span>
                             {ClientInformedButton}
+                            {ProductsOrderedButton}
                         </h4></span>
                           <table class="table table-striped">
                              <thead style="background: rgba(216,246,210,0.2)">
@@ -216,9 +223,9 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
 
 //Show ClientInformed Button according to status
 $ClientInformedButtonText = "";
-if($orderObject->GetStatus()->getValue() < EProductStatus::Client_Informed[0]) {
+if($orderObject->GetStatus() <EOrderStatus::Client_Informed()) {
     foreach ($orderObject->GetOrderProducts() as $productObject) {
-        if ($productObject->GetStatus()->getValue() == EProductStatus::Arrived[0]) {
+        if ($productObject->GetStatus() == EProductStatus::Arrived()) {
             //check if at least one product arrived and show inform button
             $ClientInformedButtonText = "<span class='btn btn-warning' id='ClientInformed' data-SubmitPage = 'vieworder.php?id={$orderObject->GetId()}&ShowHeaderFooter=0&SetAsClientInformed=1' data-orderId='{$orderObject->GetId()}'> לקוח מעודכן </span>";
             break;
@@ -227,13 +234,25 @@ if($orderObject->GetStatus()->getValue() < EProductStatus::Client_Informed[0]) {
 }
 \Services::setPlaceHolder($PageTemplate, "ClientInformedButton", $ClientInformedButtonText);
 
+//Show Products Ordered Button if there are products that need to be ordered
+$ProductsOrderedButtonText = "";
+if($orderObject->GetStatus() == EOrderStatus::Open()) {
+    foreach ($orderObject->GetOrderProducts() as $productObject) {
+        if ($productObject->GetStatus() == EProductStatus::Created()) {
+            //check if at least one product need to be ordered and show that button
+            $ProductsOrderedButtonText = "<span class='btn btn-success' id='ProductsOrdered' data-SubmitPage = 'vieworder.php?id={$orderObject->GetId()}&ShowHeaderFooter=0&SetAsProductsOrdered=1' data-orderId='{$orderObject->GetId()}'> המוצרים הוזמנו </span>";
+            break;
+        }
+    }
+}
+\Services::setPlaceHolder($PageTemplate, "ProductsOrderedButton", $ProductsOrderedButtonText);
+
 $onclickEditJS = "onclick=\"document.location = 'editproduct.php?id={$orderId}&productId={productId}&ShowHeaderFooter=0'\"";
 $productRow = <<<EOF
-<!-- <tr style="cursor: pointer;" $onclickEditJS> -->
 <tr style="cursor: pointer;">
-    <td $onclickEditJS>{productName}</td>
-    <td $onclickEditJS>{productQuantity}</td>
-    <td $onclickEditJS>{productBarcode}</td>
+    <td {$onclickEditJS}>{productName}</td>
+    <td {$onclickEditJS}>{productQuantity}</td>
+    <td {$onclickEditJS}>{productBarcode}</td>
     <td>
         <form method="POST" id="changeProductStatus_{productId}" name="changeProductStatus_{productId}">
               <input type="hidden" name="ProductId" id="ProductId" value={productId}>
@@ -242,9 +261,9 @@ $productRow = <<<EOF
                </select>
         </form>
     </td>
-    <td $onclickEditJS>{productRemarks}</td>
-    <td $onclickEditJS>{productTimestamp}</td>
-    <td $onclickEditJS>{editProduct}</td>
+    <td {$onclickEditJS}>{productRemarks}</td>
+    <td {$onclickEditJS}>{productTimestamp}</td>
+    <td {$onclickEditJS}>{editProduct}</td>
 </tr>
 EOF;
 $productList = "";
@@ -253,6 +272,14 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productName", $product->getProductName());
     \Services::setPlaceHolder($productList, "productQuantity", $product->GetQuantity());
     \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
+
+    /*
+    if ($product->GetStatus() == EProductStatus::Delivered())
+        $strikeThrough = "style='text-decoration: line-through;'";
+    else
+        $strikeThrough = "";
+    \Services::setPlaceHolder($productList, "strikeLine", $strikeThrough);
+    */
 
     $productStatusString = "";
     foreach (EProductStatus::toArray() as $status) {

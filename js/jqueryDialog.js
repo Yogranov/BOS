@@ -22,6 +22,11 @@ $(document).ready(function(){
     var Body = $('body');
     var IframeUrl = "";
 
+    //**************************** {BugOrderSystem ProductsOrdered button - to inform client for arriving products } *****************************//
+    $("#ProductsOrdered").on( "click", function() {
+        window.location.href = $(this).attr("data-SubmitPage");
+    });
+
     //**************************** {BugOrderSystem ClientInformed button - to inform client for arriving products } *****************************//
     $("#ClientInformed").on( "click", function() {
         window.location.href = $(this).attr("data-SubmitPage");
@@ -188,13 +193,28 @@ $(document).ready(function(){
     //auto adjust iframe size on load/reload
     Dialog.children("iframe").on("load", function () {
         var iframeBody = $(this).contents().find("body");
-
-        SetIframeSize($(this), iframeBody.width(), iframeBody.height() + 20);
-
-        $(this).css("display", "block");
+        if (LegalIframe($(this))) {
+            //console.log(IframeUrl);
+            //console.log("Legal Iframe! Continue!");
+            SetIframeSize($(this), iframeBody.width(), iframeBody.height() + 20);
+            $(this).css("display", "block");
+        }
+        else {
+            //console.log("Not Legal Iframe!");
+            Dialog.dialog( "close" );
+        }
     });
     //**************************** {END BugOrderSystem Big Dialog} *****************************//
 });
+
+function LegalIframe(iFrame) {
+    var illigal = iFrame.contents().find("nav").length;
+    //console.log(illigal);
+    if (illigal === 0)
+        return true;
+    else
+        return false;
+}
 
 function SetIframeUrl(iFrame, newUrl) {
     iFrame.attr("src", newUrl);
