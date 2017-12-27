@@ -141,31 +141,17 @@ foreach ($shopOrders as $order) {
             \Services::setPlaceHolder($orderProductString, "ProductQuantity", $orderProduct->GetQuantity());
 
             //Add color to product name if arrived
-            if(count($order->GetOrderProducts()) > 1) {
-                if ($orderProduct->GetStatus()->getValue() == 5) {
-                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Arrived[0]][0]);
-                }
-                else if($orderProduct->GetStatus()->getValue() == 7) {
-                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Delivered[0]][0]);
-                } else {
-                    \Services::setPlaceHolder($orderProductString, "productColor", "");
-                }
-            }
+            if(count($order->GetOrderProducts()) > 1)
+                \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
+
 
         } else {
             $orderProductString .= $productOrderTemplate_Quantity_One;
 
             //Add color to product name if arrived
-            if(count($order->GetOrderProducts()) > 1) {
-                if ($orderProduct->GetStatus()->getValue() == 5) {
-                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Arrived[0]][0]);
-                }
-                else if($orderProduct->GetStatus()->getValue() == 7) {
-                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::ORDER_STATUS_STYLE[EOrderStatus::Delivered[0]][0]);
-                } else {
-                    \Services::setPlaceHolder($orderProductString, "productColor", "");
-                }
-            }
+            if(count($order->GetOrderProducts()) > 1)
+                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
+
 
             }
         \Services::setPlaceHolder($orderProductString, "ProductName", $orderProduct->getProductName());
