@@ -37,7 +37,8 @@ $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "לוח מנהל");
 //setting menu bar
-$PageTemplate .= headerMenu;
+$PageTemplate .= headerBody;
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", headerMenu);
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
 \Services::setPlaceHolder($PageTemplate, "mainPageClass", "active");
 ///

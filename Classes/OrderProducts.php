@@ -105,7 +105,7 @@ class OrderProducts {
             throw new Exception("לא ניתן לשנות מסטטוס {0} לסטטוס {1} את הפריט {2}", null, $this->status, $newStatus, $this);
 
         $logText = "הסטטוס של המוצר {product} השתנה מ-{oldStatus} ל-{newStatus}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status, "newStatus" => $newStatus));
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc()));
 
         $this->status = $newStatus;
         return $this->status;

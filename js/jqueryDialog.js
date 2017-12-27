@@ -153,11 +153,19 @@ $(document).ready(function(){
                 }
             },
             {
-                text: "שמור וסגור",
+                text: "סגור",
                 class: "btn btn-danger",
                 click: function(e) {
                     e.preventDefault();
-                    $( this ).dialog( "close" );
+                    /*
+                    console.log(IframeUrl);
+                    if (IframeUrl.includes("neworder.php")) {
+                        Dialog.children("iframe").submit();
+                    }
+                    else {
+                    */
+                        $( this ).dialog( "close" );
+                    //}
                 }
             }
         ],

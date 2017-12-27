@@ -73,8 +73,7 @@ const headerTemplate = <<<Header
 Header;
 
 const headerMenu = <<<HeaderMenu
-    
-    <nav class="navbar navbar-default">
+        <nav class="navbar navbar-default">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         
@@ -97,6 +96,7 @@ const headerMenu = <<<HeaderMenu
           <ul class="nav navbar-nav navbar-right">
             <li class="{oldOrdersClass}"><a href="oldordersboard.php">הזמנות ישנות <i class="glyphicon glyphicon-inbox"></i></a></li>
             <li class="{newOrdersClass}"><a href="neworder.php" >הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>
+            <!-- <li class="{newOrdersClass}" data-action="OpenBOSDialog" data-page="neworder.php" data-dialogTitle="פתיחת הזמנה חדשה" data-variables="ShowHeaderFooter=0"><a href="#">הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>-->
             <li class="{ordersBoardClass}"><a href="Ordersboard.php">לוח הזמנות <i class="glyphicon glyphicon-list-alt"></i></a></li>
             <li class="{mainPageClass}"><a href="index.php">ראשי <i class="glyphicon glyphicon-home"></i></a></li>
             <li>
@@ -115,35 +115,6 @@ const headerMenu = <<<HeaderMenu
         </div>
       </div>
     </nav>
-    
-    <!--
-              <header>
-                  <div class="container-fluid">
-                      <logo>
-                          <img src="images/logo.png" alt="logo">
-                      </logo>
-                      <div class="shop-details">שלום, {shopName}
-                            <br><a href="logout.php"><img src="images/icons/exit.png" alt="exit"></a>
-                      </div>
-                      <nav>
-                        <div id="burger-nav"><img src="images/icons/burger.png"></div>
-                          <h2>Main Navigation</h2>
-                            <ul>
-                            <li><form id="searchBox" name="searchbox" action="search.php" method="get">
-                                 <input type="text" placeholder="חיפוש" name="search">
-                                <input type="submit" style="position: relative; left: -9999px; width: 1px; height: 1px;" tabindex="2" />
-                                </form>
-                            </li> 
-                             <li><a href="oldordersboard.php" class={oldOrdersClass}">הזמנות ישנות</a></li>
-                             <li><a href="neworder.php" class={newOrdersClass}>הזמנה חדשה</a></li>
-                             <li><a href="Ordersboard.php" class={ordersBoardClass}>לוח הזמנות</a></li>
-                             <li><a href="index.php" class={mainPageClass}>ראשי</a></li>
-                          </ul>
-                      </nav>
-                  </div>
-              </header>
-              -->
-
 HeaderMenu;
 
 const headerBody = <<<HeaderBody
@@ -154,32 +125,8 @@ const headerBody = <<<HeaderBody
             <p>Your browser does not support iframes.</p>
         </iframe>
     </div>
-    
 </body>
 HeaderBody;
-
-
-/*
-const shopMenu = <<<ShopMenu
-                      <ul>
-                        <li><form id="searchBox" name="searchbox" action="search.php" method="get">
-                             <input type="text" placeholder="חיפוש" name="search">
-                            <input type="submit" style="position: relative; left: -9999px; width: 1px; height: 1px;" tabindex="2" />
-                            </form>
-                        </li>
-                         <li><a href="oldordersboard.php" class={oldOrdersClass}">הזמנות ישנות</a></li>
-                         <li><a href="neworder.php" class={newOrdersClass}>הזמנה חדשה</a></li>
-                         <li><a href="Ordersboard.php" class={ordersBoardClass}>לוח הזמנות</a></li>
-                         <li><a href="index.php" class={mainPageClass}>ראשי</a></li>
-                      </ul>
-ShopMenu;
-
-const regionMenu = <<<RegionMenu
-                      <ul>
-                         <li><a href="index.php" class={mainPageClass}>ראשי</a></li>
-                      </ul>
-RegionMenu;
-*/
 
 const footer = <<<Footer
 <footer>

@@ -35,7 +35,7 @@ $PageTemplate = headerTemplate;
 
 $PageTemplate .= headerBody;
 $data = "";
-if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !isset($_GET["ShowHeaderFooter"])) {
     //setting menu bar
     $data = headerMenu;
     \Services::setPlaceHolder($data, "shopName", $shopObject->GetShopName());
@@ -299,7 +299,7 @@ foreach ($orderObject->GetOrderProducts() as $product) {
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
 //setting footer
-if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !isset($_GET["ShowHeaderFooter"])) {
     $PageTemplate .= footer;
 }
 

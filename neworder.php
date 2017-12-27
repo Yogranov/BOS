@@ -26,9 +26,15 @@ $PageTemplate = headerTemplate;
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "הזמנה חדשה");
 //setting menu bar
-$PageTemplate .= headerMenu;
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObj->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "newOrdersClass", "active");
+$PageTemplate .= headerBody;
+$data = "";
+if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !isset($_GET["ShowHeaderFooter"])) {
+    //setting menu bar
+    $data = headerMenu;
+    \Services::setPlaceHolder($data, "shopName", $shopObj->GetShopName());
+    \Services::setPlaceHolder($data, "newOrdersClass", "active");
+}
+\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
 
@@ -173,7 +179,8 @@ $PageTemplate .= <<<PAGE
 PAGE;
 
 //setting footer
-$PageTemplate .= footer;
+if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 0) || !isset($_GET["ShowHeaderFooter"]))
+    $PageTemplate .= footer;
 
 //setting sellers list
 $orderSellersString = "";
@@ -241,8 +248,8 @@ if(isset($_POST['neworder']))  {
                 }
 
                 $LocationToOrder = $orderObject->GetId();
-                header("Location: vieworder.php?id=$LocationToOrder");
-
+                //header("Location: vieworder.php?id={$LocationToOrder}&ShowHeaderFooter={$_GET["ShowHeaderFooter"]}");
+                header("Location: Ordersboard.php");
             }
 
         } else {
