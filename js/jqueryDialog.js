@@ -22,6 +22,11 @@ $(document).ready(function(){
     var Body = $('body');
     var IframeUrl = "";
 
+    //**************************** {BugOrderSystem ProductsDelivered button - to change products that need to be deliver to delivered status } *****************************//
+    $("#ProductsDelivered").on( "click", function() {
+        window.location.href = $(this).attr("data-SubmitPage");
+    });
+
     //**************************** {BugOrderSystem ProductsOrdered button - to inform client for arriving products } *****************************//
     $("#ProductsOrdered").on( "click", function() {
         window.location.href = $(this).attr("data-SubmitPage");

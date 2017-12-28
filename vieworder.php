@@ -97,6 +97,13 @@ else if(isset($_REQUEST["SetAsProductsOrdered"])) {
         }
     }
 }
+else if(isset($_REQUEST["SetAsProductsDelivered"])) {
+    foreach ($orderObject->GetOrderProducts() as $productId => $productObject) {
+        if ($productObject->GetStatus() == EProductStatus::Client_Informed()) {
+            $productObject->ChangeStatus(EProductStatus::Delivered());
+        }
+    }
+}
 
 
 $PageTemplate .= <<<PAGE
@@ -151,6 +158,7 @@ $PageTemplate .= <<<PAGE
                             <span class="btn btn-primary" onclick="document.location = 'addproduct.php?orderid={$orderId}&ShowHeaderFooter=0';"> הוסף מוצר </span>
                             {ClientInformedButton}
                             {ProductsOrderedButton}
+                            {ProductsDeliveredButton}
                         </h4></span>
                           <table class="table table-striped">
                              <thead style="background: rgba(216,246,210,0.2)">
@@ -214,9 +222,10 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
 \Services::setPlaceHolder($PageTemplate, "ClientWantsEmails", $wantEmail);
 \Services::setPlaceHolder($PageTemplate, "clientWantsEmailsBool", $wantEmailBool);
 
+//*********************************************{product operations Buttons}******************************************//
 //Show ClientInformed Button according to status
 $ClientInformedButtonText = "";
-if($orderObject->GetStatus() <EOrderStatus::Client_Informed()) {
+if($orderObject->GetStatus() < EOrderStatus::Client_Informed()) {
     foreach ($orderObject->GetOrderProducts() as $productObject) {
         if ($productObject->GetStatus() == EProductStatus::Arrived()) {
             //check if at least one product arrived and show inform button
@@ -239,6 +248,20 @@ if($orderObject->GetStatus() == EOrderStatus::Open()) {
     }
 }
 \Services::setPlaceHolder($PageTemplate, "ProductsOrderedButton", $ProductsOrderedButtonText);
+
+//Show Products Delivered Button if there are products that need to be Deliver
+$ProductsDeliveredButtonText = "";
+if($orderObject->GetStatus() !== EOrderStatus::Delivered()) {
+    foreach ($orderObject->GetOrderProducts() as $productObject) {
+        if ($productObject->GetStatus() == EProductStatus::Client_Informed()) {
+            //check if at least one product need to be deliver and show that button
+            $ProductsDeliveredButtonText = "<span class='btn btn-info' id='ProductsDelivered' data-SubmitPage = 'vieworder.php?id={$orderObject->GetId()}&ShowHeaderFooter=0&SetAsProductsDelivered=1' data-orderId='{$orderObject->GetId()}'> המוצרים נאספו </span>";
+            break;
+        }
+    }
+}
+\Services::setPlaceHolder($PageTemplate, "ProductsDeliveredButton", $ProductsDeliveredButtonText);
+//*********************************************{End product operations Buttons}******************************************//
 
 $onclickEditJS = "onclick=\"document.location = 'editproduct.php?id={$orderId}&productId={productId}&ShowHeaderFooter=0'\"";
 $productRow = <<<EOF
@@ -278,15 +301,10 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productId", $product->GetId());
 
     $remarks = $product->GetRemarks();
-    /*
-    if (empty($remarks))
-        $remarks = "לא קיים";
-    */
     \Services::setPlaceHolder($productList, "productRemarks", $remarks);
 
     \Services::setPlaceHolder($productList, "productTimestamp", $product->GetTimestamp()->format("d/m/Y"));
     \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productId={$product->GetId()}&ShowHeaderFooter=0\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
-
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
