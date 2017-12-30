@@ -30,23 +30,23 @@ $PageTemplate .= headerBody;
 \Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
 \Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
 ///
-//TODO: Change direction from LTR to RTL and fix style issues after that.
 $PageTemplate .= <<<PAGE
 <main>
   <orderboard>
     <div class="wrapper">
         <div class="responstable">
-                <table id="OrderBoard">
+                <table id="OrderBoard" style="direction: rtl">
                   <thead>
                     <tr>
-                        <th>סטאטוס</th>
-                        <th>מוכרן</th>
-                        <th>הערות</th>
-                        <th>ברקוד</th>
-                        <th>מוצר</th>
-                        <th>פלאפון</th>
-                        <th>שם הלקוח</th>
+                        <th>הזמנה</th>
                         <th>תאריך</th>
+                        <th>שם הלקוח</th>
+                        <th>פלאפון</th>
+                        <th>מוצר</th>
+                        <th>ברקוד</th>
+                        <th>הערות</th>
+                        <th>מוכרן</th>
+                        <th>סטאטוס</th>  
                     </tr>
                   </thead>
                   <tbody>
@@ -63,39 +63,21 @@ PAGE;
 //setting footer
 $PageTemplate .= footer;
 
-/*
-$OrderBoard_Table_Temlplate = <<<EOF
-<tr onclick="document.location = 'vieworder.php?id={orderId}';">
-    <td class="{flashClass}" style="color: {rowClass} !important; font-weight: 600;"><span>{orderStatus}</span></td>
-    <td>{orderSellerName}</td>
-    <td>{orderRemarks}</td>
-    <td>
-        <ul>{barcodeTemplate}</ul>
-    </td>
-    <td>
-        <ul>{productTemplate}</ul>
-    </td>
-    <td>{clientCellPhone}</td>
-    <td>{clientName}</td>
-    <td>{orderDate}</td>
-</tr>
-EOF;
-*/
-
 $OrderBoard_Table_Temlplate = <<<EOF
 <tr data-action="OpenBOSDialog" data-page="vieworder.php" data-dialogTitle="הזמנה {orderId}" data-variables="id={orderId}&ShowHeaderFooter=0">
-    <td class="{flashClass}" style="{rowClass} !important; font-weight: 600;"><span>{orderStatus}</span></td>
-    <td>{orderSellerName}</td>
-    <td>{orderRemarks}</td>
-    <td>
-        <ul>{barcodeTemplate}</ul>
-    </td>
-    <td>
-        <ul>{productTemplate}</ul>
-    </td>
-    <td>{clientCellPhone}</td>
-    <td>{clientName}</td>
-    <td>{orderDate}</td>
+  <td>{orderId}</td>
+  <td>{orderDate}</td>
+  <td>{clientName}</td>
+  <td>{clientCellPhone}</td>
+  <td>
+     <ul>{productTemplate}</ul>
+  </td>
+  <td>
+      <ul>{barcodeTemplate}</ul>
+  </td>
+  <td>{orderRemarks}</td>
+  <td>{orderSellerName}</td>
+  <td class="{flashClass}" style="{rowClass} !important; font-weight: 600;"><span>{orderStatus}</span></td>    
 </tr>
 EOF;
 
@@ -174,17 +156,18 @@ foreach ($shopOrders as $order) {
 $preOrderTemplate = <<<PreOrder
 <div class="pre-order-title">הזמנות מוקדמות</div>
     <div class="responstable">
-        <table id="PreOrderBoard" cellpadding="0" cellspacing="0">
+        <table id="PreOrderBoard" cellpadding="0" cellspacing="0" style="direction: rtl">
           <thead>
             <tr>
-                <th>סטאטוס</th>
-                <th>מוכרן</th>
-                <th>הערות</th>
-                <th>ברקוד</th>
-                <th>מוצר</th>
-                <th>פלאפון</th>
-                <th>שם הלקוח</th>
+                <th>הזמנה</th>
                 <th>תאריך</th>
+                <th>שם הלקוח</th>
+                <th>פלאפון</th>
+                <th>מוצר</th>
+                <th>ברקוד</th>
+                <th>הערות</th>
+                <th>מוכרן</th>
+                <th>סטאטוס</th>    
             </tr>
           </thead>
           <tbody>
@@ -196,19 +179,20 @@ PreOrder;
 
 
 $PreOrderBoard_Table_Temlplate = <<<EOF
-<tr onclick="document.location = 'vieworder.php?id={orderId}';">
-    <td>{orderStatus}</td>
-    <td>{orderSellerName}</td>
-    <td>{orderRemarks}</td>
-    <td>
-        <ul>{barcodeTemplate}</ul>
-    </td>
+<tr data-action="OpenBOSDialog" data-page="vieworder.php" data-dialogTitle="הזמנה {orderId}" data-variables="id={orderId}&ShowHeaderFooter=0">
+    <td>{orderId}</td>
+    <td>{orderDate}</td>
+    <td>{clientName}</td>
+    <td>{clientCellPhone}</td>
     <td>
         <ul>{productTemplate}</ul>
     </td>
-    <td>{clientCellPhone}</td>
-    <td>{clientName}</td>
-    <td>{orderDate}</td>
+    <td>
+        <ul>{barcodeTemplate}</ul>
+    </td>
+    <td>{orderRemarks}</td>
+    <td>{orderSellerName}</td>
+    <td>{orderStatus}</td>
 </tr>
 EOF;
 $productPreOrderTemplate_Quantity_More_Then_One = "<li><span style='color: indianred'> {ProductQuantity} X </span>{ProductName}</li>";
@@ -264,12 +248,6 @@ if(count($shopPreOrders)) {
     \Services::setPlaceHolder($PageTemplate, "PreOrderBoard_Table", "");
 
 }
-
-
-
-
-
-
 
 
 echo $PageTemplate;

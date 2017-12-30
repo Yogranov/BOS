@@ -99,13 +99,8 @@ class LoginC {
 
             //Log
             $shopClass = &Shop::GetById($connectedShopData["Id"]);
-            $timeNow = new \DateTime( "now", new \DateTimeZone("Asia/Jerusalem"));
-            $logFile = fopen("logs/EnterLog.php", "a");
             $logText = "סניף {$shopClass} התחבר";
             BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array($connectedShopData["Id"]));
-            fwrite($logFile, "\n" . "<br>" . "{$timeNow->format("Y/m/d H:i:s")} {$logText}.");
-            fclose($logFile);
-
         }
         else {
             $_SESSION["RegionId"] = $regionConnectData["Id"];

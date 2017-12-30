@@ -59,9 +59,7 @@ $PageTemplate .= <<<PAGE
                                 <li><span> תאריך פתיחה: </span> {$orderInfo->GetTimeStamp()->format("d/m/y H:i")}</li>
                                 <li><span> מוכרן: </span> {SellerName}</li>      
                                 <li><span> הערות להזמנה: </span> {$orderInfo->GetRemarks()}</li>
-                         <li><span> סטאטוס הזמנה: </span> {$orderInfo->GetStatus()->getDesc()}</li>
-
-                                <li><span>עדכון אחרון:</span> {$orderInfo->GetUpdateTime()->format("d/m/y H:i")}</li>
+                                <li><span> סטאטוס הזמנה: </span> {$orderInfo->GetStatus()->getDesc()}</li>
                            </ul> 
                     </div>
                 </div>

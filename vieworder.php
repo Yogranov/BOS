@@ -126,7 +126,6 @@ $PageTemplate .= <<<PAGE
                                 <li><span> מוכרן: </span> {SellerName}</li>      
                                 <li><span> הערות להזמנה: </span> {OrderRemarks}</li>
                                 <li><span>סטטוס הזמנה מחושב:</span> {OrderStatus}</li>
-                                <li><span>עדכון הזמנה אחרון:</span> {OrderLastUpdate}</li>
                            </ul> 
                         <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}&ShowHeaderFooter=0';">ערוך הזמנה </div>
                     </div>
@@ -182,13 +181,6 @@ if (empty($orderRemarks))
     $orderRemarks = "ללא";
 */
 \Services::setPlaceHolder($PageTemplate, "OrderRemarks", $orderRemarks);
-
-$updatedTime = $orderInfo->GetUpdateTime();
-if ($updatedTime instanceof \DateTime)
-    $OrderLastUpdate = $updatedTime->format("d/m/Y H:i");
-else
-    $OrderLastUpdate = "ללא עדכון";
-\Services::setPlaceHolder($PageTemplate, "OrderLastUpdate", $OrderLastUpdate);
 
 $clientEmail = $orderObject->GetClient()->GetEmail();
 if (empty($clientEmail))

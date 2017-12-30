@@ -14,16 +14,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$orderObject = Order::GetById(137);
 
+$encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
 
-
-
-\Services::dump($checkManager = BugOrderSystem::GetDB()->where("Id",1898)->getOne(Seller::TABLE_NAME));
-
-
-
-
-
+echo $encode;
 
 
 

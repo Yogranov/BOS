@@ -27,7 +27,6 @@ class Order
     private $sellerId;
     private $remarks;
     private $timeStamp;
-    private $updateTime;
     private $OrderInnerStatus;
     /**
      * @var EOrderStatus[]
@@ -52,8 +51,6 @@ class Order
         $this->sellerId = $orderData["SellerId"];
         $this->remarks = $orderData["Remarks"];
         $this->timeStamp = new \DateTime($orderData["Timestamp"]);
-        if ($orderData["updateTime"] !== "0000-00-00 00:00:00")
-            $this->updateTime = new \DateTime($orderData["updateTime"]);
 
         $orderArray = BugOrderSystem::GetDB()->where("OrderId", $orderData["OrderId"])->get("orderproducts", null);
         foreach ($orderArray as $orderProduct) {
@@ -347,13 +344,6 @@ class Order
     public function GetSeller() {
         $seller = &Seller::GetById($this->sellerId);
         return $seller;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function GetUpdateTime() {
-        return $this->updateTime;
     }
 
     /**
