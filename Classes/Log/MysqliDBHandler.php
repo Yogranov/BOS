@@ -15,7 +15,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
 {
-    const DEFAULT_DB_TABLE_NAME = "monolog";
+    const DEFAULT_DB_TABLE_NAME = "Monolog";
     const TIME_COLUMN_FORMAT = "YmdHis.u";
 
     private $dbTable;
