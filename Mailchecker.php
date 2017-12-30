@@ -10,7 +10,7 @@ require_once "Classes/BugOrderSystem.php";
 
 
 $orderId = $_GET['orderId'];
-$orderObj = Order::GetById($orderId);
+$orderObj = &Order::GetById($orderId);
 $oldStatus = $orderObj->GetStatus()->getDesc();
 
 if (count($orderId) != 0 && $orderObj->GetStatus() != EOrderStatus::Client_Informed()){

@@ -6,6 +6,8 @@
  * Time: 17:38
  */
 
+include_once "vendor/mobiledetect/mobiledetectlib/Mobile_Detect.php";
+
 class Services
 {
     /**
@@ -29,6 +31,23 @@ class Services
         if($echo) echo($output);
 
         return $output;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isMobile() {
+        if (class_exists("Mobile_Detect")) {
+            //using mobile detect class
+            $mobileDetect = new Mobile_Detect();
+            return $mobileDetect->isMobile();
+        }
+        else {
+            //inner check
+            if (preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]))
+                return true;
+        }
+        return false;
     }
 
     /**

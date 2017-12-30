@@ -1,0 +1,10 @@
+{
+  "name": "BugOrderSystem/Classes",
+  "require": {
+    "phpmailer/phpmailer": "~6.0",
+    "joshcam/mysqli-database-class": "dev-master",
+    "twilio/sdk": "~5.15",
+	"chillerlan/php-qrcode": "dev-master",
+	"mobiledetect/mobiledetectlib": "^2.8"
+  }
+}

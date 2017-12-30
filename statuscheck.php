@@ -125,21 +125,16 @@ foreach ($orderObj->GetOrderProducts() as $product) {
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 
-
 //if the client use smartPhone
-
-$mobile = <<<MOBILE
+$mobile = "";
+if(\Services::isMobile()){
+    $mobile = <<<MOBILE
         לניווט וחיוג מהיר: <br>
         <a href='waze://?q={$orderObj->GetShop()->GetLocation()}'><img src='/images/icons/waze.png' alt='waze' height='50' width='50'></a> 
         <a href=\"tel:{$orderObj->GetShop()->GetPhoneNumber()}\"><img src='/images/icons/telephone.png' alt='telephone'  height='50' width='50'></a>
 MOBILE;
-
-if(preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"])){
-    \Services::setPlaceHolder($PageTemplate,"mobile", $mobile);
-
-} else {
-    \Services::setPlaceHolder($PageTemplate,"mobile", "");
 }
+\Services::setPlaceHolder($PageTemplate,"mobile", $mobile);
 ///////////////////////
 
 

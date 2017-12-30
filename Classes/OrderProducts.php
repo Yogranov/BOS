@@ -18,6 +18,7 @@ class OrderProducts {
     private static $orderProduct = array();
 
     private $id;
+    private $orderId;
     private $productName;
     private $productBarcode;
     private $remarks;
@@ -40,6 +41,7 @@ class OrderProducts {
      */
     public function __construct(int $OrderId, string $ProductName, string $ProductBarcode, string $remarks = null, int $Quantity = 1) {
         $res = BugOrderSystem::GetDB()->where("OrderId", $OrderId)->where("ProductBarcode", $ProductBarcode)->getOne(self::TABLE_NAME, self::TABLE_KEY_COLUMN);
+        $this->orderId = $OrderId;
         if (BugOrderSystem::GetDB()->count == 0) {
             $orderProductArray = array(
                 "OrderId" => $OrderId,
@@ -104,8 +106,8 @@ class OrderProducts {
         if (!$success)
             throw new Exception("לא ניתן לשנות מסטטוס {0} לסטטוס {1} את הפריט {2}", null, $this->status, $newStatus, $this);
 
-        $logText = "הסטטוס של המוצר {product} השתנה מ-{oldStatus} ל-{newStatus}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc()));
+        $logText = "הסטטוס של המוצר {product} השתנה מ-{oldStatus} ל-{newStatus} בהזמנה {order}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc(), "order" => $this->orderId));
 
         $this->status = $newStatus;
         return $this->status;
