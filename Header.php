@@ -130,7 +130,7 @@ HeaderBody;
 
 const footer = <<<Footer
 <footer>
-        <div id="footer"> ~Beta 2.0~ </div>
+        <div id="footer"> ~Test Beta 2.0~ </div>
 </footer>
 </html>
 Footer;

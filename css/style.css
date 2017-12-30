@@ -10,6 +10,15 @@
 
 :root {
     --Body_Background-image: linear-gradient(135deg, #f4fafd 0%, #f3fbfe 100%);
+    /* Oper BugOrderSystem colors */
+    /*
+    --Footer_Background_Color: #efefef;
+    --Footer_Text_Color: black;
+    */
+
+    /* Test BugOrderSystem colors     */
+    --Footer_Background_Color: red;
+    --Footer_Text_Color: whitesmoke;
 }
 
 html {
@@ -90,7 +99,6 @@ header nav{
     float: right;
     text-shadow: 0 1px 0 #6a6a6a;
     height: 20px;
-
 }
 
 header:after{
@@ -660,11 +668,11 @@ order editing button
     bottom: 0;
     left: 0;
     padding: 8px;
-    background-color: #efefef;
+    background-color: var(--Footer_Background_Color);
     text-align: center;
     border-top: 1px solid rgba(0,0,0,0.5);
     font-family: "Open Sans Hebrew",Helvetica,Arial,sans-serif !important;
-
+    color: var(--Footer_Text_Color);
 }
 
 
