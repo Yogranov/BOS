@@ -51,17 +51,18 @@ $PageTemplate .= <<<PAGE
                 <option value="100">100</option>
             </select>
         </div>
-                <table id="mytable" class="table table-bordered">
+                <table id="mytable" class="table table-bordered" style="direction: rtl">
                   <thead>
                     <tr>
-                        <th>סטאטוס</th>
-                        <th>מוכרן</th>
-                        <th>הערות</th>
-                        <th>ברקוד</th> 
-                        <th>מוצר</th>
-                        <th>פלאפון</th>
-                        <th>שם הלקוח</th>
+                        <th>הזמנה</th>
                         <th>תאריך</th>
+                        <th>שם הלקוח</th>
+                        <th>פלאפון</th>
+                        <th>מוצר</th>
+                        <th>ברקוד</th> 
+                        <th>הערות</th>
+                        <th>מוכרן</th>
+                        <th>סטאטוס</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -155,18 +156,19 @@ $PageTemplate .= footer;
 
 $OrderBoard_Table_Temlplate = <<<EOF
 <tr data-action="OpenBOSDialog" data-page="vieworder.php" data-dialogTitle="הזמנה {orderId}" data-variables="id={orderId}&ShowHeaderFooter=0">
-    <td>{orderStatus}</td>
-    <td>{orderSellerName}</td>
-    <td>{orderRemarks}</td>
+   <td>{orderId}</td>
+   <td>{orderDate}</td>
+   <td>{clientName}</td>
+   <td>{clientCellPhone}</td>
+   <td>
+        <ul>{productTemplate}</ul>
+   </td>
     <td>
         <ul>{barcodeTemplate}</ul>
-    </td>
-    <td>
-        <ul>{productTemplate}</ul>
-    </td>
-    <td>{clientCellPhone}</td>
-    <td>{clientName}</td>
-    <td>{orderDate}</td>
+   </td>
+   <td>{orderRemarks}</td>
+   <td>{orderSellerName}</td>
+   <td>{orderStatus}</td>  
 </tr>
 EOF;
 $productOrderTemplate_Quantity_More_Then_One = "<li><span style='color: indianred'> {ProductQuantity} X </span>{ProductName}</li>";
