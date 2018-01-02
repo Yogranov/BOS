@@ -456,8 +456,7 @@ class Order
         $now = new \DateTime("now", new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
         $updateArray = array(
             "SellerId" => $this->sellerId,
-            "Remarks" => $this->remarks,
-            "updateTime" => $now->format("Y-m-d H:i:s")
+            "Remarks" => $this->remarks
         );
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)

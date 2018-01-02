@@ -9,14 +9,20 @@ namespace BugOrderSystem;
 
 require_once "Classes/BugOrderSystem.php";
 
-if(isset($_GET["id"])){
-    $decodeId = base64_decode($_GET["id"]);
-    $idExplode = explode("_",$decodeId);
-    $orderObj = Order::GetById((int)$idExplode[1]);
-    $shopId = $idExplode[0];
-    $unixTime = $idExplode[2];
-} else {
-    exit("לא ניתן להציג מידע, מספר הזמנה לא קיים");
+try {
+    if(isset($_GET["id"])){
+        $decodeId = base64_decode($_GET["id"]);
+        $idExplode = explode("_",$decodeId);
+        $orderObj = &Order::GetById((int)$idExplode[1]);
+        $shopId = $idExplode[0];
+        $unixTime = $idExplode[2];
+    } else {
+        throw new Exception("לא ניתן להציג מידע, מספר הזמנה לא קיים");
+    }
+}
+catch (\Throwable $e) {
+    echo $e->getMessage();
+    exit;
 }
 
 
@@ -141,12 +147,11 @@ if(preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hipto
 if($orderObj->GetShop()->GetId() == $shopId && $orderObj->GetTimeStamp()->format("U") == $unixTime && $orderObj->GetStatus()->getValue() !== EOrderStatus::Aborted[0]) {
     echo $PageTemplate;
 
-
     //Log the status changing
-    $logText = "הלקוח {$orderObj->GetClient()->GetFullName()} צפה בהזמנה מספר {$orderObj->GetId()}";
-    BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO());
+    $logText = "הלקוח {client} צפה ב{order}";
+    BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("client" => $orderObj->GetClient(), "order" => $orderObj));
 
-
+    
 } else {
     echo "<h2>אירע שגיאה, לא ניתן להציג דף זה</h2>";
 }
