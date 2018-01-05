@@ -17,10 +17,14 @@ use Log\ELogLevel;
 
 //echo 12344;
 //\Services::dump(new \DateTime("1512506414"));
+
+//$orderObject = &Order::GetById("113");
+//\Services::dump($orderObject);
+//\Services::dump($_SERVER);
+
 try
 {
     BugOrderSystem::GetLog();
-    //BugOrderSystem::GetLog()->Write("BlaBla2");
     foreach(BugOrderSystem::$logReadHandlers as $where => $handler) {
         \Services::dump($where);
         \Services::dump($handler->Read(0, new \DateTime("2017-12-02 14:35")));
@@ -31,10 +35,9 @@ catch (\Throwable $e) {
     echo $e->getMessage();
     BugOrderSystem::GetLog()->LogException($e);
 }
+
 /*
 \Services::dump(EOrderStatus::Arrived[0]);
-
-
 
 $orderId = 130;
 $orderObject = &Order::GetById($orderId);
