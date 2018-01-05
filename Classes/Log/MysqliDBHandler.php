@@ -16,7 +16,7 @@ require __DIR__ . '/vendor/autoload.php';
 class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
 {
     const DEFAULT_DB_TABLE_NAME = "Monolog";
-    const TIME_COLUMN_FORMAT = "YmdHis.u";
+    const TIME_COLUMN_FORMAT = "YmdHis";
 
     private $dbTable;
     private $initialized = false;
@@ -65,10 +65,13 @@ class MysqliDBHandler extends AbstractProcessingHandler implements ILogRead
      * @throws Exception
      */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
+        //TODO: need to check why its not working
+        /*
         if ($TimeFrom !== null)
             $this->mysqliDb->where("time", $TimeFrom->format(self::TIME_COLUMN_FORMAT), ">=");
         if ($TimeTo !== null)
             $this->mysqliDb->where("time", $TimeTo->format(self::TIME_COLUMN_FORMAT), "<=");
+        */
 
         $this->mysqliDb->orderBy("time", "Desc");
 

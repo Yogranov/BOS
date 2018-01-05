@@ -50,7 +50,8 @@ class BugOrderSystem {
             if (!class_exists("MysqliDb"))
                 throw new Exception("Mandatory 'MysqliDB' class not exist!");
 
-            self::$db = new \MysqliDb (Constant::MYSQL_SERVER, Constant::MYSQL_DATABASE_USERNAME, Constant::MYSQL_DATABASE_PASSWORD, Constant::MYSQL_DATABASE, Constant::MYSQL_SERVER_PORT);
+            $SqlCredential = \Credential::GetCredential('sql_' . Constant::MYSQL_SERVER . '_' . Constant::MYSQL_SERVER_PORT . '_' . Constant::MYSQL_DATABASE);
+            self::$db = new \MysqliDb (Constant::MYSQL_SERVER, $SqlCredential->GetUsername(), $SqlCredential->GetPassword(), Constant::MYSQL_DATABASE, Constant::MYSQL_SERVER_PORT);
             return self::$db;
         }
     }
@@ -77,7 +78,9 @@ class BugOrderSystem {
                 self::$logReadHandlers["file"] = self::$log->AddFileHandler(ELogLevel::DEBUG(), $LogsBaseDir, null, true,Constant::LOG_DEFAULT_MAX_FILE);
                 self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog".Constant::SYSTEM_TEST_OR_EMPTY);
                 self::$log->AddEmailHandler(ELogLevel::CRITICAL(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
-                self::$log->AddLogglyHandler(ELogLevel::DEBUG(), Constant::LOG_LOGGLY_TOKEN);
+
+                $LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
+                self::$log->AddLogglyHandler(ELogLevel::DEBUG(), $LogglyCredentials->GetPassword());
 
                 return self::$log;
             }
