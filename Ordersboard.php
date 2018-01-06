@@ -10,6 +10,10 @@ namespace BugOrderSystem;
 
 session_start();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once "Classes/BugOrderSystem.php";
 
 $shopId = $_SESSION["ShopId"];
@@ -81,7 +85,7 @@ $OrderBoard_Table_Temlplate = <<<EOF
 </tr>
 EOF;
 
-$productOrderTemplate_Quantity_More_Then_One = "<li><span style='color: indianred'> {ProductQuantity} X </span>{ProductName}</li>";
+$productOrderTemplate_Quantity_More_Then_One = "<li>{ProductName}<span style='color: indianred'> {ProductQuantity} X </span></li>";
 $productOrderTemplate_Quantity_One = "<li style='{productColor}'>{ProductName}</li>";
 
 $productOrderTemplate_Quantity_One_Code = "<li>{ProductCode}</li>";
@@ -132,9 +136,7 @@ foreach ($shopOrders as $order) {
 
             //Add color to product name if arrived
             if(count($order->GetOrderProducts()) > 1)
-                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
-
-
+                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[1][0]);
             }
         \Services::setPlaceHolder($orderProductString, "ProductName", $orderProduct->getProductName());
     }

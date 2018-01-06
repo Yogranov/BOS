@@ -15,13 +15,19 @@ error_reporting(E_ALL);
 require_once "Classes/BugOrderSystem.php";
 use Log\ELogLevel;
 
-//echo 12344;
-//\Services::dump(new \DateTime("1512506414"));
+/*
+$productData = array(
+    "8806088999920" => array(1, 1, "blablabla"),
+    "7290008314299" => array(2, 4, "")
+);
+var_dump(json_encode($productData));
+*/
 
-//$orderObject = &Order::GetById("113");
-//\Services::dump($orderObject);
+$orderObject = &Order::GetById("161");
+\Services::dump($orderObject);
 //\Services::dump($_SERVER);
 
+/*
 try
 {
     BugOrderSystem::GetLog();
@@ -35,7 +41,7 @@ catch (\Throwable $e) {
     echo $e->getMessage();
     BugOrderSystem::GetLog()->LogException($e);
 }
-
+*/
 /*
 \Services::dump(EOrderStatus::Arrived[0]);
 

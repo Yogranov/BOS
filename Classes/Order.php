@@ -8,7 +8,8 @@
 
 namespace BugOrderSystem;
 
-require_once "OrderProducts.php";
+//require_once "OrderProducts.php";
+require_once "Products.php";
 
 use Log\ELogLevel;
 
@@ -29,21 +30,17 @@ class Order
     private $timeStamp;
     private $OrderInnerStatus;
     /**
-     * @var EOrderStatus[]
+     * @var EOrderStatus
      */
     private $status;
-    /**
-     * @var OrderProducts[]
-     */
-    private $orderProducts;
+    private $orderProducts = array();
 
     /**
      * Order constructor.
      * @param array $orderData
      * @throws \Exception
      */
-    private function __construct(array $orderData)
-    {
+    private function __construct(array $orderData) {
         //\Services::dump($orderData);
         $this->id = $orderData["OrderId"];
         $this->clientId = $orderData["ClientId"];
@@ -52,10 +49,140 @@ class Order
         $this->remarks = $orderData["Remarks"];
         $this->timeStamp = new \DateTime($orderData["Timestamp"]);
 
+        /*
+         * Before Json Array
+         array(
+            "1095815981gjagki (barcode)" => array(quantity, statusEnum, remarks),
+            "176147yergh2 (barcode)" => array(quantity, statusEnum, remarks)
+        );
+        */
+
+        $orderProductsJson = json_decode($orderData["products"]);
+        if (!empty($orderProductsJson)) {
+            foreach ($orderProductsJson as $productBarcode => $productArray) {
+                $AnonymousProductClass = new class($productBarcode, $productArray) {
+                    /**
+                     * @var Products
+                     */
+                    private $productObject;
+                    /**
+                     * @var EProductStatus
+                     */
+                    private $status;
+                    private $quantity;
+                    private $remarks;
+
+                    /**
+                     *  constructor.
+                     * @param string $productBarcode
+                     * @param array $productArray
+                     * @throws Exception
+                     * @throws \Exception
+                     */
+                    public function __construct(string $productBarcode, array $productArray) {
+                        list($quantity, $status, $remarks) = $productArray;
+                        $this->productObject = &Products::GetByBarcode($productBarcode);
+                        $this->quantity = $quantity;
+                        $this->status = EProductStatus::search($status);
+                        $this->remarks = $remarks;
+                    }
+
+                    /**
+                     * @return string
+                     */
+                    public function GetProductName() {
+                        return $this->productObject->GetName();
+                    }
+
+                    /**
+                     * @return string
+                     */
+                    public function GetProductRemarks() {
+                        return $this->productObject->GetRemark();
+                    }
+
+                    /**
+                     * @return string
+                     */
+                    public function GetProductBarcode() {
+                        return $this->productObject->GetBarcode();
+                    }
+
+                    /**
+                     * @return EProductStatus
+                     */
+                    public function GetStatus() {
+                        return $this->status;
+                    }
+
+                    /**
+                     * @return int
+                     */
+                    public function GetQuantity() {
+                        return $this->quantity;
+                    }
+
+                    /**
+                     * @return int
+                     */
+                    public function GetRemarks() {
+                        return $this->remarks;
+                    }
+
+                    /**
+                     * @param EProductStatus $newStatus
+                     * @param bool $update
+                     */
+                    public function SetStatus(EProductStatus $newStatus, bool $update) {
+                        $this->status = $newStatus;
+                        if ($update)
+                            $this->Update();
+                    }
+
+                    /**
+                     * @param int $quantity
+                     * @param bool $update
+                     * @throws Exception
+                     */
+                    public function SetQuantity(int $quantity, bool $update) {
+                        if ($quantity <= 0)
+                            throw new Exception("unable to set Quantity to 0 or less", $quantity);
+
+                        if ($quantity > Constant::PRODUCT_MAX_QUANTITY)
+                            throw new Exception("unable to set Quantity to {0}! Max are {1}", null, $quantity, Constant::PRODUCT_MAX_QUANTITY);
+
+                        $this->quantity = $quantity;
+                        if ($update)
+                            $this->Update();
+                    }
+
+                    /**
+                     * @param string $remarks
+                     * @param bool $update
+                     */
+                    public function SetRemarks(string $remarks, bool $update) {
+                        $this->remarks = $remarks;
+                        if ($update)
+                            $this->Update();
+                    }
+
+
+                    public function Update() {
+                        //TODO: Need to write!
+                        parent::Update();
+                    }
+
+                };
+                $this->orderProducts[$productBarcode] = $AnonymousProductClass;
+            }
+        }
+
+        /*
         $orderArray = BugOrderSystem::GetDB()->where("OrderId", $orderData["OrderId"])->get("orderproducts", null);
         foreach ($orderArray as $orderProduct) {
             $this->orderProducts[$orderProduct["ProductId"]] = new OrderProducts($this->id, $orderProduct["ProductName"], $orderProduct["ProductBarcode"]);
         }
+        */
 
         if (in_array($orderData["Status"], EOrderStatus::toArray()))
             $this->OrderInnerStatus = EOrderStatus::search($orderData["Status"]);
@@ -362,8 +489,9 @@ class Order
         if (is_array($this->orderProducts) && count($this->orderProducts) > 0) {
             $leastProductStatus = "";
             $mapKeys = array_keys(Constant::ORDER_PRODUCT_STATUS_TO_ORDER_STATUS_MAP);
-            foreach ($this->orderProducts as $product) {
-                $ProductStatus = $product->GetStatus();
+
+            foreach ($this->orderProducts as $barcode => $productObject) {
+                $ProductStatus = $productObject->GetStatus();
                 if (!empty($leastProductStatus)) {
                     $currentProductLoc = @array_search($ProductStatus->getName(), $mapKeys);
                     if ($currentProductLoc !== false && $currentProductLoc > @array_search($leastProductStatus->getName(), $mapKeys))
@@ -462,8 +590,8 @@ class Order
         if (!$success)
             throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
 
-        $logText = "הלקוח ".$this." עודכן";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), $updateArray);
+        $logText = "{order} עודכן!";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "OrderArray" => $updateArray));
     }
 
     /**
