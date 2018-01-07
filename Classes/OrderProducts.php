@@ -11,70 +11,59 @@ namespace BugOrderSystem;
 use Log\ELogLevel;
 
 class OrderProducts {
-
-    const TABLE_KEY_COLUMN = "ProductId";
-    const TABLE_NAME = "orderproducts";
-
-    private static $orderProduct = array();
-
-    private $id;
     private $orderId;
-    private $productName;
-    private $productBarcode;
+    /**
+     * @var Products
+     */
+    private $product;
     private $remarks;
-    private $timestamp;
-    private $quantity;
     /**
      * @var EProductStatus
      */
     private $status;
+    private $quantity;
 
     /**
      * OrderProducts constructor.
-     * @param int $OrderId
-     * @param string $ProductName
-     * @param string $ProductBarcode
+     * @param int $orderId
+     * @param Products $product
+     * @param int $quantity
+     * @param EProductStatus $status
      * @param string|null $remarks
-     * @param int $Quantity
      * @throws Exception
      * @throws \Exception
      */
-    public function __construct(int $OrderId, string $ProductName, string $ProductBarcode, string $remarks = null, int $Quantity = 1) {
-        $res = BugOrderSystem::GetDB()->where("OrderId", $OrderId)->where("ProductBarcode", $ProductBarcode)->getOne(self::TABLE_NAME, self::TABLE_KEY_COLUMN);
-        $this->orderId = $OrderId;
-        if (BugOrderSystem::GetDB()->count == 0) {
-            $orderProductArray = array(
-                "OrderId" => $OrderId,
-                "ProductName" => $ProductName,
-                "ProductBarcode" => $ProductBarcode,
-                "Remarks" => $remarks,
-                "Quantity" => $Quantity,
-                "Status" => EProductStatus::Created[0]
-            );
-
-            $productInfoId = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $orderProductArray);
-            if (!$productInfoId)
-                throw new Exception("לא ניתן לייצר הזמנה כרגע", $orderProductArray);
-        }
-        else {
-            $productInfoId = $res[self::TABLE_KEY_COLUMN];
-        }
-
-        $OrderInfoData = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $productInfoId)->getOne(self::TABLE_NAME);
-        $this->id = $productInfoId;
-        $this->productName = $OrderInfoData["ProductName"];
-        $this->productBarcode = $OrderInfoData["ProductBarcode"];
-        $this->remarks = $OrderInfoData["Remarks"];
-        $this->timestamp = new \DateTime($OrderInfoData["Timestamp"]);
-        $this->quantity = $OrderInfoData["Quantity"];
-        $this->status = EProductStatus::search($OrderInfoData["Status"]);
+    public function __construct(int $orderId, Products $product, int $quantity, EProductStatus $status, string $remarks = null) {
+        $this->orderId = $orderId;
+        $this->product = $product;
+        $this->SetQuantity($quantity, false);
+        $this->status = $status;
+        $this->remarks = $remarks;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function GetId() {
-        return $this->id;
+    public function GetProductName() {
+        return $this->product->GetName();
+    }
+
+    public function GetProductRemark() {
+        return $this->product->GetRemark();
+    }
+
+    /**
+     * @return string
+     */
+    public function GetProductBarcode() {
+        return $this->product->GetBarcode();
+    }
+
+    /**
+     * @return string
+     */
+    public function GetRemarks() {
+        return $this->remarks;
     }
 
     /**
@@ -93,88 +82,14 @@ class OrderProducts {
 
     /**
      * @param EProductStatus $newStatus
-     * @return EProductStatus|static
-     * @throws Exception
-     * @throws \Exception
      */
     public function ChangeStatus(EProductStatus $newStatus) {
-        //\Services::dump($newStatus);
-        unset($info);
-        $info = array("Status" => $newStatus->getValue());
-        //\Services::dump($newStatusValue);
-        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
-        if (!$success)
-            throw new Exception("לא ניתן לשנות מסטטוס {0} לסטטוס {1} את הפריט {2}", null, $this->status, $newStatus, $this);
-
-        $logText = "הסטטוס של המוצר {product} השתנה מ-{oldStatus} ל-{newStatus} בהזמנה {order}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc(), "order" => $this->orderId));
-
-        $this->status = $newStatus;
-        return $this->status;
-    }
-
-    /**
-     * @param string $Remarks
-     * @throws Exception
-     * @throws \Exception
-     */
-    public function ChangeRemarks(string $Remarks) {
-        $this->remarks = $Remarks;
-        $this->Update();
-    }
-
-    /**
-     * @return string
-     */
-    public function getProductName() {
-        return $this->productName;
-    }
-
-    /**
-     * @return string
-     */
-    public function GetProductBarcode() {
-        return $this->productBarcode;
-    }
-
-    /**
-     * @return string
-     */
-    public function GetRemarks() {
-        return $this->remarks;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function GetTimestamp() {
-        return $this->timestamp;
-    }
-
-    /**
-     * @param $productName
-     * @throws Exception
-     * @throws \Exception
-     */
-    public function SetProductName($productName, bool $update = true) {
-        $this->productName = $productName;
-        if ($update)
-            $this->Update();
-    }
-
-    /**
-     * @param $productBarcode
-     * @throws Exception
-     * @throws \Exception
-     */
-    public function SetProductBarcode($productBarcode, bool $update = true) {
-        $this->productBarcode = $productBarcode;
-        if ($update)
-            $this->Update();
+        //TODO: need to rewrite!
     }
 
     /**
      * @param $remarks
+     * @param bool $update
      * @throws Exception
      * @throws \Exception
      */
@@ -191,8 +106,8 @@ class OrderProducts {
      * @throws \Exception
      */
     public function SetQuantity(int $quantity, bool $update = true) {
-        if($quantity < 1 || $quantity > Constant::ORDER_MAX_QUANTITY)
-            throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::ORDER_MAX_QUANTITY);
+        if($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
+            throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::PRODUCT_MAX_QUANTITY);
 
         $this->quantity = $quantity;
         if ($update)
@@ -200,28 +115,16 @@ class OrderProducts {
     }
 
     /**
-     * @throws Exception
-     * @throws \Exception
+     *
      */
     public function Update() {
-        $updateArray = array(
-            "ProductName" => $this->productName,
-            "ProductBarcode" => $this->productBarcode,
-            "Quantity" => $this->quantity,
-            "Remarks" => $this->remarks
-        );
-        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
-        if (!$success)
-            throw new Exception("לא ניתן לעדכן את {0}", $updateArray, $this);
-
-        $logText = "המוצר ".$this." עודכן";
-        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
+        //TODO: need to rewrite!
     }
 
     /**
      * @return string
      */
     public function __toString() {
-        return $this->id.": ".$this->productName." (".$this->productBarcode.")";
+        return "המוצר {$this->product->GetName()} ({$this->product->GetBarcode()}) בהזמנה {$this->orderId}";
     }
 }
