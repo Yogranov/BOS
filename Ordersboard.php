@@ -10,9 +10,11 @@ namespace BugOrderSystem;
 
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+if (Constant::SYSTEM_DEBUG) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
 
 require_once "Classes/BugOrderSystem.php";
 
@@ -128,7 +130,7 @@ foreach ($shopOrders as $order) {
 
             //Add color to product name if arrived
             if(count($order->GetOrderProducts()) > 1)
-                \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
+                \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()[0]]);
 
 
         } else {

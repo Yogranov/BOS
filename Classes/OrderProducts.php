@@ -82,9 +82,17 @@ class OrderProducts {
 
     /**
      * @param EProductStatus $newStatus
+     * @return EProductStatus
+     * @throws Exception
+     * @throws \Exception
      */
     public function ChangeStatus(EProductStatus $newStatus) {
-        //TODO: need to rewrite!
+        $logText = "הסטטוס של {product} השתנה מ-{oldStatus} ל-{newStatus} ב{order}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc(), "order" => $this->orderId));
+
+        $this->status = $newStatus;
+        $this->Update();
+        return $this->status;
     }
 
     /**
@@ -115,10 +123,12 @@ class OrderProducts {
     }
 
     /**
-     *
+     * @throws Exception
+     * @throws \Exception
      */
     public function Update() {
-        //TODO: need to rewrite!
+        $orderObject = &Order::GetById($this->orderId);
+        $orderObject->ProductsUpdate();
     }
 
     /**

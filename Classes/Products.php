@@ -28,8 +28,7 @@ class Products {
      * Products constructor.
      * @param array $productData
      */
-    private function __construct(array $productData)
-    {
+    private function __construct(array $productData) {
         //\Services::dump($productData);
         $this->barcode = $productData["Barcode"];
         $this->name = $productData["Name"];
@@ -42,8 +41,7 @@ class Products {
      * @return mixed
      * @throws Exception
      */
-    private static function AddProductByProductData($barcode, $productData)
-    {
+    private static function AddProductByProductData($barcode, $productData) {
         $res = @self::$products[$barcode];
 
         if (!empty($res))
@@ -54,7 +52,6 @@ class Products {
 
         self::$products[$barcode] = new Products($productData);
         return self::$products[$barcode];
-
     }
 
     /**
@@ -78,13 +75,11 @@ class Products {
             $res = self::AddProductByProductData($barcode, $ProductData);
         }
 
-        $logText = "נשלף האובייקט של המוצר {Product}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::DEBUG(), array("Product" => $barcode));
+        //$logText = "נשלף האובייקט של המוצר {Product}";
+        //BugOrderSystem::GetLog()->Write($logText, ELogLevel::DEBUG(), array("Product" => $barcode));
 
         return $res;
     }
-
-
 
     /**
      * @param string $barcode
@@ -94,7 +89,7 @@ class Products {
      * @throws Exception
      * @throws \Exception
      */
-    public static function Add(string $barcode, string $name, string $remarks = null){
+    public static function Add(string $barcode, string $name, string $remarks = null) {
         if (empty($barcode))
             throw new Exception("Illegal Barcode {0}!", null, $barcode);
 
@@ -167,7 +162,7 @@ class Products {
      * @throws Exception
      * @throws \Exception
      */
-    public function SetRemarks(string $remarks, bool $update = true){
+    public function SetRemarks(string $remarks, bool $update = true) {
         $this->remarks = $remarks;
         if ($update)
             $this->Update();

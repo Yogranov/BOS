@@ -13,8 +13,9 @@ var dialogHideSpeed = speed;
 var dialogSizeChangeSpeed = 200;
 var DialogClasses = "dialogWithDropShadow dialogBackground";
 
-
-
+function outputUpdate(range, where) {
+    document.querySelector(where).value = range;
+}
 
 $(document).ready(function(){
 

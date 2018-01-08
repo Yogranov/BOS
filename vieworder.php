@@ -11,6 +11,11 @@ session_start();
 @ob_start();
 require_once "Classes/BugOrderSystem.php";
 
+if (Constant::SYSTEM_DEBUG) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
 
 $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
@@ -43,20 +48,18 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !i
 }
 \Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 
-
-
-if (isset($_REQUEST["ProductId"])) {
-    $productId = $_REQUEST["ProductId"];
-    $productStatus = $_REQUEST["productstatus_" . $productId];
+if (isset($_REQUEST["productBarcode"])) {
+    $productBarcode = $_REQUEST["productBarcode"];
+    $productStatus = $_REQUEST["productstatus_" . $productBarcode];
 
     $orderProductArray = $orderObject->GetOrderProducts();
     $newStatus = EProductStatus::search($productStatus);
 
-    if ($orderProductArray[$productId]->ChangeStatus($newStatus)) {
+    if ($orderProductArray[$productBarcode]->ChangeStatus($newStatus)) {
         if ($newStatus == EProductStatus::Arrived()) {
             $arrivedCount = 0;
             $allOrderProducts = $orderObject->GetOrderProducts();
-            foreach ($orderObject->GetOrderProducts() as $innerProductId => $productObject) {
+            foreach ($orderObject->GetOrderProducts() as $innerproductBarcode => $productObject) {
                 if ($productObject->GetStatus() == EProductStatus::Arrived())
                     $arrivedCount++;
             }
@@ -84,21 +87,21 @@ if (isset($_REQUEST["ProductId"])) {
     }
 }
 else if(isset($_REQUEST["SetAsClientInformed"])) {
-    foreach ($orderObject->GetOrderProducts() as $productId => $productObject) {
+    foreach ($orderObject->GetOrderProducts() as $productBarcode => $productObject) {
         if ($productObject->GetStatus()->getValue() == EProductStatus::Arrived[0]) {
             $productObject->ChangeStatus(EProductStatus::Client_Informed());
         }
     }
 }
 else if(isset($_REQUEST["SetAsProductsOrdered"])) {
-    foreach ($orderObject->GetOrderProducts() as $productId => $productObject) {
+    foreach ($orderObject->GetOrderProducts() as $productBarcode => $productObject) {
         if ($productObject->GetStatus() == EProductStatus::Created()) {
             $productObject->ChangeStatus(EProductStatus::Ordered());
         }
     }
 }
 else if(isset($_REQUEST["SetAsProductsDelivered"])) {
-    foreach ($orderObject->GetOrderProducts() as $productId => $productObject) {
+    foreach ($orderObject->GetOrderProducts() as $productBarcode => $productObject) {
         if ($productObject->GetStatus() == EProductStatus::Client_Informed()) {
             $productObject->ChangeStatus(EProductStatus::Delivered());
         }
@@ -168,7 +171,6 @@ $PageTemplate .= <<<PAGE
                                   <th>ברקוד</th>
                                   <th>סטטוס</th>
                                   <th>הערות</th>
-                                  <th>תאריך</th>
                                   <th></th>
                                </tr>
                              </thead>
@@ -263,22 +265,21 @@ if($orderObject->GetStatus() !== EOrderStatus::Delivered()) {
 \Services::setPlaceHolder($PageTemplate, "ProductsDeliveredButton", $ProductsDeliveredButtonText);
 //*********************************************{End product operations Buttons}******************************************//
 
-$onclickEditJS = "onclick=\"document.location = 'editproduct.php?id={$orderId}&productId={productId}&ShowHeaderFooter=0'\"";
+$onclickEditJS = "onclick=\"document.location = 'editproduct.php?id={$orderId}&productBarcode={productBarcode}&ShowHeaderFooter=0'\"";
 $productRow = <<<EOF
 <tr style="cursor: pointer;">
     <td {$onclickEditJS}>{productName}</td>
     <td {$onclickEditJS}>{productQuantity}</td>
     <td {$onclickEditJS}>{productBarcode}</td>
     <td>
-        <form method="POST" id="changeProductStatus_{productId}" name="changeProductStatus_{productId}">
-              <input type="hidden" name="ProductId" id="ProductId" value={productId}>
-              <select class="productstatus" name="productstatus_{productId}" data-ProductId="{productId}" data-OrderId="{$orderObject->GetId()}" required>
+        <form method="POST" id="changeProductStatus_{productBarcode}" name="changeProductStatus_{productBarcode}">
+              <input type="hidden" name="productBarcode" id="productBarcode" value={productBarcode}>
+              <select class="productstatus" name="productstatus_{productBarcode}" data-OrderId="{$orderObject->GetId()}" required>
                {productStatusOptions}
                </select>
         </form>
     </td>
     <td {$onclickEditJS}>{productRemarks}</td>
-    <td {$onclickEditJS}>{productTimestamp}</td>
     <td {$onclickEditJS}>{editProduct}</td>
 </tr>
 EOF;
@@ -298,13 +299,10 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     }
     \Services::setPlaceHolder($productList, "productStatusOptions", $productStatusString);
 
-    \Services::setPlaceHolder($productList, "productId", $product->GetId());
-
     $remarks = $product->GetRemarks();
     \Services::setPlaceHolder($productList, "productRemarks", $remarks);
 
-    \Services::setPlaceHolder($productList, "productTimestamp", $product->GetTimestamp()->format("d/m/Y"));
-    \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productId={$product->GetId()}&ShowHeaderFooter=0\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
+    \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productBarcode={$product->GetProductBarcode()}&ShowHeaderFooter=0\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
 }
 \Services::setPlaceHolder($PageTemplate, "productsList", $productList);
 

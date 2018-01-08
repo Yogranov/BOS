@@ -33,6 +33,9 @@ class Order
      * @var EOrderStatus
      */
     private $status;
+    /**
+     * @var OrderProducts[]
+     */
     private $orderProducts = array();
 
     /**
@@ -49,22 +52,7 @@ class Order
         $this->remarks = $orderData["Remarks"];
         $this->timeStamp = new \DateTime($orderData["Timestamp"]);
 
-        /*
-         * Before Json Array
-         array(
-            "1095815981gjagki (barcode)" => array(quantity, statusEnum, remarks),
-            "176147yergh2 (barcode)" => array(quantity, statusEnum, remarks)
-        );
-        */
-
-        if (!empty($orderData["products"])) {
-            $orderProductsJson = json_decode($orderData["products"]);
-            foreach ($orderProductsJson as $productBarcode => $productArray) {
-                list($quantity, $status, $remarks) = $productArray;
-                $productObject = &Products::GetByBarcode($productBarcode);
-                $this->orderProducts[$productBarcode] = new OrderProducts($this->id, $productObject, $quantity, EProductStatus::search($status), $remarks);
-            }
-        }
+        $this->JsonStringToOrderProduct($orderData["products"]);
 
         if (in_array($orderData["Status"], EOrderStatus::toArray()))
             $this->OrderInnerStatus = EOrderStatus::search($orderData["Status"]);
@@ -74,10 +62,10 @@ class Order
     /**
      * @param $orderId
      * @param $orderData
-     * @return mixed
+     * @return Order
      * @throws Exception
      */
-    private static function AddOrderByOrderData($orderId, $orderData)
+    private static function AddOrderByOrderData(int $orderId, array $orderData)
     {
         $res = @self::$orders[$orderId];
 
@@ -90,6 +78,39 @@ class Order
         self::$orders[$orderId] = new Order($orderData);
         return self::$orders[$orderId];
 
+    }
+
+    /**
+     * @return string
+     */
+    private function convertOrderProductArrayToJsonString() {
+        if (is_array($this->orderProducts) && count($this->orderProducts) > 0) {
+            $jsonArray = array();
+            foreach ($this->orderProducts as $barcode => $orderProduct) {
+                $jsonArray[$barcode] = array($orderProduct->GetQuantity(), $orderProduct->GetStatus()->getValue(), $orderProduct->GetRemarks());
+            }
+            if (is_array($jsonArray) && count($jsonArray) > 0)
+                return json_encode($jsonArray);
+        }
+
+        return json_encode("");
+    }
+
+    /**
+     * @param string|null $jsonProducts
+     * @throws Exception
+     * @throws \Exception
+     */
+    private function JsonStringToOrderProduct(string $jsonProducts = null) {
+        if (is_null($jsonProducts))
+            return;
+
+        $orderProductsJson = (array)@json_decode($jsonProducts);
+        foreach ($orderProductsJson as $productBarcode => $productArray) {
+            list($quantity, $status, $remarks) = $productArray;
+            $productObject = &Products::GetByBarcode($productBarcode);
+            $this->AddOrderProduct($productObject, $quantity, EProductStatus::search($status), $remarks);
+        }
     }
 
     /**
@@ -311,24 +332,6 @@ class Order
     }
 
     /**
-     * @param string $ProductName
-     * @param string $ProductBarcode
-     * @param string $Remarks
-     * @throws Exception
-     * @throws \Exception
-     */
-    public function AddOrderProduct(string $ProductName, string $ProductBarcode, string $Remarks) {
-        if (array_key_exists($this->id, $this->orderProducts))
-            throw new Exception("המוצר {0} כבר קיים בהזמנה של הלקוח ולכן לא ניתן להוסיפו!", $this->orderProducts, $ProductName);
-
-        $orderProductObject = new OrderProducts($this->id, $ProductName, $ProductBarcode, $Remarks);
-        $this->orderProducts[$this->id] = $orderProductObject;
-
-        $logText = "נוסף המוצר {orderProductObject} ל{Order}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProductObject" => $orderProductObject, "Order" => $this));
-    }
-
-    /**
      * @return int
      */
     public function GetId() {
@@ -402,13 +405,6 @@ class Order
     }
 
     /**
-     * @return OrderProducts[]
-     */
-    public function GetOrderProducts() {
-        return $this->orderProducts;
-    }
-
-    /**
      * @return Client
      * @throws \Exception
      */
@@ -418,20 +414,30 @@ class Order
     }
 
     /**
-     * @param EOrderStatus $status
-     * @return EOrderStatus|EOrderStatus[]|static
-     * @throws Exception
-     * @throws \Exception
+     * @return OrderProducts[]
      */
-    public function ChangeStatus(EOrderStatus $status) {
-        $info = array("Status" => $status->getValue());
-        BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $info);
+    public function GetOrderProducts() {
+        return $this->orderProducts;
+    }
 
-        $logText = "סטטוס {$this} השתנה";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array(EOrderStatus::search($status)->getDesc()));
+    /**
+     * @param Products $product
+     * @param int $quantity
+     * @param EProductStatus|null $status
+     * @param string|null $remarks
+     * @throws Exception
+     */
+    public function AddOrderProduct(Products $product, int $quantity = 1, EProductStatus $status = null, string $remarks = null) {
+        if (is_array($this->orderProducts) && array_key_exists($product->GetBarcode(), $this->orderProducts))
+            throw new Exception("{0} כבר קיים ב{1}!", null, $product, $this);
 
-        $this->status = $status;
-        return $this->status;
+        if ($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
+            throw new Exception("הכמות שהוזנה ({0}) ל{1} ב{2} אינה חוקית!", null, $quantity, $product, $this);
+
+        if (is_null($status))
+            $status = EProductStatus::Created();
+
+        $this->orderProducts[$product->GetBarcode()] = new OrderProducts($this->id, $product, $quantity, $status, $remarks);
     }
 
     /**
@@ -463,9 +469,9 @@ class Order
      * @throws \Exception
      */
     public function Update() {
-        $now = new \DateTime("now", new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
         $updateArray = array(
             "SellerId" => $this->sellerId,
+            "products" => $this->convertOrderProductArrayToJsonString(),
             "Remarks" => $this->remarks
         );
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
@@ -474,6 +480,19 @@ class Order
 
         $logText = "{order} עודכן!";
         BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "OrderArray" => $updateArray));
+    }
+
+    public function ProductsUpdate() {
+        $jsonString = $this->convertOrderProductArrayToJsonString();
+        $updateArray = array(
+            "products" => $jsonString
+        );
+        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);
+        if (!$success)
+            throw new Exception("לא ניתן לעדכן את המוצרים של {0}", $updateArray, $this);
+
+        $logText = " עודכנו המוצרים {products} של {order}!";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "products"=> $jsonString));
     }
 
     /**
