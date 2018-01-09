@@ -79,6 +79,18 @@ try {
             }
             break;
 
+        case "GetProductData":
+            list($productBacrcode) = $pageData;
+            \Services::dump($productBacrcode);
+            try {
+                $productObject = &Products::GetByBarcode($productBacrcode);
+                $outputData = (array)$productObject;
+            }
+            catch (\Throwable $e) {
+                $outputData = 0;
+            }
+            break;
+
         default:
             throw new Exception("invalid API '%1' method!", $pageData, $pageMethod);
     }

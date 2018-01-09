@@ -8,14 +8,13 @@
 namespace BugOrderSystem;
 
 session_start();
+require_once "Classes/BugOrderSystem.php";
 
 if (Constant::SYSTEM_DEBUG) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 }
-
-require_once "Classes/BugOrderSystem.php";
 
 $localUrl = 'https://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 if ($_SERVER["HTTP_REFERER"] !== $localUrl)
