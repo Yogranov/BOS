@@ -26,6 +26,11 @@ html {
 }
 
 
+.ui-autocomplete-loading {
+    background: white url("../images/Loading_icon.gif") LEFT center no-repeat;
+    background-size: 100px 50px;
+}
+
 
 body, ul li {
     margin: 0px;

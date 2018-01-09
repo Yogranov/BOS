@@ -50,7 +50,7 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !i
 
 if (isset($_REQUEST["productBarcode"])) {
     $productBarcode = $_REQUEST["productBarcode"];
-    $productStatus = $_REQUEST["productstatus_" . $productBarcode];
+    $productStatus = $_REQUEST[$productBarcode];
 
     $orderProductArray = $orderObject->GetOrderProducts();
     $newStatus = EProductStatus::search($productStatus);
@@ -274,7 +274,7 @@ $productRow = <<<EOF
     <td>
         <form method="POST" id="changeProductStatus_{productBarcode}" name="changeProductStatus_{productBarcode}">
               <input type="hidden" name="productBarcode" id="productBarcode" value={productBarcode}>
-              <select class="productstatus" name="productstatus_{productBarcode}" data-OrderId="{$orderObject->GetId()}" required>
+              <select class="productstatus" name="{productBarcode}" data-OrderId="{$orderObject->GetId()}" required>
                {productStatusOptions}
                </select>
         </form>

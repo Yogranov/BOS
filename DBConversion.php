@@ -27,15 +27,22 @@ if (is_array($orderProducts) && count($orderProducts) > 0) {
     if ($numUpdatedOrderTable > 0) {
         echo " הזמנות עודכנו בעמודת הפריטים בבסיס הנתונים בטבלת ההזמנות:</br>{$numUpdatedOrderTable}ל";
         \Services::dump($updatedOrderTable);
-        echo "<br><br>";
     }
+    else {
+        echo "לא עודכנו הזמנות בבסיס הנתונים!";
+    }
+    echo "<br><br>";
 
     $numInsertedProducts = count($insertedProducts);
     if ($numInsertedProducts > 0) {
         echo "{$numInsertedProducts} פריטים הוכנסו לטבלת products";
         \Services::dump($insertedProducts);
-        echo "<br><br>";
     }
+    else {
+        echo "לא הוכנסו פריטים חדשים לבסיס הנתונים לטבלת product";
+    }
+    echo "<br><br>";
+
 }
 
 /**
@@ -68,19 +75,19 @@ function AddProduct(array $productData, array &$inserted) {
 function AddProductsToOrderTable(array $productData, array &$updated){
     $orderProductArray = array();
     $orderProduct = BugOrderSystem::GetDB()->where("OrderId", $productData["OrderId"])->get("orders", null, "products");
-    if (!is_null($orderProduct[0]["products"])) {
-        $orderProductArray = (array)@json_decode($orderProduct[0]["products"]);
-    }
+    $orderProduct = $orderProduct[0]["products"];
+    if (!is_null($orderProduct))
+        $orderProductArray = (array)@json_decode($orderProduct);
 
-    /*
-    if (array_key_exists($productData["ProductBarcode"], $orderProductArray)) {
-        unset($updated[$productData["OrderId"]]);
+    $ProductBarcode = $productData["ProductBarcode"];
+
+    if (in_array($ProductBarcode, array_keys($orderProductArray))) {
         return;
     }
-    */
 
-    $orderProductArray[$productData["ProductBarcode"]] = array($productData["Quantity"], $productData["Status"], $productData["Remarks"]);
+    $orderProductArray[$ProductBarcode] = array($productData["Quantity"], $productData["Status"], $productData["Remarks"]);
     $jsonString = @json_encode($orderProductArray);
+
     $updateData = array(
         "products" => $jsonString
     );

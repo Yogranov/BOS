@@ -20,8 +20,33 @@ function outputUpdate(range, where) {
 $(document).ready(function(){
 
     var Dialog = $("#BOS_Dialog");
+    var DialogIframe = Dialog.children("iframe");
     var Body = $('body');
     var IframeUrl = "";
+
+    //**************************** {BugOrderSystem addproduct.php Page -  } *****************************//
+    $( "#form-product-barcode" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax( {
+                url: "API_CALLS.php?method=SearchProductByBarcode",
+                dataType: "json",
+                data: {
+                    data: request.term
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            } );
+        },
+        minLength: 3,
+        change: function( event, ui ) {
+            var value = $("#form-product-barcode").val();
+            GetBarcodeData(value);
+        },
+        select: function( event, ui ) {
+            GetBarcodeData(ui.item.value, DialogIframe);
+        }
+    });
 
     //**************************** {BugOrderSystem ProductsDelivered button - to change products that need to be deliver to delivered status } *****************************//
     $("#ProductsDelivered").on( "click", function() {
@@ -116,8 +141,8 @@ $(document).ready(function(){
             },
             close: function() {
                 //closing function
-                var src = "vieworder.php?id="+OrderId+"&ShowHeaderFooter=0";
-                window.location.href = src;
+                var source = "vieworder.php?id="+OrderId+"&ShowHeaderFooter=0";
+                window.location.href = source;
             }
         });
     }
@@ -163,15 +188,7 @@ $(document).ready(function(){
                 class: "btn btn-danger",
                 click: function(e) {
                     e.preventDefault();
-                    /*
-                    console.log(IframeUrl);
-                    if (IframeUrl.includes("neworder.php")) {
-                        Dialog.children("iframe").submit();
-                    }
-                    else {
-                    */
-                        $( this ).dialog( "close" );
-                    //}
+                    $( this ).dialog( "close" );
                 }
             }
         ],
@@ -205,16 +222,12 @@ $(document).ready(function(){
     });
 
     //auto adjust iframe size on load/reload
-    Dialog.children("iframe").on("load", function () {
-        var iframeBody = $(this).contents().find("body");
+    DialogIframe.on("load", function () {
         if (LegalIframe($(this))) {
-            //console.log(IframeUrl);
-            //console.log("Legal Iframe! Continue!");
-            SetIframeSize($(this), iframeBody.width(), iframeBody.height() + 20);
+            SetIframeSize($(this));
             $(this).css("display", "block");
         }
         else {
-            //console.log("Not Legal Iframe!");
             Dialog.dialog( "close" );
         }
     });
@@ -223,7 +236,6 @@ $(document).ready(function(){
 
 function LegalIframe(iFrame) {
     var illigal = iFrame.contents().find("nav").length;
-    //console.log(illigal);
     if (illigal === 0)
         return true;
     else
@@ -233,10 +245,17 @@ function LegalIframe(iFrame) {
 function SetIframeUrl(iFrame, newUrl) {
     iFrame.attr("src", newUrl);
     IframeUrl = newUrl;
-    //console.log("Iframe url has been changed to: '"+newUrl+"'");
 }
 
-function SetIframeSize(iFrame, newWidth, newHeight) {
+function SetIframeSize(iFrame, newWidth = 0, newHeight = 0) {
+    var iframeBody = iFrame.contents().find("body");
+
+    if (newWidth == 0)
+        var newWidth = iframeBody.width();
+
+    if (newHeight == 0)
+        var newHeight =  iframeBody.height() + 20;
+
     iFrame.attr({
         height: newHeight,
         width: newWidth
@@ -246,8 +265,26 @@ function SetIframeSize(iFrame, newWidth, newHeight) {
         height: newHeight,
         width: newWidth
     }, dialogSizeChangeSpeed, function(){
-        //animation complete
+        //console.log("iframe resized to "+newWidth+"x"+newHeight);
     });
+}
 
-    //console.log("resizing iframe to "+newWidth+"x"+newHeight);
+function GetBarcodeData(productBarcode, DialogIframe) {
+    $.ajax( {
+        url: "API_CALLS.php?method=GetProductData",
+        dataType: "json",
+        data: {
+            data: productBarcode + "|javascript"
+        },
+        success: function( data ) {
+            if (data !== 0) {
+                //exist in product db
+                $("#productName").find('#form-product-name').replaceWith("<div id='productName_Text'><input type='hidden' name='ProductName' value='"+data.Name+"'><span>" + data.Name + "</span></div>");
+            }
+            else {
+                //not exist in products db
+                $("#productName").find('div').replaceWith("<input type='text' class='form-control' id='form-product-name' placeholder='שם המוצר' name='ProductName' required>");
+            }
+        }
+    } );
 }

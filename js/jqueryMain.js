@@ -12,12 +12,12 @@ $(document).ready(function(){
     });
 
     $(".productstatus").change(function(){
-        var productId = $(this).attr("data-ProductId");
-        var submitLoc = "changeProductStatus_" + productId;
+        var productBarcode = $(this).attr("name");
+        var submitLoc = "changeProductStatus_" + productBarcode;
         document.getElementById(submitLoc).submit();
     });
 
-    //Question handler
+    //**************************** {Question handler} *****************************//
     $('li.q').on(action, function(){
         //gets next element
         //opens .a of selected question

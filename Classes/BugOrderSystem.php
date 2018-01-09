@@ -79,8 +79,8 @@ class BugOrderSystem {
                 self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog".Constant::SYSTEM_TEST_OR_EMPTY);
                 self::$log->AddEmailHandler(ELogLevel::CRITICAL(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
 
-                $LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
-                self::$log->AddLogglyHandler(ELogLevel::DEBUG(), $LogglyCredentials->GetPassword());
+                //$LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
+                //self::$log->AddLogglyHandler(ELogLevel::DEBUG(), $LogglyCredentials->GetPassword());
 
                 return self::$log;
             }

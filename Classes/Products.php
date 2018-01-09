@@ -56,7 +56,7 @@ class Products {
 
     /**
      * @param string $barcode
-     * @return mixed
+     * @return Products
      * @throws Exception
      * @throws \Exception
      */
@@ -89,7 +89,7 @@ class Products {
      * @throws Exception
      * @throws \Exception
      */
-    public static function Add(string $barcode, string $name, string $remarks = null) {
+    public static function &Add(string $barcode, string $name, string $remarks = null) {
         if (empty($barcode))
             throw new Exception("Illegal Barcode {0}!", null, $barcode);
 

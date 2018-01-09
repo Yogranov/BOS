@@ -77,7 +77,6 @@ class Order
 
         self::$orders[$orderId] = new Order($orderData);
         return self::$orders[$orderId];
-
     }
 
     /**
@@ -109,7 +108,7 @@ class Order
         foreach ($orderProductsJson as $productBarcode => $productArray) {
             list($quantity, $status, $remarks) = $productArray;
             $productObject = &Products::GetByBarcode($productBarcode);
-            $this->AddOrderProduct($productObject, $quantity, EProductStatus::search($status), $remarks);
+            $this->AddOrderProduct($productObject, $quantity, $remarks, EProductStatus::search($status));
         }
     }
 
@@ -426,18 +425,21 @@ class Order
      * @param EProductStatus|null $status
      * @param string|null $remarks
      * @throws Exception
+     * @throws \Exception
      */
-    public function AddOrderProduct(Products $product, int $quantity = 1, EProductStatus $status = null, string $remarks = null) {
+    public function AddOrderProduct(Products $product, int $quantity = 1, string $remarks = null, EProductStatus $status = null) {
         if (is_array($this->orderProducts) && array_key_exists($product->GetBarcode(), $this->orderProducts))
             throw new Exception("{0} כבר קיים ב{1}!", null, $product, $this);
-
-        if ($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
-            throw new Exception("הכמות שהוזנה ({0}) ל{1} ב{2} אינה חוקית!", null, $quantity, $product, $this);
 
         if (is_null($status))
             $status = EProductStatus::Created();
 
-        $this->orderProducts[$product->GetBarcode()] = new OrderProducts($this->id, $product, $quantity, $status, $remarks);
+        $orderProduct = new OrderProducts($this->id, $product, $quantity, $status, $remarks);
+        $this->orderProducts[$product->GetBarcode()] = $orderProduct;
+        $this->ProductsUpdate(false);
+
+        $logText = "ה{product} נוסף ל{order} בכמות {quantity}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "product" => $product, "quantity" => $quantity));
     }
 
     /**
@@ -482,7 +484,12 @@ class Order
         BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "OrderArray" => $updateArray));
     }
 
-    public function ProductsUpdate() {
+    /**
+     * @param bool $log
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function ProductsUpdate(bool $log = true) {
         $jsonString = $this->convertOrderProductArrayToJsonString();
         $updateArray = array(
             "products" => $jsonString
@@ -491,8 +498,10 @@ class Order
         if (!$success)
             throw new Exception("לא ניתן לעדכן את המוצרים של {0}", $updateArray, $this);
 
-        $logText = " עודכנו המוצרים {products} של {order}!";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "products"=> $jsonString));
+        if ($log) {
+            $logText = " עודכנו המוצרים {products} של {order}!";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "products"=> $jsonString));
+        }
     }
 
     /**

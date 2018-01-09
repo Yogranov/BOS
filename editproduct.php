@@ -88,7 +88,8 @@ PAGE;
 if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
     $PageTemplate .= footer;
 
-$productsObject = &Order::GetById($orderId)->GetOrderProducts();
+$orderProduct = &Order::GetById($orderId);
+$productsObject = $orderProduct->GetOrderProducts();
 foreach ($productsObject as $barcode => $productObject){
     if($barcode == $productBarcode) {
         \Services::setPlaceHolder($PageTemplate, "productName", $productObject->GetProductName());

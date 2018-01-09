@@ -28,6 +28,7 @@ if (!$found) {
 
 $pageMethod = html_entity_decode($_REQUEST['method']);
 $pageData = \Services::MultiToArray(html_entity_decode($_REQUEST['data']), "|");
+$JqAutoCompleteTerm = $_REQUEST['term'];
 unset($_REQUEST);
 
 $outputData = array();
@@ -79,12 +80,48 @@ try {
             }
             break;
 
+        case "SearchProductByBarcode":
+            if (isset($JqAutoCompleteTerm))
+                $productBacrcode = $JqAutoCompleteTerm;
+            else
+                list($productBacrcode) = $pageData;
+
+            $data = BugOrderSystem::GetDB()->where('Barcode', "^".$productBacrcode."*", "REGEXP")->get("products", null, "Barcode, Name");
+            if (BugOrderSystem::GetDB()->count > 0) {
+                foreach ($data as $product) {
+                    array_push($outputData, array("label" => $product["Barcode"].": ".$product["Name"], "value" => $product["Barcode"]));
+                }
+            }
+            else
+                $outputData = 0;
+            break;
+
         case "GetProductData":
-            list($productBacrcode) = $pageData;
-            \Services::dump($productBacrcode);
+            list($productBacrcode, $location) = $pageData;
             try {
                 $productObject = &Products::GetByBarcode($productBacrcode);
-                $outputData = (array)$productObject;
+                switch ($location) {
+                    case "javascript":
+                        $outputData["Barcode"] = $productObject->GetBarcode();
+                        $outputData["Name"] = $productObject->GetName();
+                        $outputData["Remark"] = $productObject->GetRemark();
+                        break;
+
+                    default:
+                        $outputData = serialize($productObject);
+                }
+
+            }
+            catch (\Throwable $e) {
+                $outputData = 0;
+            }
+            break;
+
+        case "InsertNewProduct":
+            list($productBacrcode, $productName, $productRemark) = $pageData;
+            try {
+                $productObject = &Products::Add($productBacrcode, $productName, $productRemark);
+                $outputData = serialize($productObject);
             }
             catch (\Throwable $e) {
                 $outputData = 0;

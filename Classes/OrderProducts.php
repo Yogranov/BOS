@@ -34,9 +34,12 @@ class OrderProducts {
      * @throws \Exception
      */
     public function __construct(int $orderId, Products $product, int $quantity, EProductStatus $status, string $remarks = null) {
+        if($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
+            throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::PRODUCT_MAX_QUANTITY);
+
+        $this->quantity = $quantity;
         $this->orderId = $orderId;
         $this->product = $product;
-        $this->SetQuantity($quantity, false);
         $this->status = $status;
         $this->remarks = $remarks;
     }
@@ -91,7 +94,8 @@ class OrderProducts {
         BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc(), "order" => $this->orderId));
 
         $this->status = $newStatus;
-        $this->Update();
+        $this->Update(false);
+
         return $this->status;
     }
 
@@ -110,25 +114,32 @@ class OrderProducts {
     /**
      * @param int $quantity
      * @param bool $update
+     * @param bool $log
      * @throws Exception
      * @throws \Exception
      */
-    public function SetQuantity(int $quantity, bool $update = true) {
+    public function SetQuantity(int $quantity, bool $update = true, bool $log = true) {
         if($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
             throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::PRODUCT_MAX_QUANTITY);
 
+        if ($log) {
+            $logText = "הכמות של {orderProduct} השתנה מ{oldQuantity} ל{newQuantity}";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProduct" => $this, "oldQuantity"=> $this->quantity, "newQuantity" => $quantity));
+        }
+
         $this->quantity = $quantity;
         if ($update)
-            $this->Update();
+            $this->Update(!$log);
     }
 
     /**
+     * @param bool $log
      * @throws Exception
      * @throws \Exception
      */
-    public function Update() {
+    public function Update(bool $log = true) {
         $orderObject = &Order::GetById($this->orderId);
-        $orderObject->ProductsUpdate();
+        $orderObject->ProductsUpdate($log);
     }
 
     /**

@@ -129,18 +129,18 @@ foreach ($shopOrders as $order) {
 
             //Add color to product name if arrived
             if(count($order->GetOrderProducts()) > 1)
-                \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()[0]]);
-
-
-        } else {
+                \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
+        }
+        else {
             $orderProductString .= $productOrderTemplate_Quantity_One;
 
             //Add color to product name if arrived
             if(count($order->GetOrderProducts()) > 1)
                     \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[1][0]);
-            }
+        }
         \Services::setPlaceHolder($orderProductString, "ProductName", $orderProduct->getProductName());
     }
+
     \Services::setPlaceHolder($orderBoard, "productTemplate", $orderProductString);
 
     $orderProductCode = "";
