@@ -254,4 +254,17 @@ class Services
 
         return $baseDir;
     }
+
+    /**
+     * @param $dataToCheck
+     * @return bool
+     */
+    public static function is_serialized($dataToCheck) {
+        $data = @unserialize($dataToCheck);
+        if ($dataToCheck === 'b:0;' || $data !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

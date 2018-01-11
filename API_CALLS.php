@@ -80,16 +80,19 @@ try {
             }
             break;
 
-        case "SearchProductByBarcode":
-            if (isset($JqAutoCompleteTerm))
-                $productBacrcode = $JqAutoCompleteTerm;
-            else
-                list($productBacrcode) = $pageData;
+        case "SearchProduct":
+            //\Services::dump($pageData);
+            list($productData, $column) = $pageData;
 
-            $data = BugOrderSystem::GetDB()->where('Barcode', "^".$productBacrcode."*", "REGEXP")->get("products", null, "Barcode, Name");
+            //\Services::dump($productData);
+            //\Services::dump($column);
+
+            $column = ucfirst(strtolower($column));
+
+            $data = BugOrderSystem::GetDB()->where($column, $productData, "REGEXP")->get("products", null, "Barcode, Name");
             if (BugOrderSystem::GetDB()->count > 0) {
                 foreach ($data as $product) {
-                    array_push($outputData, array("label" => $product["Barcode"].": ".$product["Name"], "value" => $product["Barcode"]));
+                    array_push($outputData, array("label" => $product["Barcode"].": ".$product["Name"], "Barcode" => $product["Barcode"], "value" => $product["Name"]));
                 }
             }
             else

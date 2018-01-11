@@ -64,7 +64,7 @@ class BugOrderSystem {
         try {
             $username = "";
             if(session_status() !== PHP_SESSION_ACTIVE)
-                session_start();
+                @session_start();
             if (LoginC::ConnectedAs() !== false)
                 $username = (string)$_SESSION[LoginC::ConnectedAs()];
 
@@ -77,10 +77,10 @@ class BugOrderSystem {
                 $LogsBaseDir = \Services::GetBaseDir(Constant::SYSTEM_NAME) . Constant::LOG_SUBFOLDER;
                 self::$logReadHandlers["file"] = self::$log->AddFileHandler(ELogLevel::DEBUG(), $LogsBaseDir, null, true,Constant::LOG_DEFAULT_MAX_FILE);
                 self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog".Constant::SYSTEM_TEST_OR_EMPTY);
-                self::$log->AddEmailHandler(ELogLevel::CRITICAL(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
+                self::$log->AddEmailHandler(ELogLevel::ERROR(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
 
-                //$LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
-                //self::$log->AddLogglyHandler(ELogLevel::DEBUG(), $LogglyCredentials->GetPassword());
+                $LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
+                self::$log->AddLogglyHandler(ELogLevel::INFO(), $LogglyCredentials->GetPassword());
 
                 return self::$log;
             }

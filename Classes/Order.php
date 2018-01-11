@@ -108,7 +108,7 @@ class Order
         foreach ($orderProductsJson as $productBarcode => $productArray) {
             list($quantity, $status, $remarks) = $productArray;
             $productObject = &Products::GetByBarcode($productBarcode);
-            $this->AddOrderProduct($productObject, $quantity, $remarks, EProductStatus::search($status));
+            $this->innerAddOrderProduct($productObject, $quantity, $remarks, EProductStatus::search($status), false);
         }
     }
 
@@ -422,12 +422,23 @@ class Order
     /**
      * @param Products $product
      * @param int $quantity
-     * @param EProductStatus|null $status
      * @param string|null $remarks
      * @throws Exception
      * @throws \Exception
      */
-    public function AddOrderProduct(Products $product, int $quantity = 1, string $remarks = null, EProductStatus $status = null) {
+    public function AddOrderProduct(Products $product, int $quantity = 1, string $remarks = null) {
+        $this->innerAddOrderProduct($product, $quantity, $remarks);
+    }
+    /**
+     * @param Products $product
+     * @param int $quantity
+     * @param string|null $remarks
+     * @param EProductStatus|null $status
+     * @param bool $log
+     * @throws Exception
+     * @throws \Exception
+     */
+    private function innerAddOrderProduct(Products $product, int $quantity = 1, string $remarks = null, EProductStatus $status = null, bool $log = true) {
         if (is_array($this->orderProducts) && array_key_exists($product->GetBarcode(), $this->orderProducts))
             throw new Exception("{0} כבר קיים ב{1}!", null, $product, $this);
 
@@ -438,29 +449,31 @@ class Order
         $this->orderProducts[$product->GetBarcode()] = $orderProduct;
         $this->ProductsUpdate(false);
 
-        $logText = "ה{product} נוסף ל{order} בכמות {quantity}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "product" => $product, "quantity" => $quantity));
+        if ($log) {
+            $logText = "ה{product} נוסף ל{order} בכמות {quantity}";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "product" => $product, "quantity" => $quantity));
+        }
     }
 
     /**
-     * @param $sellerId
+     * @param int $sellerId
      * @param bool $update
      * @throws Exception
      * @throws \Exception
      */
-    public function SetSellerId($sellerId, bool $update = true) {
+    public function SetSellerId(int $sellerId, bool $update = true) {
         $this->sellerId = $sellerId;
         if ($update)
             $this->Update();
     }
 
     /**
-     * @param $remarks
+     * @param string $remarks
      * @param bool $update
      * @throws Exception
      * @throws \Exception
      */
-    public function SetRemarks($remarks, bool $update = true) {
+    public function SetRemarks(string $remarks, bool $update = true) {
         $this->remarks = $remarks;
         if ($update)
             $this->Update();

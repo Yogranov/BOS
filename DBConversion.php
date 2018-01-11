@@ -7,12 +7,11 @@
  */
 
 namespace BugOrderSystem;
+require "Classes/BugOrderSystem.php";
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
-require "Classes/BugOrderSystem.php";
 
 $orderProducts = BugOrderSystem::GetDB()->orderBy("orderId")->get("orderproducts");
 if (is_array($orderProducts) && count($orderProducts) > 0) {
@@ -23,26 +22,31 @@ if (is_array($orderProducts) && count($orderProducts) > 0) {
         AddProductsToOrderTable($product, $updatedOrderTable);
     }
 
+    $string = "";
     $numUpdatedOrderTable = count($updatedOrderTable);
     if ($numUpdatedOrderTable > 0) {
-        echo " הזמנות עודכנו בעמודת הפריטים בבסיס הנתונים בטבלת ההזמנות:</br>{$numUpdatedOrderTable}ל";
-        \Services::dump($updatedOrderTable);
+        $string .= " הזמנות עודכנו בעמודת הפריטים בבסיס הנתונים בטבלת ההזמנות:</br>{$numUpdatedOrderTable}ל";
+        $string .= \Services::dump($updatedOrderTable, false);
     }
     else {
-        echo "לא עודכנו הזמנות בבסיס הנתונים!";
+        $string .= "לא עודכנו הזמנות בבסיס הנתונים!";
     }
-    echo "<br><br>";
+    $string .= "<br><br>";
 
     $numInsertedProducts = count($insertedProducts);
     if ($numInsertedProducts > 0) {
-        echo "{$numInsertedProducts} פריטים הוכנסו לטבלת products";
-        \Services::dump($insertedProducts);
+        $string .= "{$numInsertedProducts} פריטים הוכנסו לטבלת products";
+        $string .= \Services::dump($insertedProducts, false);
     }
     else {
-        echo "לא הוכנסו פריטים חדשים לבסיס הנתונים לטבלת product";
+        $string .= "לא הוכנסו פריטים חדשים לבסיס הנתונים לטבלת product";
     }
-    echo "<br><br>";
+    $string .= "<br><br>";
 
+    echo $string;
+
+    $logText = "הקובץ DBConversion סיים ריצה - כלל המוצרים סונכרנו (בהזמנות והמוצרים עצמם)";
+    BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::DEBUG());
 }
 
 /**
@@ -79,13 +83,17 @@ function AddProductsToOrderTable(array $productData, array &$updated){
     if (!is_null($orderProduct))
         $orderProductArray = (array)@json_decode($orderProduct);
 
-    $ProductBarcode = $productData["ProductBarcode"];
+    $ProductBarcode = (string)$productData["ProductBarcode"];
+    $productArray = array($productData["Quantity"], $productData["Status"], $productData["Remarks"]);
 
+    /*
     if (in_array($ProductBarcode, array_keys($orderProductArray))) {
-        return;
+        if ($orderProductArray[$ProductBarcode] === $productArray)
+            return;
     }
+    */
 
-    $orderProductArray[$ProductBarcode] = array($productData["Quantity"], $productData["Status"], $productData["Remarks"]);
+    $orderProductArray[$ProductBarcode] = $productArray;
     $jsonString = @json_encode($orderProductArray);
 
     $updateData = array(

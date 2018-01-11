@@ -67,7 +67,7 @@ const headerTemplate = <<<Header
     <script src="js/main.js"></script>
     <script src="js/jqueryMain.js"></script>
     <script src="js/jqueryDialog.js"></script>
-    
+    <script src="js/jqueryAddProduct.js"></script>
 </head>
 
 Header;

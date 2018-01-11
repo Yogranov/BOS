@@ -49,14 +49,14 @@ $PageTemplate .= <<<PAGE
         <div id="new-order">
             <form method="POST">
                 <center>הוספת פריט להזמנה - {$orderId}</center>
-            <div class="form-group">
-                <label for="form-product-barcode">ברקוד</label>
-                <input type="text" class="form-control" id="form-product-barcode" placeholder="ברקוד" name="ProductBarcode" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
-            </div>
-            
             <div class="form-group" id="productName">
                 <label for="form-product-name">שם המוצר</label>
                 <input type="text" class="form-control" id="form-product-name" placeholder="שם המוצר" name="ProductName" required><br>
+            </div>
+            
+            <div class="form-group" id="productBarcode">
+                <label for="form-product-barcode">ברקוד</label>
+                <input type="text" class="form-control" id="form-product-barcode" placeholder="ברקוד" name="ProductBarcode" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
             </div>
                 
             <div class="form-group">
@@ -93,7 +93,7 @@ if(isset($_POST['addproduct'])) {
 
     if(!empty($product_name) && !empty($product_barcode) && !empty($product_quantity)) {
         try {
-            //$orderProductsObject = new OrderProducts($orderObject->GetId(), $product_name, $product_barcode, $product_remarks, $product_quantity);
+            //$product = &Products::GetByBarcode($product_barcode);
             $product = &Products::Add($product_barcode, $product_name);
             $orderObject->AddOrderProduct($product, $product_quantity, $product_remarks);
             if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
@@ -108,7 +108,6 @@ if(isset($_POST['addproduct'])) {
         echo "אנא מלא את כל השדות הנדרשים";
     }
 }
-
 
 echo $PageTemplate;
 ?>

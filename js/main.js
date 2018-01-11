@@ -35,3 +35,34 @@ function object2array(obj) {
 
     return array;
 }
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        }
+    }
+}
+
+function DoAPIAjax(method, postData) {
+    var retData = false;
+    $.ajax({
+        url: "API_CALLS.php?method="+method,
+        dataType: "json",
+        async: false,
+        data: {
+            data: postData
+        },
+        success: function (returnedData) {
+            retData = returnedData;
+        },
+        error: function (ajaxobject, statusText, errorThrowen) {
+            //console.log(statusText);
+            console.log(ajaxobject);
+            retData = false;
+        }
+    });
+
+    return retData;
+}

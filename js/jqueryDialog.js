@@ -17,10 +17,12 @@ function outputUpdate(range, where) {
     document.querySelector(where).value = range;
 }
 
-$(document).ready(function(){
+var Dialog = "";
+var DialogIframe = "";
 
-    var Dialog = $("#BOS_Dialog");
-    var DialogIframe = Dialog.children("iframe");
+$(document).ready(function(){
+    Dialog = $("#BOS_Dialog");
+    DialogIframe = Dialog.children("iframe");
     var Body = $('body');
     var IframeUrl = "";
 
@@ -267,24 +269,4 @@ function SetIframeSize(iFrame, newWidth = 0, newHeight = 0) {
     }, dialogSizeChangeSpeed, function(){
         //console.log("iframe resized to "+newWidth+"x"+newHeight);
     });
-}
-
-function GetBarcodeData(productBarcode, DialogIframe) {
-    $.ajax( {
-        url: "API_CALLS.php?method=GetProductData",
-        dataType: "json",
-        data: {
-            data: productBarcode + "|javascript"
-        },
-        success: function( data ) {
-            if (data !== 0) {
-                //exist in product db
-                $("#productName").find('#form-product-name').replaceWith("<div id='productName_Text'><input type='hidden' name='ProductName' value='"+data.Name+"'><span>" + data.Name + "</span></div>");
-            }
-            else {
-                //not exist in products db
-                $("#productName").find('div').replaceWith("<input type='text' class='form-control' id='form-product-name' placeholder='שם המוצר' name='ProductName' required>");
-            }
-        }
-    } );
 }
