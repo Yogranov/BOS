@@ -2,10 +2,9 @@
 This file contain jquery code that deal with popup's and dialogs
  */
 
-var WindowDialogWidthSize = 0.6;
-var WindowDialogHeightSize = 0.9;
-var overlayColor = "white";
-var overlayOpacity = 0.8;
+var WindowDialogWidthSize = 0.7;
+var WindowDialogHeightSize = 0.85;
+var overlayClass = "modal-backdrop";
 var dialogShowEffect = "fold";
 var dialogShowSpeed = speed;
 var dialogHideEffect = "fold";
@@ -22,33 +21,10 @@ var DialogIframe = "";
 
 $(document).ready(function(){
     Dialog = $("#BOS_Dialog");
+    TestDialog = $("#myModal");
     DialogIframe = Dialog.children("iframe");
     var Body = $('body');
     var IframeUrl = "";
-
-    //**************************** {BugOrderSystem addproduct.php Page -  } *****************************//
-    $( "#form-product-barcode" ).autocomplete({
-        source: function( request, response ) {
-            $.ajax( {
-                url: "API_CALLS.php?method=SearchProductByBarcode",
-                dataType: "json",
-                data: {
-                    data: request.term
-                },
-                success: function( data ) {
-                    response( data );
-                }
-            } );
-        },
-        minLength: 3,
-        change: function( event, ui ) {
-            var value = $("#form-product-barcode").val();
-            GetBarcodeData(value);
-        },
-        select: function( event, ui ) {
-            GetBarcodeData(ui.item.value, DialogIframe);
-        }
-    });
 
     //**************************** {BugOrderSystem ProductsDelivered button - to change products that need to be deliver to delivered status } *****************************//
     $("#ProductsDelivered").on( "click", function() {
@@ -149,8 +125,57 @@ $(document).ready(function(){
         });
     }
 
+    //**************************** {BugOrderSystem Big Dialog Bootstrap 3} *****************************//
+    /*
+    TestDialog.modal({
+        keyboard: false,
+        show: false,
+        backdrop: true
+    });
 
-    //**************************** {BugOrderSystem Big Dialog} *****************************//
+    $("[data-action='OpenBOSDialog']").on( "click", function() {
+        //data things//
+        IframeUrl = $(this).attr("data-page") + "?" + $(this).attr("data-variables");
+        SetIframeUrl(TestDialog.find("iframe"), IframeUrl);
+        TestDialog.find(".modal-title").text($(this).attr("data-dialogTitle"));
+
+        //css things
+        SetIframeSize(TestDialog.find("iframe"), windowWidth * WindowDialogWidthSize, windowHeight * WindowDialogHeightSize);
+        TestDialog.find("iframe").css("display", "block");
+        TestDialog.find(".modal-backdrop").addClass(overlayClass);
+        TestDialog.find(".modal-body").addClass("dialogBackground");
+        TestDialog.find(".modal-footer").addClass("dialogFooterBackground");
+        TestDialog.find(".modal-header").addClass("dialogHeaderBackground");
+        TestDialog.find('.modal-dialog').css({
+            width: (windowWidth * WindowDialogWidthSize) + 30, //probably not needed
+            height: windowHeight * WindowDialogHeightSize, //probably not needed
+            'max-height': windowHeight - 100,
+            'max-width': windowWidth - 100
+        });
+
+        sleep(50);
+        TestDialog.modal('show'); //open dialog when everything are ready
+    });
+
+    //auto adjust iframe size on load/reload
+    TestDialog.find("iframe").on("load", function () {
+        if (LegalIframe($(this))) {
+            SetIframeSize($(this), 0, 0);
+            TestDialog.data('bs.modal').handleUpdate();
+            $(this).css("display", "block");
+        }
+        else {
+            TestDialog.modal('hide');
+        }
+    });
+
+    TestDialog.on('show.bs.modal', function () {
+
+    });
+    */
+
+    //**************************** {BugOrderSystem Big Dialog Jquery UI} *****************************//
+
     Body.on('click', '.ui-widget-overlay', function(e){
         //listening to overlay click for closing the dialog
         Dialog.dialog('close');
@@ -196,7 +221,7 @@ $(document).ready(function(){
         ],
         open: function(event, ui) {
             $(".ui-dialog-titlebar-close", ui.dialog | ui).hide(); //hiding top close button
-            $(".ui-widget-overlay").css({background: overlayColor, opacity: overlayOpacity});
+            $(".ui-widget-overlay").addClass(overlayClass);
 
             var buttonJquery = $(".ui-dialog-buttonset");
             SetButtonIcon(buttonJquery, "הקודם", "glyphicon glyphicon-repeat");
@@ -226,13 +251,14 @@ $(document).ready(function(){
     //auto adjust iframe size on load/reload
     DialogIframe.on("load", function () {
         if (LegalIframe($(this))) {
-            SetIframeSize($(this));
+            SetIframeSize($(this), 0, 0);
             $(this).css("display", "block");
         }
         else {
             Dialog.dialog( "close" );
         }
     });
+
     //**************************** {END BugOrderSystem Big Dialog} *****************************//
 });
 
@@ -249,14 +275,16 @@ function SetIframeUrl(iFrame, newUrl) {
     IframeUrl = newUrl;
 }
 
-function SetIframeSize(iFrame, newWidth = 0, newHeight = 0) {
+function SetIframeSize(iFrame, newWidth, newHeight) {
     var iframeBody = iFrame.contents().find("body");
 
     if (newWidth == 0)
-        var newWidth = iframeBody.width();
+        var newWidth = parseInt(iframeBody.innerWidth());
 
     if (newHeight == 0)
-        var newHeight =  iframeBody.height() + 20;
+        var newHeight =  parseInt(iframeBody.innerHeight()) + 20;
+
+    console.log(newWidth+"x"+newHeight);
 
     iFrame.attr({
         height: newHeight,
@@ -267,6 +295,6 @@ function SetIframeSize(iFrame, newWidth = 0, newHeight = 0) {
         height: newHeight,
         width: newWidth
     }, dialogSizeChangeSpeed, function(){
-        //console.log("iframe resized to "+newWidth+"x"+newHeight);
+        console.log("iframe resized to "+newWidth+"x"+newHeight);
     });
 }

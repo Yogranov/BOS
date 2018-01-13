@@ -37,7 +37,6 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !i
 \Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
-
 $PageTemplate .= <<<PAGE
 <main>
     <div class="container">
@@ -48,12 +47,12 @@ $PageTemplate .= <<<PAGE
             <div class="col-12">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <form method="post" role="form" style="font-size: 18px">
+                        <form method="post" id="CreateOrderForm" role="form" style="font-size: 18px">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                     <label for="form-PhoneNumber">מספר טלפון</label>
-                                    <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern=".{10,}" maxlength="10" title="10 ספרות" onkeyup="this.value=this.value.replace(/[^\d]/,''); autofill();" required>
+                                    <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern=".{10,}" maxlength="10" title="10 ספרות" onkeyup="this.value=this.value.replace(/[^\d]/,'');" required>
                                     </div>                                
                                 </div>
                                 
@@ -112,36 +111,64 @@ $PageTemplate .= <<<PAGE
                                </div>
                                 <!--End of order info-->
                                 
-                                <div class="col-sm-2">
-                                        <div class="form-group">
-                                              <label for="form-product-quantity">כמות</label>
-                                              <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
-                                        </div>
-                                </div>   
-                                    
-                                <div class="col-sm-5">
-                                        <div class="form-group">
-                                              <label for="form-product-barcode">ברקוד</label>
-                                              <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
-                                        </div>
-                                </div>    
-                                    
-                                <div class="col-sm-5">
-                                        <div class="form-group">
-                                             <label for="form-product-name">שם המוצר</label>
-                                             <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר" required>
-                                        </div>
-                                </div>   
-                                
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                         <label for="form-product-remarks">הערות למוצר</label>
-                                         <input type="text" class="form-control" id="form-product-remarks" name="productremarks" placeholder="הערות עבור המוצר">
-                                    </div>
+                                <div id="OrderProducts" class="col-sm-12" style="display:none">
+                                    <table>
+                                        <thead>
+                                            <th>שם מוצר</th>
+                                            <th>ברקוד</th>
+                                            <th>כמות</th>
+                                            <th>הערות</th>
+                                            <th></th>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                   
+                                
+                                <div id="AddNewProduct" class="col-sm-12">
+                                    <div id="showHideNewProductForm" style="display:none">
+                                        <button type="button" class="btn btn-success">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <span>הוסף מוצר חדש</span>
+                                        </button>
+                                    </div>
+                                    <div id="NewProductData" class="col-sm-12 pull-right" style="padding:0px;">
+                                        <div class="col-lg-2 pull-left">
+                                            <button type="button" id="AddProductButton" class="btn"><span class="glyphicon glyphicon-plus"></span><span>&nbsp;הוסף מוצר</span></button>
+                                        </div>
+                                        <div class="col-sm-10 pull-right">
+                                            <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                          <label for="form-product-quantity">כמות</label>
+                                                          <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                    </div>
+                                            </div>   
+                                                
+                                            <div class="col-sm-4">
+                                                    <div class="form-group" id="productBarcode">
+                                                          <label for="form-product-barcode">ברקוד</label>
+                                                          <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                    </div>
+                                            </div>    
+                                                
+                                            <div class="col-sm-4">
+                                                    <div class="form-group" id="productName">
+                                                         <label for="form-product-name">שם המוצר</label>
+                                                         <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
+                                                    </div>
+                                            </div>   
+                                            
+                                            <div class="col-sm-10">
+                                                <div class="form-group">
+                                                     <label for="form-product-remarks">הערות למוצר</label>
+                                                     <input type="text" class="form-control" id="form-product-remarks" name="productremarks" placeholder="הערות עבור המוצר">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
                             </div>
-                            <input type="submit" value="צור הזמנה" name="neworder" class="btn btn-info btn-block">
+                            <input type="submit" id="CreateOrderButton" value="צור הזמנה" name="neworder" class="btn btn-info btn-block" disabled>
                         </form>
                     </div>
                 </div>
@@ -149,33 +176,6 @@ $PageTemplate .= <<<PAGE
         </div>
     </div>
 </main>
-<script type="text/javascript">
-    //auto complete client
-  function autofill() {
-      var email = 0;
-      var phoneNumber = $("#form-PhoneNumber").val();
-      $.ajax({
-          url: 'auto-fill.php',
-          data: 'phoneNumber='+phoneNumber,
-          success: function(data){
-              var json = data,
-                  obj = JSON.parse(json);
-              $("#form-FirstName").val(obj.FirstName);
-              $("#form-LastName").val(obj.LastName);
-              $("#form-Email").val(obj.Email);
-              if(obj.Email) {
-                   $('input[name=wantsemail]').attr('checked', true);
-                   document.getElementById("clientwantsemails").className = "open";
-              } else {
-                     $('input[name=wantsemail]').attr('checked', false);
-                    document.getElementById("clientwantsemails").className = "form-group";
-              }
-
-          }
-      })
-  }
-</script>
-<script src="js/main.js"></script>
 PAGE;
 
 //setting footer
@@ -194,43 +194,48 @@ foreach ($shopObj->GetActiveSellers() as $sellerId => $sellerObj) {
 //Take form filed and make them variable.
 if(isset($_POST['neworder']))  {
     try {
-        $client_first_name = $_POST['firstname'];
-        $client_last_name = $_POST['lastname'];
-        $client_phone_number = $_POST['phonenumber'];
+        $client_first_name = $_REQUEST['firstname'];
+        $client_last_name = $_REQUEST['lastname'];
+        $client_phone_number = $_REQUEST['phonenumber'];
 
         $client_wants_emails = 0;
-        if (isset($_POST['wantsemail']))
+        if (isset($_REQUEST['wantsemail']))
             $client_wants_emails = 1;
 
-        $client_email = $_POST['email'];
-        $product_name = $_POST['productname'];
-        $product_barcode = $_POST['productbarcode'];
-        $product_quantity = $_POST['quantity'];
-        $order_seller = $_POST['seller'];
-        $client_remarks = $_POST['remarks'];
-        $client_product_remarks = $_POST['productremarks'];
+        $client_email = $_REQUEST['email'];
+        $order_seller = $_REQUEST['seller'];
+        $order_remarks = $_REQUEST['remarks'];
 
-        if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number) && !empty($product_name) && !empty($product_barcode) && !empty($order_seller)) {
+        //products
+        preg_match_all("/product_[0-9a-z]+_[A-Z]+/i", \Services::dump(\Services::ArrayToMulti(array_keys($_REQUEST), "\N")), $matches);
+        $NewProductArray = array();
+        foreach ($matches[0] as $productRequestName) {
+            list(, $barcode, $property) = \Services::MultiToArray($productRequestName, "_");
+            $NewProductArray[$barcode][$property] = $_REQUEST[$productRequestName];
+        }
+
+        if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number) && !empty($order_seller) && count($NewProductArray) > 0) {
             //starting create order//
             //create client//
             $clientId = Client::isPhoneExist($client_phone_number);
-            if ($clientId == False) {
-                $NewClientObj = Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
-                $clientId = $NewClientObj->GetId();
-            }
-            else {
+            if ($clientId == False)
+                $NewClientObj = &Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
+            else
                 $NewClientObj = &Client::GetById($clientId);
-            }
 
             //create order//
-            $orderObject = Order::Add($NewClientObj, Shop::GetById($shopId), Seller::GetById($order_seller), $client_remarks);
+            $orderObject = &Order::Add($NewClientObj, Shop::GetById($shopId), Seller::GetById($order_seller), $order_remarks);
 
             //Add products to order.
-            $orderProductsObject = new OrderProducts($orderObject->GetId(), $product_name, $product_barcode, $client_product_remarks, $product_quantity);
-            if ($orderProductsObject) {
+            foreach ($NewProductArray as $productBarcode => $productArray) {
+                $productObject = &Products::Add($productBarcode, $NewProductArray[$productBarcode]["Name"]);
+                $orderObject->AddOrderProduct($productObject, $NewProductArray[$productBarcode]["Quantity"], $NewProductArray[$productBarcode]["Remark"]);
+            }
+            $orderProductsArray = $orderObject->GetOrderProducts();
 
+            if (count($orderProductsArray) > 0) {
                 //Send order summery to client
-                if (!empty($client_email) && $NewClientObj->IsWantEmail()) {
+                if ($NewClientObj->IsWantEmail() && $NewClientObj->GetEmail() !== "") {
                     $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
                     $encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
 
@@ -247,17 +252,17 @@ if(isset($_POST['neworder']))  {
                     $NewClientObj->SendEmail($orderSummery, "סיכום הזמנה");
                 }
 
-                $LocationToOrder = $orderObject->GetId();
-                //header("Location: vieworder.php?id={$LocationToOrder}&ShowHeaderFooter={$_GET["ShowHeaderFooter"]}");
                 header("Location: Ordersboard.php");
+            }
+            else {
+                //Todo: need to remove the order
             }
 
         } else {
             echo "אנא מלא את כל השדות הנדרשים";
         }
     } catch (\Throwable $e) {
-        $errorMsg = $e->getMessage();
-        echo $errorMsg;
+        echo $e->getMessage();
     }
 }
 

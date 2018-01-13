@@ -146,7 +146,7 @@ class Order
      * @throws Exception
      * @throws \Exception
      */
-    public static function Add(Client $client, Shop $shop, Seller $seller, string $remarks = "")
+    public static function &Add(Client $client, Shop $shop, Seller $seller, string $remarks = "")
     {
         $OrderData= array(
             "ClientId" => $client->GetId(),

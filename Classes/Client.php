@@ -84,7 +84,7 @@ class Client {
      * @throws Exception
      * @throws \Exception
      */
-    public static function Add(string $firstName, string $lastName, string $phoneNumber, string $email, bool $clientWantsMails) {
+    public static function &Add(string $firstName, string $lastName, string $phoneNumber, string $email, bool $clientWantsMails) {
         if(empty($firstName))
             throw new Exception("לא הוכנס שם פרטי");
 

@@ -34,8 +34,9 @@ class OrderProducts {
      * @throws \Exception
      */
     public function __construct(int $orderId, Products $product, int $quantity, EProductStatus $status, string $remarks = null) {
-        if($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
-            throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::PRODUCT_MAX_QUANTITY);
+        if ($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY) {
+            throw new Exception("כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::PRODUCT_MAX_QUANTITY);
+        }
 
         $this->quantity = $quantity;
         $this->orderId = $orderId;
@@ -51,6 +52,9 @@ class OrderProducts {
         return $this->product->GetName();
     }
 
+    /**
+     * @return string
+     */
     public function GetProductRemark() {
         return $this->product->GetRemark();
     }
@@ -146,6 +150,6 @@ class OrderProducts {
      * @return string
      */
     public function __toString() {
-        return "המוצר {$this->product->GetName()} ({$this->product->GetBarcode()}) בהזמנה {$this->orderId}";
+        return "המוצר {$this->GetProductName()} ({$this->GetProductBarcode()}) בהזמנה {$this->orderId}";
     }
 }

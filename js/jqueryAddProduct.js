@@ -56,9 +56,12 @@ function GetBarcodeData(productBarcode, DialogIframe) {
 
 
 function ChangeBarcodeToSpan(value) {
-    ProductBarcodeDiv.find('#form-product-barcode').replaceWith("<div id='barcode_Text'><input type='hidden' name='ProductBarcode' value='"+value+"'><span>" + value + "</span></div>");
+    ProductBarcodeDiv.find("#form-product-barcode[type!='hidden']").replaceWith("<div id='barcode_Text'><input type='hidden' id='form-product-barcode' name='ProductBarcode' value='" + value + "'><span>" + value + "</span></div>");
 }
 
-function ChangeBarcodeToInput() {
-    ProductBarcodeDiv.find('div').replaceWith("<input type='text' class='form-control' id='form-product-barcode' placeholder='ברקוד' name='ProductBarcode' required>");
+function ChangeBarcodeToInput(requiredBool = false) {
+    var AdditionalRequire = "";
+    if (requiredBool)
+        AdditionalRequire = " required";
+    ProductBarcodeDiv.find('div').replaceWith("<input type='text' class='form-control' id='form-product-barcode' placeholder='ברקוד' name='ProductBarcode' "+AdditionalRequire+">");
 }

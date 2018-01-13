@@ -237,6 +237,15 @@ logo{
     display:none;
 }
 
+.modal.fade{
+    -webkit-transition:opacity .3s linear, top .3s ease-out;
+    -moz-transition:opacity .3s linear, top .3s ease-out;
+    -ms-transition:opacity .3s linear, top .3s ease-out;
+    -o-transition:opacity .3s linear, top .3s ease-out;
+    transition:opacity .3s linear, top .3s ease-out;
+    /*top:-25%;*/
+}
+
 .dialogWithDropShadow {
     -webkit-box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
     -moz-box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
@@ -244,6 +253,20 @@ logo{
 
 .dialogBackground {
     background-image: var(--Body_Background-image);
+}
+
+.dialogHeaderBackground {
+    /*background-image: var(--Body_Background-image);*/
+}
+
+.dialogFooterBackground {
+    /*background-image: var(--Body_Background-image);*/
+}
+
+.modal-backdrop {
+    background-color: white;
+    opacity: 0.8 !important;
+    filter: Alpha(opacity=50); /* IE8 and earlier */
 }
 
 .ui-dialog-buttonset {

@@ -131,6 +131,40 @@ try {
             }
             break;
 
+        case "SearchClient":
+            list($clientData, $column) = $pageData;
+            $column = ucfirst(strtolower($column));
+            $data = BugOrderSystem::GetDB()->where($column, $clientData, "REGEXP")->get("clients");
+            if (BugOrderSystem::GetDB()->count > 0) {
+                foreach ($data as $client) {
+                    $arrayToPush = array("label" => "{$client["PhoneNumber"]} - {$client["FirstName"]} {$client["LastName"]} ", "value" => $client["PhoneNumber"]);
+                    foreach ($client as $key => $innerData) {
+                        $arrayToPush[$key] = $innerData;
+                    }
+                    array_push($outputData, $arrayToPush);
+                }
+            }
+            else
+                $outputData = 0;
+
+            break;
+
+        case "GetClientByPhoneNumber":
+            list($phoneNumber) = $pageData;
+            $sql = BugOrderSystem::GetDB()->where("PhoneNumber",$phoneNumber)->getone("clients");
+            if (BugOrderSystem::GetDB()->count > 0) {
+                $outputData = array(
+                    'FirstName' => $sql['FirstName'],
+                    'LastName' => $sql['LastName'],
+                    'ClientWantsMails' => $sql['ClientWantsMails'],
+                    'Email' => $sql['Email']
+                );
+            }
+            else
+                $outputData = 0;
+
+            break;
+
         default:
             throw new Exception("invalid API '%1' method!", $pageData, $pageMethod);
     }
