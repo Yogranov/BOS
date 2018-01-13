@@ -127,19 +127,19 @@ function AutoFillUserData(phoneNumber) {
 function showHideProductOrderTable(what) {
     switch (what) {
         case "hide":
-            OrderProducts.hide();
+            OrderProducts.hide(defaultHideOptions);
             $("#CreateOrderButton").attr("disabled", true);
-            NewProductData.show();
-            $("#showHideNewProductForm").hide();
+            NewProductData.show(defaultShowOptions);
+            $("#showHideNewProductForm").hide(defaultHideOptions);
             SetShowHideButtonVisibility('show');
             break;
 
         case "show":
             default:
-            OrderProducts.show();
+            OrderProducts.show(defaultShowOptions);
             $("#CreateOrderButton").attr("disabled", false);
-            NewProductData.hide();
-            $("#showHideNewProductForm").show();
+            NewProductData.hide(defaultHideOptions);
+            $("#showHideNewProductForm").show(defaultShowOptions);
     }
 }
 
@@ -147,11 +147,11 @@ function ToggleShowHideNewProductForm() {
     var isVisible = NewProductData.is(':visible');
     if (!isVisible) {
         SetShowHideButtonVisibility('hide');
-        NewProductData.show();
+        NewProductData.show(defaultShowOptions);
     }
     else {
         SetShowHideButtonVisibility('show');
-        NewProductData.hide();
+        NewProductData.hide(defaultHideOptions);
     }
 }
 

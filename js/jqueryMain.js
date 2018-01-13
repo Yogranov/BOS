@@ -5,6 +5,21 @@ var speed = "500";
 var windowWidth = window.innerWidth;
 var windowHeight = window.innerHeight;
 
+
+var defaultShowOptions = {
+    effect: "blind",
+    easing: "swing",
+    duration: 400,
+    queue: false
+};
+
+var defaultHideOptions = {
+    effect: "blind",
+    easing: "linear",
+    duration: 400,
+    queue: false
+};
+
 $(document).ready(function(){
     $("[class='goBack']").click(function(event) {
         event.preventDefault();
