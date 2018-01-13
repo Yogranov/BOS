@@ -19,14 +19,12 @@ $(document).ready(function(){
     });
 
     //**************************** { Change changeable td on the fly } *****************************//
-    OrderProducts.on("click", ".editable", function() {
+    OrderProducts.on("dblclick", ".editable", function() {
         ConvertChildrensInput($(this),"text", "editing");
-        //$(this).replaceWith("<td class='editing'><input type='text' data-ProductId='" + $(this).find("input").attr("data-ProductId") + "' name='" + $(this).find("input").attr("name") + "' value='" + $(this).find("input").val() + "'></td>");
         $(".editing").find("input").focus();
     });
     OrderProducts.on("blur", ".editing", function() {
         ConvertChildrensInput($(this),"hidden", "editable");
-        //$(this).replaceWith("<td class='editable'><input type='hidden' data-ProductId='" + $(this).find("input").attr("data-ProductId") + "' name='" + $(this).find("input").attr("name") + "' value='" + $(this).find("input").val() + "'><span>" + $(this).find("input").val() + "</span></td>");
     });
 
     //**************************** { Add Product to List From bottom form inputs } *****************************//
@@ -37,7 +35,7 @@ $(document).ready(function(){
 
             //clear input after adding to array
             var valueData = "";
-            if (Element.id == "form-product-quantity")
+            if (Element.id === "form-product-quantity")
                 valueData = 1;
             Element.value = valueData;
         });
@@ -67,12 +65,13 @@ $(document).ready(function(){
 
     //**************************** { Remove Product From list button code } *****************************//
     $(document).on("click", "#RemoveNewProduct", function() {
-        //console.log("Remove Button clicked!");
-        OrderProducts.find("#"+$(this).attr("data-ProductId")).empty();
+        OrderProducts.find("#"+$(this).attr("data-ProductId")).replaceWith("");
         addedProducts.splice(addedProducts.indexOf($(this).attr("data-Barcode")), 1);
 
-        if (addedProducts.length === 0)
+        if (addedProducts.length === 0) {
             showHideProductOrderTable("hide");
+            NewProductData.removeClass("framed");
+        }
     });
 
     //**************************** { Client Data AutoFill } *****************************//
@@ -102,10 +101,15 @@ $(document).ready(function(){
 
 function AutoFillUserData(phoneNumber) {
     var retData = DoAPIAjax("GetClientByPhoneNumber", phoneNumber);
+    console.log(retData);
     if (retData !== false && retData !== 0) {
-        $("#form-FirstName").val(retData.FirstName);
-        $("#form-LastName").val(retData.LastName);
+        $("#form-FirstName").val(retData.FirstName).attr("disabled", "true");
+        $("#form-LastName").val(retData.LastName).attr("disabled", "true");
         $("#form-Email").val(retData.Email);
+        if (retData.Email !== "") {
+            $("#form-Email").attr("disabled", "true");
+        }
+
         if (retData.ClientWantsMails === 1) {
             $('input[name=wantsemail]').attr('checked', true);
             document.getElementById("clientwantsemails").className = "open";
@@ -116,9 +120,9 @@ function AutoFillUserData(phoneNumber) {
         }
     }
     else {
-        $("#form-FirstName").val("");
-        $("#form-LastName").val("");
-        $("#form-Email").val("");
+        $("#form-FirstName").val("").attr("disabled", "false");
+        $("#form-LastName").val("").attr("disabled", "false");
+        $("#form-Email").val("").attr({"disabled": "false"});
         $('input[name=wantsemail]').attr('checked', false);
         document.getElementById("clientwantsemails").className = "form-group";
     }
@@ -140,6 +144,7 @@ function showHideProductOrderTable(what) {
             $("#CreateOrderButton").attr("disabled", false);
             NewProductData.hide(defaultHideOptions);
             $("#showHideNewProductForm").show(defaultShowOptions);
+            SetShowHideButtonVisibility('show');
     }
 }
 
@@ -147,19 +152,21 @@ function ToggleShowHideNewProductForm() {
     var isVisible = NewProductData.is(':visible');
     if (!isVisible) {
         SetShowHideButtonVisibility('hide');
+        NewProductData.addClass("framed");
         NewProductData.show(defaultShowOptions);
     }
     else {
         SetShowHideButtonVisibility('show');
+        NewProductData.removeClass("framed");
         NewProductData.hide(defaultHideOptions);
     }
 }
 
 function SetShowHideButtonVisibility(ShowHide) {
     switch (ShowHide) {
-        case 'show': $("#showHideNewProductForm").find("button").replaceWith("<button type='button' class='btn btn-success'><span class='glyphicon glyphicon-plus'></span><span>הוסף מוצר חדש</span></button>");
+        case 'show': $("#showHideNewProductForm").find("button").replaceWith("<button type='button' class='btn btn-basic-improved2'><span class='glyphicon glyphicon-plus'></span>&nbsp;<span>הוסף מוצר חדש</span></button>");
             break;
-        case 'hide': $("#showHideNewProductForm").find("button").replaceWith("<button type='button' class='btn btn-warning'><span class='glyphicon glyphicon-minus'></span><span>הסתר חלונית</span></button>");
+        case 'hide': $("#showHideNewProductForm").find("button").replaceWith("<button type='button' class='btn btn-basic-improved'><span class='glyphicon glyphicon-minus'></span>&nbsp;<span>הסתר חלונית</span></button>");
             break;
     }
 }

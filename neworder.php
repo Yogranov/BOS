@@ -41,8 +41,8 @@ $PageTemplate .= <<<PAGE
 <main>
     <div class="container">
         <div class="row centered-form" id="new-order">
-         <div class="col-12">
-          <span><h3> הזמנה חדשה </h3></span>
+            <div class="col-12">
+                <span><h3> הזמנה חדשה </h3></span>
             </div>
             <div class="col-12">
                 <div class="panel panel-default">
@@ -59,7 +59,7 @@ $PageTemplate .= <<<PAGE
                                 <div class="col-xs-6 col-sm-6 col-md-6">
                                     <div class="form-group">
                                         <label for="form-LastName">שם משפחה</label>
-                                        <input type="text" class="form-control" id="form-LastName" name="lastname" placeholder="שם משפחה" required>
+                                        <span><input type="text" class="form-control" id="form-LastName" name="lastname" placeholder="שם משפחה" required></span>
                                     </div>
                                 </div>
                                 
@@ -67,7 +67,7 @@ $PageTemplate .= <<<PAGE
                                 <div class="col-xs-6 col-sm-6 col-md-6">
                                     <div class="form-group">
                                       <label for="form-FirstName">שם פרטי</label>
-                                      <input type="text" class="form-control" id="form-FirstName" name="firstname" placeholder="שם פרטי" required>
+                                      <span><input type="text" class="form-control" id="form-FirstName" name="firstname" placeholder="שם פרטי" required></span>
                                     </div>                                
                                 </div>
                                 
@@ -81,7 +81,7 @@ $PageTemplate .= <<<PAGE
                                 <div class="col-sm-12">
                                    <div id="clientwantsemails" class="form-group">
                                         <label for="form-Email">אימייל</label>
-                                        <input type="text" class="form-control" id="form-Email" name="email" placeholder="דואר אלקטרוני">
+                                        <span><input type="text" class="form-control" id="form-Email" name="email" placeholder="דואר אלקטרוני"></span>
                                     </div>
                                 </div>
                                 
@@ -111,64 +111,82 @@ $PageTemplate .= <<<PAGE
                                </div>
                                 <!--End of order info-->
                                 
-                                <div id="OrderProducts" class="col-sm-12" style="display:none">
-                                    <table>
-                                        <thead>
-                                            <th>שם מוצר</th>
-                                            <th>ברקוד</th>
-                                            <th>כמות</th>
-                                            <th>הערות</th>
-                                            <th></th>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                
+                                
+                                <div class="row">
+                                    <div id="OrderProducts" class="col-sm-12" style="display:none">
+                                        <table class="table table-striped" style="font-size: 14px">
+                                            <thead>
+                                                <th>שם מוצר</th>
+                                                <th>ברקוד</th>
+                                                <th>כמות</th>
+                                                <th>הערות</th>
+                                                <th></th>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 
-                                <div id="AddNewProduct" class="col-sm-12">
-                                    <div id="showHideNewProductForm" style="display:none">
-                                        <button type="button" class="btn btn-success">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                            <span>הוסף מוצר חדש</span>
-                                        </button>
-                                    </div>
-                                    <div id="NewProductData" class="col-sm-12 pull-right" style="padding:0px;">
-                                        <div class="col-lg-2 pull-left">
-                                            <button type="button" id="AddProductButton" class="btn"><span class="glyphicon glyphicon-plus"></span><span>&nbsp;הוסף מוצר</span></button>
+                                <div class="row" style="width: 98%; margin-right: 5px">
+                                    <div id="AddNewProduct" class="col-sm-12">
+                                        <div class="row" id="showHideNewProductForm" style="display:none">
+                                            <div class="col-sm-12">
+                                                <button type="button" class="btn btn-basic-improved2">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <span>הוסף מוצר חדש</span>
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-10 pull-right">
+                                        <div class="row" id="NewProductData">
                                             <div class="col-sm-2">
-                                                    <div class="form-group">
-                                                          <label for="form-product-quantity">כמות</label>
-                                                          <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
-                                                    </div>
-                                            </div>   
-                                                
-                                            <div class="col-sm-4">
-                                                    <div class="form-group" id="productBarcode">
-                                                          <label for="form-product-barcode">ברקוד</label>
-                                                          <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
-                                                    </div>
-                                            </div>    
-                                                
-                                            <div class="col-sm-4">
-                                                    <div class="form-group" id="productName">
-                                                         <label for="form-product-name">שם המוצר</label>
-                                                         <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
-                                                    </div>
-                                            </div>   
-                                            
+                                                <button type="button" id="AddProductButton" class="btn shadow">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <span>&nbsp;הוסף מוצר</span>
+                                                </button>
+                                            </div>
                                             <div class="col-sm-10">
-                                                <div class="form-group">
-                                                     <label for="form-product-remarks">הערות למוצר</label>
-                                                     <input type="text" class="form-control" id="form-product-remarks" name="productremarks" placeholder="הערות עבור המוצר">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="row">
+                                                            <div class="col-sm-2">
+                                                                    <div class="form-group">
+                                                                          <label for="form-product-quantity">כמות</label>
+                                                                          <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                                    </div>
+                                                            </div>   
+                                                                
+                                                            <div class="col-sm-5">
+                                                                    <div class="form-group" id="productBarcode">
+                                                                          <label for="form-product-barcode">ברקוד</label>
+                                                                          <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                                    </div>
+                                                            </div>    
+                                                                
+                                                            <div class="col-sm-5">
+                                                                    <div class="form-group" id="productName">
+                                                                         <label for="form-product-name">שם המוצר</label>
+                                                                         <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
+                                                                    </div>
+                                                            </div>
+                                                        </div>   
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                             <label for="form-product-remarks">הערות למוצר</label>
+                                                             <input type="text" class="form-control" id="form-product-remarks" name="productremarks" placeholder="הערות עבור המוצר">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div> 
+                                    </div> 
+                                </div>
                             </div>
-                            <input type="submit" id="CreateOrderButton" value="צור הזמנה" name="neworder" class="btn btn-info btn-block" disabled>
+                            <input type="submit" id="CreateOrderButton" style="margin-top: 10px" value="צור הזמנה" name="neworder" class="btn btn-info btn-block" disabled>
                         </form>
                     </div>
                 </div>

@@ -7,7 +7,7 @@ var windowHeight = window.innerHeight;
 
 
 var defaultShowOptions = {
-    effect: "blind",
+    effect: "drop",
     easing: "swing",
     duration: 400,
     queue: false
@@ -16,7 +16,7 @@ var defaultShowOptions = {
 var defaultHideOptions = {
     effect: "blind",
     easing: "linear",
-    duration: 400,
+    duration: 300,
     queue: false
 };
 

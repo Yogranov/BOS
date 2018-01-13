@@ -110,6 +110,7 @@ function ConvertChildrensInput(inputDom, ConvertedTo, classTo) {
             inputDom.attr('class', classTo);
     }
     inputDom.html(outString);
+    //inputDom.find("input[class=editing]").focus(); //Todo: need to do focus after
 }
 
 function GetInputsAttributes(inputElement) {
