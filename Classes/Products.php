@@ -157,6 +157,18 @@ class Products {
     }
 
     /**
+     * @param string $barcode
+     * @param bool $update
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function SetBarcode(string $barcode, bool $update = true) {
+        $this->barcode = $barcode;
+        if ($update)
+            $this->Update();
+    }
+
+    /**
      * @param string $remarks
      * @param bool $update
      * @throws Exception
@@ -175,6 +187,7 @@ class Products {
     public function Update() {
         $updateArray = array(
             "Name" => $this->name,
+            "Barcode" => $this->barcode,
             "Remark" => $this->remarks
         );
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->barcode)->update(self::TABLE_NAME, $updateArray, 1);

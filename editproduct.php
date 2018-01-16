@@ -24,10 +24,12 @@ $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
     header("Location: login.php");
 }
-
-$orderId = $_REQUEST["id"];
-$productBarcode = $_REQUEST["productBarcode"];
+/*
+$productBarcode = $_REQUEST["barcode"];
+$productObj = &Products::GetByBarcode($productBarcode);
+*/
 $shopObject = &Shop::GetById($shopId);
+
 
 
 //setting header
@@ -55,28 +57,24 @@ $PageTemplate .= <<<PAGE
         <div id="new-order">
 
         <form method="POST">
-            <center>עריכת פריט - {productBarcode}</center>
+            <center>עריכת מוצר - </center>
+                    
+            <div class="form-group">
+                    <label for="product-barcode">נא להכניס ברקוד לעריכה:</label>
+                    <input type="text" class="form-control" id="product-barcode" name="ProductBarcode"><br>
+            </div>
                     
             <div class="form-group">
                     <label for="product-name">שם המוצר</label>
-                    <input type="text" class="form-control" name="ProductName" value="{productName}" disabled><br>
+                    <input type="text" class="form-control" id="product-name" name="ProductName" value=""><br>
             </div>
-            <div class="form-group">
-                    <label for="product-barcode">ברקוד</label>
-                    {productBarcode}
-                    <input type="text" class="form-control" id="product-barcode" name="ProductBarcode" value="{productBarcode}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" disabled><br>
-            </div>
-            <div class="form-group">
-                    <label for="product-quantity">כמות</label><output for="product-quantity" id="QuantityOutput">{productQuantity}</output>
-                    <!-- <input type="text" class="form-control" name="Quantity" id="product-quantity" value="{productQuantity}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>-->
-                    <input type="range" name="Quantity" id="product-quantity" min="1" max="{$maxQuantity}" value="{productQuantity}" step="1" oninput="outputUpdate(value, '#QuantityOutput')" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required>
-            </div>
+
             <div class="form-group">
                     <label for="product-remarks">הערות למוצר</label>
-                    <input type="text" class="form-control" id="product-remarks" name="Remarks" value="{productRemarks}"><br>
+                    <input type="text" class="form-control" id="product-remarks" name="ProductRemarks" value=""><br>
             </div>
             
-            <input type="submit" value="עדכן פריט" name="editorder" class="btn btn-info btn-block">
+            <input type="submit" value="עדכן מוצר" name="editproduct" class="btn btn-info btn-block">
 
             </form>
 
@@ -85,45 +83,33 @@ $PageTemplate .= <<<PAGE
 </main>
 PAGE;
 //setting footer
+
 if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
     $PageTemplate .= footer;
 
-$orderProduct = &Order::GetById($orderId);
-$productsObject = $orderProduct->GetOrderProducts();
-foreach ($productsObject as $barcode => $productObject){
-    if($barcode == $productBarcode) {
-        \Services::setPlaceHolder($PageTemplate, "productName", $productObject->GetProductName());
-        \Services::setPlaceHolder($PageTemplate, "productBarcode", $productObject->GetProductBarcode());
-        \Services::setPlaceHolder($PageTemplate, "productQuantity", $productObject->GetQuantity());
-        \Services::setPlaceHolder($PageTemplate, "productRemarks", $productObject->GetRemarks());
-        $newProductObject = $productObject;
-    }
-}
+
+
 
 //Take form filed and make them variable.
-if(isset($_POST['editorder'])) {
-    $product_remarks = $_POST['Remarks'];
-    $product_quantity = $_POST['Quantity'];
+if(isset($_POST['editproduct'])) {
+
+    $productObj = &Products::GetByBarcode($_POST["ProductBarcode"]);
 
     $arrayToUpdate = array(
-        "SetRemarks" => $_POST['Remarks'],
-        "SetQuantity" => $_POST['Quantity']
+        "SetName" => $_POST['ProductName'],
+        "SetRemarks" => $_POST['ProductRemarks']
     );
 
         //Update product
-    if(!empty($product_quantity)) {
+    if(!empty($_POST['ProductName'] && !empty($_POST['editproduct']))) {
         try {
             foreach ($arrayToUpdate as $func => $attr) {
-                $newProductObject->$func($attr, false);
+                $productObj->$func($attr, false);
             }
-            $newProductObject->Update();
-            if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
-                header("Location: ".$_SESSION["REFERER"]);
-            else
-                echo "<script>window.location.href = '{$_SESSION["REFERER"]}';</script>";
+            $productObj->Update();
 
-        }catch (Exception $e) {
-            //todo: fix the Exeption issue.
+        }
+        catch (Exception $e) {
             $errorMsg = $e->getMessage();
             echo $errorMsg;
         }
