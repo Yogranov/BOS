@@ -163,7 +163,7 @@ $PageTemplate .= <<<PAGE
                             {ProductsOrderedButton}
                             {ProductsDeliveredButton}
                         </h4></span>
-                          <table class="table table-striped">
+                          <table id="viewOrderProducts" class="table table-striped">
                              <thead style="background: rgba(216,246,210,0.2)">
                                <tr>
                                   <th>שם המוצר</th>
@@ -171,7 +171,6 @@ $PageTemplate .= <<<PAGE
                                   <th>ברקוד</th>
                                   <th>סטטוס</th>
                                   <th>הערות</th>
-                                  <th></th>
                                </tr>
                              </thead>
                              <tbody>
@@ -265,22 +264,21 @@ if($orderObject->GetStatus() !== EOrderStatus::Delivered()) {
 \Services::setPlaceHolder($PageTemplate, "ProductsDeliveredButton", $ProductsDeliveredButtonText);
 //*********************************************{End product operations Buttons}******************************************//
 
-$onclickEditJS = "onclick=\"document.location = 'editproduct.php?id={$orderId}&productBarcode={productBarcode}&ShowHeaderFooter=0'\"";
 $productRow = <<<EOF
-<tr style="cursor: pointer;">
-    <td {$onclickEditJS}>{productName}</td>
-    <td {$onclickEditJS}>{productQuantity}</td>
-    <td {$onclickEditJS}>{productBarcode}</td>
-    <td>
+<tr style="cursor: default;" data-ProductBarcode="{productBarcode}" data-orderId="{$orderId}">
+    <td><span>{productName}</span></td>
+    <td class='editable'><input type='hidden' name='product_{productBarcode}_Quantity' data-function = "SetQuantity" data-OldValue="{productQuantity}" value='{productQuantity}'><span>{productQuantity}</span></td>
+    <td><span>{productBarcode}</span></td>
+    <td><span>
         <form method="POST" id="changeProductStatus_{productBarcode}" name="changeProductStatus_{productBarcode}">
-              <input type="hidden" name="productBarcode" id="productBarcode" value={productBarcode}>
-              <select class="productstatus" name="{productBarcode}" data-OrderId="{$orderObject->GetId()}" required>
-               {productStatusOptions}
-               </select>
+            <input type="hidden" name="productBarcode" id="productBarcode" value={productBarcode}>
+            <select class="productstatus" name="{productBarcode}" data-OrderId="{$orderObject->GetId()}" required>
+                {productStatusOptions}
+            </select>
         </form>
+        </span>
     </td>
-    <td {$onclickEditJS}>{productRemarks}</td>
-    <td {$onclickEditJS}>{editProduct}</td>
+    <td class='editable'><input type='hidden' name='product_{productBarcode}_Remarks' data-function = "SetRemarks" data-OldValue="{productQuantity}" value='{productRemarks}'><span>{productRemarks}</span></td>
 </tr>
 EOF;
 $productList = "";

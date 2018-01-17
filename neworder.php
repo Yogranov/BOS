@@ -85,36 +85,35 @@ $PageTemplate .= <<<PAGE
                                     </div>
                                 </div>
                                 
-                               <div class="col-sm-12">
-                                  <hr>
-                               </div>
-                                 <!-- End of client info -->
+                                <div class="col-sm-12">
+                                    <hr>
+                                </div>
+                                <!-- End of client info -->
                                 
-                               <div class="col-sm-8">
+                                <div class="col-sm-8">
                                     <div class="form-group">
                                         <label for="form-remarks">הערות להזמנה</label>
                                         <input type="text" class="form-control" id="form-remarks" name="remarks" placeholder="הערות עבור ההזמנה">
                                     </div>
-                               </div>
+                                </div>
                                 
-                               <div class="col-sm-4">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="form-seller">מוכרן</label>
                                         <select class="form-control" name="seller" id="form-seller" required><br>
                                              {sellerSelect}
                                         </select>
                                     </div>
-                               </div>
+                                </div>
                                 
-                               <div class="col-sm-12">
-                                  <hr>
-                               </div>
+                                <div class="col-sm-12">
+                                    <hr>
+                                </div>
                                 <!--End of order info-->
                                 
-                                
-                                
+                                <!--Added Products-->
                                 <div class="row">
-                                    <div id="OrderProducts" class="col-sm-12" style="display:none">
+                                    <div id="newOrderProducts" class="col-sm-12" style="display:none">
                                         <table class="table table-striped" style="font-size: 14px">
                                             <thead>
                                                 <th>שם מוצר</th>
@@ -128,6 +127,7 @@ $PageTemplate .= <<<PAGE
                                         </table>
                                     </div>
                                 </div>
+                                <!--End of Added Products-->
                                 
                                 <div class="row" style="width: 98%; margin-right: 5px">
                                     <div id="AddNewProduct" class="col-sm-12">
@@ -151,24 +151,22 @@ $PageTemplate .= <<<PAGE
                                                     <div class="col-sm-12">
                                                         <div class="row">
                                                             <div class="col-sm-2">
-                                                                    <div class="form-group">
-                                                                          <label for="form-product-quantity">כמות</label>
-                                                                          <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
-                                                                    </div>
+                                                                <div class="form-group">
+                                                                    <label for="form-product-quantity">כמות</label>
+                                                                    <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                                </div>
                                                             </div>   
-                                                                
                                                             <div class="col-sm-5">
-                                                                    <div class="form-group" id="productBarcode">
-                                                                          <label for="form-product-barcode">ברקוד</label>
-                                                                          <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
-                                                                    </div>
+                                                                <div class="form-group" id="productBarcode">
+                                                                    <label for="form-product-barcode">ברקוד</label>
+                                                                    <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                                </div>
                                                             </div>    
-                                                                
                                                             <div class="col-sm-5">
-                                                                    <div class="form-group" id="productName">
-                                                                         <label for="form-product-name">שם המוצר</label>
-                                                                         <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
-                                                                    </div>
+                                                                <div class="form-group" id="productName">
+                                                                    <label for="form-product-name">שם המוצר</label>
+                                                                    <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
+                                                                </div>
                                                             </div>
                                                         </div>   
                                                     </div>

@@ -284,7 +284,7 @@ function SetIframeSize(iFrame, newWidth, newHeight) {
     if (newHeight == 0)
         var newHeight =  parseInt(iframeBody.innerHeight()) + 20;
 
-    console.log(newWidth+"x"+newHeight);
+    //console.log(newWidth+"x"+newHeight);
 
     iFrame.attr({
         height: newHeight,
@@ -295,6 +295,6 @@ function SetIframeSize(iFrame, newWidth, newHeight) {
         height: newHeight,
         width: newWidth
     }, dialogSizeChangeSpeed, function(){
-        console.log("iframe resized to "+newWidth+"x"+newHeight);
+        //console.log("iframe resized to "+newWidth+"x"+newHeight);
     });
 }

@@ -30,6 +30,14 @@
     border: 1px solid rgba(0, 0, 0, 0.5) !important;
 }
 
+.editable {
+    cursor: pointer !important;
+}
+
+.productstatus {
+    cursor: pointer !important;
+}
+
 input[type="text"]:disabled {
     background-color: #e6e6e6 !important;
 }

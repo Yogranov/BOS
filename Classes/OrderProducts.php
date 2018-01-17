@@ -110,9 +110,11 @@ class OrderProducts {
      * @throws \Exception
      */
     public function SetRemarks($remarks, bool $update = true) {
-        $this->remarks = $remarks;
-        if ($update)
-            $this->Update();
+        if ($remarks !== $this->remarks) {
+            $this->remarks = $remarks;
+            if ($update)
+                $this->Update();
+        }
     }
 
     /**
@@ -123,17 +125,19 @@ class OrderProducts {
      * @throws \Exception
      */
     public function SetQuantity(int $quantity, bool $update = true, bool $log = true) {
-        if($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
-            throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::PRODUCT_MAX_QUANTITY);
+        if ($quantity !== $this->quantity) {
+            if($quantity < 1 || $quantity > Constant::PRODUCT_MAX_QUANTITY)
+                throw new Exception("\"כמות לא חוקית של פריטים! ניתן לשנות את הכמות בין 1 ל-{0}!", $quantity, Constant::PRODUCT_MAX_QUANTITY);
 
-        if ($log) {
-            $logText = "הכמות של {orderProduct} השתנה מ{oldQuantity} ל{newQuantity}";
-            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProduct" => $this, "oldQuantity"=> $this->quantity, "newQuantity" => $quantity));
+            if ($log) {
+                $logText = "הכמות של {orderProduct} השתנה מ{oldQuantity} ל{newQuantity}";
+                BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProduct" => $this, "oldQuantity"=> $this->quantity, "newQuantity" => $quantity));
+            }
+
+            $this->quantity = $quantity;
+            if ($update)
+                $this->Update(!$log);
         }
-
-        $this->quantity = $quantity;
-        if ($update)
-            $this->Update(!$log);
     }
 
     /**

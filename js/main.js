@@ -118,6 +118,5 @@ function GetInputsAttributes(inputElement) {
     $.each(inputElement.attributes,function(i,a){
         arr[i] = [a.name, a.value];
     });
-    //console.log(arr);
     return arr;
 }

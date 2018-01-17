@@ -9,14 +9,17 @@
 namespace BugOrderSystem;
 require "Classes/BugOrderSystem.php";
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+if (Constant::SYSTEM_DEBUG) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
 
 $orderProducts = BugOrderSystem::GetDB()->orderBy("orderId")->get("orderproducts");
 if (is_array($orderProducts) && count($orderProducts) > 0) {
     $updatedOrderTable = array();
     $insertedProducts = array();
+    BugOrderSystem::GetDB()->update("orders", array("products" => null)); //clear products column from order table
     foreach ($orderProducts as $product) {
         AddProduct($product, $insertedProducts);
         AddProductsToOrderTable($product, $updatedOrderTable);
@@ -79,9 +82,10 @@ function AddProduct(array $productData, array &$inserted) {
 function AddProductsToOrderTable(array $productData, array &$updated){
     $orderProductArray = array();
     $orderProduct = BugOrderSystem::GetDB()->where("OrderId", $productData["OrderId"])->get("orders", null, "products");
-    $orderProduct = $orderProduct[0]["products"];
-    if (!is_null($orderProduct))
+    if (!is_null($orderProduct) && count($orderProduct) > 0) {
+        $orderProduct = $orderProduct[0]["products"];
         $orderProductArray = (array)@json_decode($orderProduct);
+    }
 
     $ProductBarcode = (string)$productData["ProductBarcode"];
     $productArray = array($productData["Quantity"], $productData["Status"], $productData["Remarks"]);

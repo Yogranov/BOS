@@ -8,14 +8,14 @@
 namespace BugOrderSystem;
 header('Access-Control-Allow-Origin: *');
 
-/*
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-*/
-
 require_once("Classes/Services.php");
 require_once("Classes/BugOrderSystem.php");
+
+if (Constant::SYSTEM_DEBUG) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
 
 /* TODO: Need to work on the link encoding!
 $AllowedIps = array("88.99.28.98");
@@ -28,7 +28,6 @@ if (!$found) {
 
 $pageMethod = html_entity_decode($_REQUEST['method']);
 $pageData = \Services::MultiToArray(html_entity_decode($_REQUEST['data']), "|");
-$JqAutoCompleteTerm = $_REQUEST['term'];
 unset($_REQUEST);
 
 $outputData = array();
@@ -116,6 +115,22 @@ try {
 
             }
             catch (\Throwable $e) {
+                $outputData = 0;
+            }
+            break;
+
+        case "UpdateOrderProductData":
+            list($orderId, $productBarcode, $function, $data) = $pageData;
+            $outputData = 0;
+            try {
+                $orderObject = &Order::GetById($orderId);
+                $productObject = $orderObject->GetOrderProducts()[$productBarcode];
+                if (is_object($productObject) && $productObject instanceof OrderProducts && method_exists($productObject, $function)) {
+                    $productObject->$function($data);
+                    $outputData = 1;
+                }
+            }
+            catch(\Throwable $e) {
                 $outputData = 0;
             }
             break;

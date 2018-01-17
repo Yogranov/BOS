@@ -2,16 +2,13 @@
 This file contain jquery code that deal with the New Order Page neworder.php
  */
 
-var AddButton = "";
 var NewProductData = "";
-var OrderProducts = "";
+var newOrderProduct = "";
 var addedProducts = [];
 
 $(document).ready(function(){
-    AddButton = $(document).find("#AddProductButton");
     NewProductData = $(document).find("#NewProductData");
-    OrderProducts = $(document).find("#OrderProducts");
-
+    newOrderProduct = $(document).find("div[id=newOrderProducts]");
 
     //**************************** { howHideNewProductForm button has been clicked } *****************************//
     $("#showHideNewProductForm").on("click", "button", function() {
@@ -19,16 +16,17 @@ $(document).ready(function(){
     });
 
     //**************************** { Change changeable td on the fly } *****************************//
-    OrderProducts.on("dblclick", ".editable", function() {
+    newOrderProduct.on("dblclick", ".editable", function() {
         ConvertChildrensInput($(this),"text", "editing");
         $(".editing").find("input").focus();
     });
-    OrderProducts.on("blur", ".editing", function() {
+
+    newOrderProduct.on("blur", ".editing", function() {
         ConvertChildrensInput($(this),"hidden", "editable");
     });
 
     //**************************** { Add Product to List From bottom form inputs } *****************************//
-    AddButton.on("click", function() {
+    $(document).on("click", "#AddProductButton", function() {
         var ProductData = [];
         NewProductData.find("input").each(function( index , Element) {
             ProductData[Element.id] = Element.value;
@@ -57,7 +55,7 @@ $(document).ready(function(){
                 "<td><button type='button' id='RemoveNewProduct' class='btn btn-danger' data-ProductId='" +ProductId+ "' data-Barcode='" +ProductData["form-product-barcode"]+ "'><span class = 'glyphicon glyphicon-minus'></span></button></td>" +
                 "</tr>";
 
-            OrderProducts.find("table > tbody:last-child").append(ProductHtml);
+            newOrderProduct.find("tbody:last-child").append(ProductHtml);
             addedProducts.push(ProductData["form-product-barcode"]);
             showHideProductOrderTable("show");
         }
@@ -65,7 +63,7 @@ $(document).ready(function(){
 
     //**************************** { Remove Product From list button code } *****************************//
     $(document).on("click", "#RemoveNewProduct", function() {
-        OrderProducts.find("#"+$(this).attr("data-ProductId")).replaceWith("");
+        newOrderProduct.find("#"+$(this).attr("data-ProductId")).replaceWith("");
         addedProducts.splice(addedProducts.indexOf($(this).attr("data-Barcode")), 1);
 
         if (addedProducts.length === 0) {
@@ -131,7 +129,7 @@ function AutoFillUserData(phoneNumber) {
 function showHideProductOrderTable(what) {
     switch (what) {
         case "hide":
-            OrderProducts.hide(defaultHideOptions);
+            newOrderProduct.hide(defaultHideOptions);
             $("#CreateOrderButton").attr("disabled", true);
             NewProductData.show(defaultShowOptions);
             $("#showHideNewProductForm").hide(defaultHideOptions);
@@ -140,7 +138,7 @@ function showHideProductOrderTable(what) {
 
         case "show":
             default:
-            OrderProducts.show(defaultShowOptions);
+            newOrderProduct.show(defaultShowOptions);
             $("#CreateOrderButton").attr("disabled", false);
             NewProductData.hide(defaultHideOptions);
             $("#showHideNewProductForm").show(defaultShowOptions);
