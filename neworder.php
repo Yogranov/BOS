@@ -223,7 +223,7 @@ if(isset($_POST['neworder']))  {
         $order_remarks = $_REQUEST['remarks'];
 
         //products
-        preg_match_all("/product_[0-9a-z]+_[A-Z]+/i", \Services::dump(\Services::ArrayToMulti(array_keys($_REQUEST), "\N")), $matches);
+        preg_match_all("/product_[0-9a-z]+_[A-Z]+/i", \Services::ArrayToMulti(array_keys($_REQUEST), "\N"), $matches);
         $NewProductArray = array();
         foreach ($matches[0] as $productRequestName) {
             list(, $barcode, $property) = \Services::MultiToArray($productRequestName, "_");

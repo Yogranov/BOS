@@ -24,7 +24,7 @@ $(document).ready(function() {
         },
         minLength: 2,
         select: function (event, ui) {
-            GetBarcodeData(ui.item.Barcode, DialogIframe);
+            GetBarcodeData(ui.item.Barcode);
         },
         change: function (event, ui) {
             if (ui.item == null)
@@ -40,20 +40,6 @@ $(document).ready(function() {
         }
     });
 });
-
-function GetBarcodeData(productBarcode, DialogIframe) {
-    var retData = DoAPIAjax("GetProductData", productBarcode + "|javascript");
-    //console.log(retData);
-    if (retData !== false && retData !== 0) {
-        //exist in product db
-        ChangeBarcodeToSpan(retData.Barcode);
-    }
-    else {
-        //not exist in products db
-        ChangeBarcodeToInput("");
-    }
-}
-
 
 function ChangeBarcodeToSpan(value) {
     ProductBarcodeDiv.find("#form-product-barcode[type!='hidden']").replaceWith("<div id='barcode_Text'><input type='hidden' id='form-product-barcode' name='ProductBarcode' value='" + value + "'><span>" + value + "</span></div>");

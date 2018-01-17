@@ -40,8 +40,8 @@ $PageTemplate .= <<<PAGE
   <orderboard>
     <div class="wrapper">
         <div class="responstable">
-                <table id="OrderBoard" style="direction: rtl">
-                  <thead>
+            <table id="OrderBoard" style="direction: rtl">
+              <thead>
                     <tr>
                         <th>הזמנה</th>
                         <th>תאריך</th>
@@ -53,11 +53,11 @@ $PageTemplate .= <<<PAGE
                         <th>מוכרן</th>
                         <th>סטאטוס</th>  
                     </tr>
-                  </thead>
-                  <tbody>
-                    {OrderBoard_Table_Template}
-                  </tbody>
-                </table>
+              </thead>
+              <tbody>
+                {OrderBoard_Table_Template}
+              </tbody>
+            </table>
         </div>
         {PreOrderBoard_Table}            
   </div>

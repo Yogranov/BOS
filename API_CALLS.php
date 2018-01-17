@@ -80,18 +80,24 @@ try {
             break;
 
         case "SearchProduct":
-            //\Services::dump($pageData);
             list($productData, $column) = $pageData;
-
-            //\Services::dump($productData);
-            //\Services::dump($column);
 
             $column = ucfirst(strtolower($column));
 
             $data = BugOrderSystem::GetDB()->where($column, $productData, "REGEXP")->get("products", null, "Barcode, Name");
             if (BugOrderSystem::GetDB()->count > 0) {
                 foreach ($data as $product) {
-                    array_push($outputData, array("label" => $product["Barcode"].": ".$product["Name"], "Barcode" => $product["Barcode"], "value" => $product["Name"]));
+                    $innerArray = array("label" => $product["Barcode"].": ".$product["Name"], "Barcode" => $product["Barcode"], "Name" => $product["Name"]);
+                    //"value" => $product["Name"]
+                    switch ($column) {
+                        case "Barcode":
+                            $innerArray["value"] = $product["Barcode"];
+                            break;
+                        case "Name":
+                        default:
+                            $innerArray["value"] =  $product["Name"];
+                    }
+                    array_push($outputData, $innerArray);
                 }
             }
             else

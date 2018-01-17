@@ -36,7 +36,7 @@ $shopObject = &Shop::GetById($shopId);
 require_once "Header.php";
 $PageTemplate = headerTemplate;
 //setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "עריכת מוצר");
+\Services::setPlaceHolder($PageTemplate, "PageTitle", "הוספה/עריכת מוצר");
 
 //setting menu bar
 $PageTemplate .= headerBody;
@@ -50,32 +50,30 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset
 \Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
-$maxQuantity = Constant::PRODUCT_MAX_QUANTITY;
 $PageTemplate .= <<<PAGE
 <main>
     <div class="container">
-        <div id="new-order">
+        <div id="new-edit-product">
 
-        <form method="POST">
-            <center>עריכת מוצר - </center>
-                    
-            <div class="form-group">
-                    <label for="product-barcode">נא להכניס ברקוד לעריכה:</label>
-                    <input type="text" class="form-control" id="product-barcode" name="ProductBarcode"><br>
-            </div>
-                    
-            <div class="form-group">
-                    <label for="product-name">שם המוצר</label>
-                    <input type="text" class="form-control" id="product-name" name="ProductName" value=""><br>
-            </div>
-
-            <div class="form-group">
-                    <label for="product-remarks">הערות למוצר</label>
-                    <input type="text" class="form-control" id="product-remarks" name="ProductRemarks" value=""><br>
-            </div>
-            
-            <input type="submit" value="עדכן מוצר" name="editproduct" class="btn btn-info btn-block">
-
+            <form method="POST">
+                <center>הוספה/עריכת מוצר</center>
+                        
+                <div class="form-group">
+                        <label for="form-product-barcode">ברקוד</label>
+                        <div id="product-barcode"><input type="text" class="form-control" id="form-product-barcode" name="ProductBarcode"></div>
+                </div>
+                
+                <div class="form-group">
+                        <label for="form-product-name">שם המוצר</label>
+                        <div id="product-name"><input type="text" class="form-control" id="form-product-name" name="ProductName" value=""></div>
+                </div>
+    
+                <div class="form-group">
+                        <label for="product-remarks">הערות למוצר</label>
+                        <input type="text" class="form-control" id="product-remarks" name="ProductRemarks" value="">
+                </div>
+                
+                <input type="submit" id="form-new-edit-button" value="צור מוצר" name="editproduct" class="btn btn-info btn-block">
             </form>
 
         </div>
@@ -90,33 +88,17 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset
 
 
 
-//Take form filed and make them variable.
-if(isset($_POST['editproduct'])) {
 
-    $productObj = &Products::GetByBarcode($_POST["ProductBarcode"]);
 
-    $arrayToUpdate = array(
-        "SetName" => $_POST['ProductName'],
-        "SetRemarks" => $_POST['ProductRemarks']
-    );
 
-        //Update product
-    if(!empty($_POST['ProductName'] && !empty($_POST['editproduct']))) {
-        try {
-            foreach ($arrayToUpdate as $func => $attr) {
-                $productObj->$func($attr, false);
-            }
-            $productObj->Update();
 
-        }
-        catch (Exception $e) {
-            $errorMsg = $e->getMessage();
-            echo $errorMsg;
-        }
-    } else {
-        echo "נא למלא את כל השדות";
-    }
-}
+
+
+
+
+
+
+
 
 echo $PageTemplate;
 

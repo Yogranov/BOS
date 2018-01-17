@@ -156,3 +156,16 @@ function SetButtonIcon(buttonJquery, buttonInnerText, newIconClass) {
 
     //console.log("Icon of the button that contain the text '"+buttonInnerText+"' as assign the class '"+newIconClass+"'!");
 }
+
+function GetBarcodeData(productBarcode) {
+    var retData = DoAPIAjax("GetProductData", productBarcode + "|javascript");
+    //console.log(retData);
+    if (retData !== false && retData !== 0) {
+        //exist in product db
+        ChangeBarcodeToSpan(retData.Barcode);
+    }
+    else {
+        //not exist in products db
+        ChangeBarcodeToInput("");
+    }
+}

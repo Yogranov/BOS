@@ -70,6 +70,7 @@ const headerTemplate = <<<Header
     <script src="js/jqueryAddProduct.js"></script>
     <script src="js/jqueryNewOrder.js"></script>
     <script src="js/jqueryViewOrder.js"></script>
+    <script src="js/jqueryAddEditProduct.js"></script>
 </head>
 
 Header;

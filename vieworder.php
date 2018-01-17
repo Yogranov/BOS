@@ -110,7 +110,7 @@ else if(isset($_REQUEST["SetAsProductsDelivered"])) {
 
 
 $PageTemplate .= <<<PAGE
-      <main>
+      <main id="ViewOrder">
         <div id="dialog-EmailConfirm" title="לשלוח אימייל ללקוח?" style="display: none; direction: rtl; float: right;">
             <p>
                 <span class="ui-icon ui-icon-info" style="float:right; margin:12px 12px 20px 0; direction: rtl;"></span>

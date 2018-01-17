@@ -69,10 +69,11 @@ function DoAPIAjax(method, postData) {
 
 
 function ConvertChildrensInput(inputDom, ConvertedTo, classTo) {
+    //console.log(ConvertedTo);
     var outString = "";
     switch (ConvertedTo) {
         case 'hidden':
-            inputDom.find("input[type='text']").each(function() {
+            inputDom.find("input").each(function() {
                 var InputAttr = GetInputsAttributes(this);
                 var arr = [];
                 var innerString = "<input type='" + ConvertedTo + "'";
@@ -85,7 +86,8 @@ function ConvertChildrensInput(inputDom, ConvertedTo, classTo) {
                         innerString = innerString.concat(" " + index + "='"+ value +"'");
                 });
 
-                var valueData = inputDom.find("input[name='" + arr['name'] + "']").val(); //dynamic get value
+                var valueData = "";
+                valueData = inputDom.find("input[name='" + arr['name'] + "']").val(); //dynamic get value
                 innerString = innerString.concat(" value='"+ valueData +"'");
                 innerString = innerString.concat("><span>" + valueData + "</span>");
                 outString = outString.concat(innerString);
@@ -94,7 +96,7 @@ function ConvertChildrensInput(inputDom, ConvertedTo, classTo) {
             break;
 
         default:
-            inputDom.find("input[type='hidden']").each(function() {
+            inputDom.find("input").each(function() {
                 var InputAttr = GetInputsAttributes(this);
                 var innerString = "<input type='" + ConvertedTo + "'";
                 InputAttr.forEach(function(element) {
@@ -106,9 +108,11 @@ function ConvertChildrensInput(inputDom, ConvertedTo, classTo) {
                 });
                 innerString = innerString.concat(">");
                 outString = outString.concat(innerString);
+                //console.log(outString);
             });
             inputDom.attr('class', classTo);
     }
+    //console.log(outString);
     inputDom.html(outString);
     //inputDom.find("input[class=editing]").focus(); //Todo: need to do focus after
 }
