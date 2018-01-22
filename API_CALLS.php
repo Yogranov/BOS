@@ -106,19 +106,21 @@ try {
 
         case "GetProductData":
             list($productBacrcode, $location) = $pageData;
+            $outputData = 0;
             try {
-                $productObject = &Products::GetByBarcode($productBacrcode);
-                switch ($location) {
-                    case "javascript":
-                        $outputData["Barcode"] = $productObject->GetBarcode();
-                        $outputData["Name"] = $productObject->GetName();
-                        $outputData["Remark"] = $productObject->GetRemark();
-                        break;
+                if (Products::IsExist($productBacrcode)) {
+                    $productObject = &Products::GetByBarcode($productBacrcode);
+                    switch ($location) {
+                        case "javascript":
+                            $outputData["Barcode"] = $productObject->GetBarcode();
+                            $outputData["Name"] = $productObject->GetName();
+                            $outputData["Remark"] = $productObject->GetRemark();
+                            break;
 
-                    default:
-                        $outputData = serialize($productObject);
+                        default:
+                            $outputData = serialize($productObject);
+                    }
                 }
-
             }
             catch (\Throwable $e) {
                 $outputData = 0;

@@ -115,6 +115,21 @@ class Products {
     }
 
     /**
+     * @param string $barcode
+     * @return bool
+     * @throws Exception
+     */
+    public static function IsExist(string $barcode) {
+        if (!empty($barcode)) {
+            BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $barcode)->getOne(self::TABLE_NAME);
+            if (BugOrderSystem::GetDB()->count > 0)
+                return True;
+        }
+
+        return False;
+    }
+
+    /**
      * @throws Exception
      */
     public function Remove() {
