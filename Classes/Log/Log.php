@@ -88,8 +88,10 @@ class Log
         $ipText = "";
         if ($showIp) {
             $ipText = $_SERVER['REMOTE_ADDR'];
-            if ($_SERVER['REMOTE_ADDR'] !== $_SERVER['HTTP_X_FORWARDED_FOR'])
-                $ipText .= "-".$_SERVER['HTTP_X_FORWARDED_FOR'];
+            if ($_SERVER['REMOTE_ADDR'] !== $_SERVER['HTTP_X_FORWARDED_FOR']) {
+                $proxyArray = @explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
+                $ipText = $proxyArray[0];
+            }
         }
         $context['ip'] = $ipText;
 
@@ -305,7 +307,7 @@ class Log
 
     /**
      * @param $handler
-     * @return void | object
+     * @throws ReflectionException
      */
     private function getReturnedData(&$handler) {
         $reflection = new \ReflectionClass($handler);

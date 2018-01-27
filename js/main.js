@@ -59,7 +59,7 @@ function DoAPIAjax(method, postData) {
         },
         error: function (ajaxobject, statusText, errorThrowen) {
             //console.log(statusText);
-            console.log(ajaxobject);
+            //console.log(ajaxobject);
             retData = false;
         }
     });

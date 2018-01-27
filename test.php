@@ -14,6 +14,7 @@ error_reporting(E_ALL);
 
 require_once "Classes/BugOrderSystem.php";
 use Log\ELogLevel;
+use Log\Message;
 
 /*
 $productData = array(
@@ -23,25 +24,29 @@ $productData = array(
 var_dump(json_encode($productData));
 */
 
+/*
 $orderObject = &Order::GetById("161");
 \Services::dump($orderObject);
 //\Services::dump($_SERVER);
+*/
 
-/*
 try
 {
     BugOrderSystem::GetLog();
-    foreach(BugOrderSystem::$logReadHandlers as $where => $handler) {
+    $SearchArray = array("הזמנה 201");
+    \Services::dump(Message::SearchMessage(BugOrderSystem::$logReadHandlers["db"], $SearchArray));
+    /*
+    foreach (BugOrderSystem::$logReadHandlers as $where => $method) {
         \Services::dump($where);
-        \Services::dump($handler->Read(0, new \DateTime("2017-12-02 14:35")));
+        \Services::dump($method->Read());
     }
-    //$data = &Region::GetById(0);
+    */
 }
 catch (\Throwable $e) {
     echo $e->getMessage();
     BugOrderSystem::GetLog()->LogException($e);
 }
-*/
+
 /*
 \Services::dump(EOrderStatus::Arrived[0]);
 

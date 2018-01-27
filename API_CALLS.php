@@ -112,6 +112,7 @@ try {
                     $productObject = &Products::GetByBarcode($productBacrcode);
                     switch ($location) {
                         case "javascript":
+                            $outputData = array();
                             $outputData["Barcode"] = $productObject->GetBarcode();
                             $outputData["Name"] = $productObject->GetName();
                             $outputData["Remark"] = $productObject->GetRemark();

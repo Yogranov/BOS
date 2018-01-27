@@ -232,25 +232,30 @@ if(isset($_POST['neworder']))  {
         }
 
         if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number) && !empty($order_seller) && count($NewProductArray) > 0) {
-            //starting create order//
-            //create client//
-            $clientId = Client::isPhoneExist($client_phone_number);
-            if ($clientId == False)
-                $NewClientObj = &Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
-            else
-                $NewClientObj = &Client::GetById($clientId);
 
-            //create order//
-            $orderObject = &Order::Add($NewClientObj, Shop::GetById($shopId), Seller::GetById($order_seller), $order_remarks);
+                //starting create order//
+                //create client//
+                $clientId = Client::isPhoneExist($client_phone_number);
+                if ($clientId == False)
+                    $NewClientObj = &Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
+                else
+                    $NewClientObj = &Client::GetById($clientId);
 
-            //Add products to order.
-            foreach ($NewProductArray as $productBarcode => $productArray) {
-                $productObject = &Products::Add($productBarcode, $NewProductArray[$productBarcode]["Name"]);
-                $orderObject->AddOrderProduct($productObject, $NewProductArray[$productBarcode]["Quantity"], $NewProductArray[$productBarcode]["Remark"]);
+                //create order//
+                $orderObject = &Order::Add($NewClientObj, Shop::GetById($shopId), Seller::GetById($order_seller), $order_remarks);
+
+            try {
+                //Add products to order.
+                foreach ($NewProductArray as $productBarcode => $productArray) {
+                    $productObject = &Products::Add($productBarcode, $NewProductArray[$productBarcode]["Name"]);
+                    $orderObject->AddOrderProduct($productObject, $NewProductArray[$productBarcode]["Quantity"], $NewProductArray[$productBarcode]["Remark"]);
+                }
             }
-            $orderProductsArray = $orderObject->GetOrderProducts();
+            catch (\Throwable $e) {
+                $orderObject->Remove();
+                throw $e;
+            }
 
-            if (count($orderProductsArray) > 0) {
                 //Send order summery to client
                 if ($NewClientObj->IsWantEmail() && $NewClientObj->GetEmail() !== "") {
                     $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
@@ -268,13 +273,7 @@ if(isset($_POST['neworder']))  {
 
                     $NewClientObj->SendEmail($orderSummery, "סיכום הזמנה");
                 }
-
                 header("Location: ".$pageLocation);
-            }
-            else {
-                //remove unfinished order! (without products)
-                $orderObject->Remove();
-            }
 
         } else {
             echo "אנא מלא את כל השדות הנדרשים";

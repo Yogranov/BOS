@@ -21,7 +21,7 @@ class Address
             $ret2=$this->setQuery($query);
 
             if (!$ret && !$ret2)
-                unset($this->ip,$this->port,$this->query);
+                unset($this->ip, $this->port, $this->query);
             else
                 return True;
         }

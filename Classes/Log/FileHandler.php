@@ -37,6 +37,7 @@ class FileHandler extends RotatingFileHandler implements ILogRead
      * @param DateTime|null $TimeFrom
      * @param DateTime|null $TimeTo
      * @return array
+     * @throws Exception
      */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
         //TODO: get all the log files in the directory and loop over them
@@ -57,5 +58,4 @@ class FileHandler extends RotatingFileHandler implements ILogRead
 
         return $contents;
     }
-
 }

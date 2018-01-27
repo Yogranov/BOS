@@ -466,7 +466,7 @@ class Order
         $this->ProductsUpdate(false);
 
         if ($log) {
-            $logText = "ה{product} נוסף ל{order} בכמות {quantity}";
+            $logText = "{product} נוסף ל{order} בכמות {quantity}";
             BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "product" => $product, "quantity" => $quantity));
         }
     }
@@ -529,7 +529,7 @@ class Order
 
         if ($log) {
             $logText = " עודכנו המוצרים {products} של {order}!";
-            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "products"=> $jsonString));
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "products"=> array_keys($this->GetOrderProducts())));
         }
     }
 

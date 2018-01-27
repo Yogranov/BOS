@@ -35,7 +35,6 @@ $(document).ready(function() {
             }
             else
                 var barcode = ui.item.Barcode;
-
             GetBarcodeData(barcode);
         }
     });

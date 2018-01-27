@@ -8,5 +8,11 @@
 
 interface ILogRead
 {
+    /**
+     * @param int $rows
+     * @param DateTime|null $TimeFrom
+     * @param DateTime|null $TimeTo
+     * @return \Log\Message[]
+     */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null);
 }

@@ -106,14 +106,21 @@ class OrderProducts {
     /**
      * @param $remarks
      * @param bool $update
+     * @param bool $log
      * @throws Exception
      * @throws \Exception
      */
-    public function SetRemarks($remarks, bool $update = true) {
+    public function SetRemarks($remarks, bool $update = true, bool $log = true) {
         if ($remarks !== $this->remarks) {
+
+            if ($log) {
+                $logText = "ההערות של {orderProduct} השתנה ל-'{newRemarks}'";
+                BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProduct" => $this, "newRemarks"=> $remarks));
+            }
+
             $this->remarks = $remarks;
             if ($update)
-                $this->Update();
+                $this->Update(!$log);
         }
     }
 
@@ -131,7 +138,7 @@ class OrderProducts {
 
             if ($log) {
                 $logText = "הכמות של {orderProduct} השתנה מ{oldQuantity} ל{newQuantity}";
-                BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProduct" => $this, "oldQuantity"=> $this->quantity, "newQuantity" => $quantity));
+                BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderProduct" => $this, "oldQuantity"=> $this->quantity, "newQuantity" => $quantity, "orderId" => $this->orderId, "ProductBarcode" => $this->product->GetBarcode()));
             }
 
             $this->quantity = $quantity;
