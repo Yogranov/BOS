@@ -55,6 +55,23 @@ class Products {
     }
 
     /**
+     * @return array
+     * @throws Exception
+     * @throws \Exception
+     */
+    private function getProductOrders() {
+        $ordersArray = array();
+        $productBarcode = $this->GetBarcode();
+        Order::LoopAll(function(Order $order) use (&$ordersArray, $productBarcode) {
+            $products = $order->GetOrderProducts();
+            if (@array_key_exists($productBarcode, $products))
+                array_push($ordersArray, $order->GetId());
+        });
+
+        return $ordersArray;
+    }
+
+    /**
      * @param string $barcode
      * @return Products
      * @throws Exception
@@ -131,29 +148,37 @@ class Products {
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function Remove() {
-        $success = BugOrderSystem::GetDB()->where($this->barcode,self::TABLE_KEY_COLUMN)->delete(self::TABLE_NAME,1);
+        $productsOrders = $this->getProductOrders();
+        if (count($productsOrders) > 0) {
+            throw new Exception("לא ניתן למחוק את {0} כיוון שהוא משוייך להזמנה אחת או יותר!", $productsOrders, $this);
+        }
+
+        $success = BugOrderSystem::GetDB()->where($this->barcode, self::TABLE_KEY_COLUMN)->delete(self::TABLE_NAME, 1);
         if(!$success)
-            throw new Exception("unable to remove {0}", $this, $this);
+            throw new Exception("לא ניתן למחוק את {0}", $this, $this);
+
+        unset(self::$products[$this->barcode]);
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetBarcode() {
         return $this->barcode;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetName() {
         return $this->name;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function GetRemark() {
         return $this->remarks;

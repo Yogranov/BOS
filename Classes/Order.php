@@ -60,10 +60,11 @@ class Order
     }
 
     /**
-     * @param $orderId
-     * @param $orderData
+     * @param int $orderId
+     * @param array $orderData
      * @return Order
      * @throws Exception
+     * @throws \Exception
      */
     private static function AddOrderByOrderData(int $orderId, array $orderData)
     {
@@ -165,6 +166,21 @@ class Order
 
         $res = &self::GetById($success);
         return $res;
+    }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function Remove() {
+        $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME, 1);
+        if (!$success)
+            throw new Exception("לא ניתן למחוק את {0}!", null, $this);
+
+        unset(self::$orders[$this->id]);
+
+        $logText = "ה{order} נמחקה!";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this));
     }
 
     /**

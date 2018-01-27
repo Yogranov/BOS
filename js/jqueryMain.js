@@ -21,15 +21,17 @@ var defaultHideOptions = {
 };
 
 $(document).ready(function(){
-    $("[class='goBack']").click(function(event) {
-        event.preventDefault();
-        history.back(1);
+    //**************************** {Bootstrap tooltip} *****************************//
+    $('[data-toggle="tooltip"]').tooltip({
+        animation: true,
+        html: true,
+        placement: "bottom"
     });
 
-    $(".productstatus").change(function(){
-        var productBarcode = $(this).attr("name");
-        var submitLoc = "changeProductStatus_" + productBarcode;
-        document.getElementById(submitLoc).submit();
+    //**************************** {goBack class click event handler} *****************************//
+    $("[class='goBack']").on(action, function(event) {
+        event.preventDefault();
+        history.back(1);
     });
 
     //**************************** {Question handler} *****************************//

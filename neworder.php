@@ -17,6 +17,7 @@ if(!isset($shopId)) {
     header("Location: login.php");
 }
 
+$pageLocation = "Ordersboard.php";
 $shopObj = &Shop::GetById($shopId);
 
 
@@ -268,10 +269,11 @@ if(isset($_POST['neworder']))  {
                     $NewClientObj->SendEmail($orderSummery, "סיכום הזמנה");
                 }
 
-                header("Location: Ordersboard.php");
+                header("Location: ".$pageLocation);
             }
             else {
-                //Todo: need to remove the order
+                //remove unfinished order! (without products)
+                $orderObject->Remove();
             }
 
         } else {

@@ -128,9 +128,9 @@ $PageTemplate .= <<<PAGE
         <div class="container">
             <h2 style="text-align: center">הזמנה {$orderObject->GetId()}</h2>
             <div class="row">
-                <div class="col-sm-6" style="height: 250px;">
+                <div class="col-sm-6">
                     <div class="order-info">    
-                        <span><h4> פרטי הזמנה </h4></span>
+                        <span><h4 class="bold underline"> פרטי הזמנה </h4></span>
                             <ul>                     
                                 <li><span> תאריך פתיחה: </span> {$orderInfo->GetTimeStamp()->format("d/m/y H:i")}</li>
                                 <li><span> מוכרן: </span> {SellerName}</li>      
@@ -140,16 +140,16 @@ $PageTemplate .= <<<PAGE
                         <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}&ShowHeaderFooter=0';">ערוך הזמנה </div>
                     </div>
                 </div>
-                <div class="col-sm-6" style="height: 250px;">
+                <div class="col-sm-6">
                     <div class="order-client-info">
-                        <span><h4> פרטי לקוח </h4></span>
+                        <span><h4 class="bold underline"> פרטי לקוח </h4></span>
                              <ul>
                                <li><span> שם הלקוח:</span> {$orderInfo->GetClient()->GetFullName()}</li>
                                <li><span> פלאפון:</span> {$clientExtendPhoneNumber}</li>
                                <li><span> לקוח מעוניין בעדכון ע"י אימייל:</span>&nbsp;<span style="font-weight: normal" id="ClientWantEmails" data-value="{clientWantsEmailsBool}">{ClientWantsEmails}</span></li>
                                <li><span> אימייל:</span>    {ClientEmail}</li>
                             </ul>
-                         <div class="btn btn-primary" style="float: left; margin: 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0';">ערוך לקוח </div>
+                         <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0';">ערוך לקוח </div>
                          <!-- <div class="btn btn-primary" style="float: left; margin: 3px;" data-action="OpenBOSDialog" data-page="editclient.php" data-dialogTitle="עריכת לקוח" data-variables="clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0">ערוך לקוח </div> -->
                     </div>
                 </div>
@@ -267,7 +267,7 @@ if($orderObject->GetStatus() !== EOrderStatus::Delivered()) {
 $productRow = <<<EOF
 <tr style="cursor: default;" data-ProductBarcode="{productBarcode}" data-orderId="{$orderId}">
     <td><span>{productName}</span></td>
-    <td class='editable'><input type='hidden' name='product_{productBarcode}_Quantity' data-function = "SetQuantity" data-OldValue="{productQuantity}" value='{productQuantity}'><span>{productQuantity}</span></td>
+    <td class='editable' data-toggle="tooltip" title="לחץ לעריכת כמות"><input type='hidden' name='product_{productBarcode}_Quantity' data-function = "SetQuantity" data-OldValue="{productQuantity}" value='{productQuantity}'><span>{productQuantity}</span></td>
     <td><span>{productBarcode}</span></td>
     <td><span>
         <form method="POST" id="changeProductStatus_{productBarcode}" name="changeProductStatus_{productBarcode}">
@@ -278,7 +278,7 @@ $productRow = <<<EOF
         </form>
         </span>
     </td>
-    <td class='editable'><input type='hidden' name='product_{productBarcode}_Remarks' data-function = "SetRemarks" data-OldValue="{productQuantity}" value='{productRemarks}'><span>{productRemarks}</span></td>
+    <td class='editable' data-toggle="tooltip" title="לחץ לעריכת הערות המוצר"><input type='hidden' name='product_{productBarcode}_Remarks' data-function = "SetRemarks" data-OldValue="{productQuantity}" value='{productRemarks}'><span>{productRemarks}</span></td>
 </tr>
 EOF;
 $productList = "";

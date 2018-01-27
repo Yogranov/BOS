@@ -38,4 +38,10 @@ $(document).ready(function(){
         ConvertChildrensInput($(this),"hidden", "editable");
     });
 
+
+    $(".productstatus").change(function(){
+        var productBarcode = $(this).attr("name");
+        var submitLoc = "changeProductStatus_" + productBarcode;
+        document.getElementById(submitLoc).submit();
+    });
 });

@@ -94,8 +94,8 @@ class OrderProducts {
      * @throws \Exception
      */
     public function ChangeStatus(EProductStatus $newStatus) {
-        $logText = "הסטטוס של {product} השתנה מ-{oldStatus} ל-{newStatus} ב{order}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc(), "order" => $this->orderId));
+        $logText = "הסטטוס של {product} השתנה מ-{oldStatus} ל-{newStatus}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc()));
 
         $this->status = $newStatus;
         $this->Update(false);
