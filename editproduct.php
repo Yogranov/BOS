@@ -50,14 +50,16 @@ if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset
 \Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 ///
 
+$info = "";
 $PageTemplate .= <<<PAGE
-<main>
+<main style="direction: rtl">
     <div class="container">
         <div id="new-edit-product">
 
             <form method="POST">
                 <center>הוספה/עריכת מוצר</center>
                         
+                        {infoFlash}
                 <div class="form-group">
                         <label for="form-product-barcode">ברקוד</label>
                         <div id="product-barcode"><input type="text" class="form-control" id="form-product-barcode" name="ProductBarcode"></div>
@@ -81,23 +83,66 @@ $PageTemplate .= <<<PAGE
 </main>
 PAGE;
 //setting footer
-
+//
 if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
     $PageTemplate .= footer;
 
 
+// TODO: fix the JS.
+
+
+\Services::setPlaceHolder($PageTemplate,"infoFlash","");
+
+if(isset($_POST["editproduct"])){
+    if(!empty($_POST["ProductName"]) && !empty($_POST["ProductBarcode"])){
+
+        $productName = $_POST["ProductName"];
+        $productBarcode = $_POST["ProductBarcode"];
+        $productRemarks = $_POST["ProductRemarks"];
+
+        try{
+            $productObj = Products::GetByBarcode($_POST["ProductBarcode"]);
+
+
+            $arrayToUpdate = array(
+                "SetName" => $productName,
+                "SetRemarks" => $productRemarks
+            );
+
+            try {
+                foreach ($arrayToUpdate as $func => $attr) {
+                    $productObj->$func($attr, false);
+                }
+                $productObj->Update();
+                if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
+                    header("Location: ".$_SESSION["REFERER"]);
+                else
+                    echo "<script>window.location.href = '{$_SESSION["REFERER"]}';</script>";
+                \Services::setPlaceHolder($PageTemplate,"infoFlash","<center><b> המוצר {$productName} עודכן בהצלחה!</b></center>");
+            } catch (\Exception $e) {
+                $errorMsg = $e->getMessage();
+                echo $errorMsg;
+            }
+
+        } catch (\Throwable $e){
+
+            try {
+                //$newProduct = Products::Add($productBarcode, $productName, $productRemarks);
+                \Services::setPlaceHolder($PageTemplate,"infoFlash","<center><b>המוצר {$productName} נוצר בהצלחה!</b></center>");
+            } catch (\Throwable $e){
+                $errorMsg = $e->getMessage();
+                echo $errorMsg;
+            }
 
 
 
+        }
 
 
-
-
-
-
-
-
-
+    }else {
+        \Services::setPlaceHolder($PageTemplate,"infoFlash","<center><b>נא למלא את השדות הנדרשים!</b></center>");
+    }
+}
 
 
 echo $PageTemplate;
