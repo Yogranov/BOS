@@ -40,14 +40,27 @@ class FileHandler extends RotatingFileHandler implements ILogRead
      * @throws Exception
      */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
-        //TODO: get all the log files in the directory and loop over them
-        $object = new SplFileObject($this->getTimedFilename(),"a+");
+        //
         $contents = array();
-        while(!$object->eof()) {
-            $lineData = $object->fgets();
 
-            if (!empty($lineData)) {
-                array_push($contents, new \Log\Message($lineData));
+        //find Regex Word according to filename format
+        $fileName = Services::MultiToArray($this->getGlobPattern(), "/");
+        $searchRegex = "/" . str_replace("*", "[0-9_-]+", $fileName[count($fileName)-1]) . "/i";
+
+        //find log files location
+        $dir = Services::MultiToArray($this->getGlobPattern(),"/");
+        unset($dir[count($dir)-1]);
+        $dir = Services::ArrayToMulti($dir, "/")."/";
+
+        //find all files in the dir and match to the Regex Word - read if match
+        foreach (scandir($dir) as $file) {
+            if (preg_match($searchRegex, $file) == 1) {
+                $object = new SplFileObject($dir.$file,"a+");
+                while($object->valid()) {
+                    $lineData = $object->fgets();
+                    if (!empty($lineData))
+                        array_push($contents, new \Log\Message($lineData));
+                }
             }
         }
 
