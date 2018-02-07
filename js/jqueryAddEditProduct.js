@@ -12,8 +12,9 @@ $(document).ready(function() {
     newEditProductName = newEditProduct.find("#product-name");
     newEditProductBarcode = newEditProduct.find("#product-barcode");
 
+
     //**************************** {BugOrderSystem Ajax Product Name autocomplete  } *****************************//
-    newEditProductName.find("input[type=text]").autocomplete({
+    /*newEditProductName.find("input[type=text]").autocomplete({
         source: function (request, response) {
             $.ajax({
                 url: "API_CALLS.php",
@@ -62,7 +63,7 @@ $(document).ready(function() {
             }
         }
     });
-
+*/
     //**************************** {BugOrderSystem Ajax Barcode autocomplete  } *****************************//
     newEditProductBarcode.find("input[type=text]").autocomplete({
         source: function (request, response) {
@@ -81,9 +82,10 @@ $(document).ready(function() {
         minLength: 2,
         select: function (event, ui) {
             newEditProductName.find("input").val(ui.item.Name);
-            ConvertChildrensInput(newEditProductName, "hidden", "");
+           // ConvertChildrensInput(newEditProductName, "hidden", "");
         },
         change: function (event, ui) {
+            /*
             if (ui.item === null)
                 barcode = newEditProductBarcode.find("input").val();
             else
@@ -101,6 +103,7 @@ $(document).ready(function() {
                 newEditProductName.find("input").val("");
                 ConvertChildrensInput(newEditProductName, "text", "");
             }
+        */
         }
     });
 });

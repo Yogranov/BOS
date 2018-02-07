@@ -127,7 +127,7 @@ if(isset($_POST["editproduct"])){
         } catch (\Throwable $e){
 
             try {
-                //$newProduct = Products::Add($productBarcode, $productName, $productRemarks);
+                Products::Add($productBarcode, $productName, $productRemarks);
                 \Services::setPlaceHolder($PageTemplate,"infoFlash","<center><b>המוצר {$productName} נוצר בהצלחה!</b></center>");
             } catch (\Throwable $e){
                 $errorMsg = $e->getMessage();

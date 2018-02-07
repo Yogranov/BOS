@@ -131,6 +131,7 @@ $PageTemplate .= <<<PAGE
                 <div class="col-sm-6">
                     <div class="order-info">    
                         <span><h4 class="bold underline"> פרטי הזמנה </h4></span>
+                            <div class="btn btn-info" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='orderHistory.php?orderId={$orderId}&ShowHeaderFooter=0';">היסטוריה</div>
                             <ul>                     
                                 <li><span> תאריך פתיחה: </span> {$orderInfo->GetTimeStamp()->format("d/m/y H:i")}</li>
                                 <li><span> מוכרן: </span> {SellerName}</li>      
@@ -138,7 +139,6 @@ $PageTemplate .= <<<PAGE
                                 <li><span>סטטוס הזמנה מחושב:</span> {OrderStatus}</li>
                            </ul> 
                         <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editorder.php?orderId={$orderId}&ShowHeaderFooter=0';">ערוך הזמנה</div>
-                        <div class="btn btn-info" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='orderHistory.php?orderId={$orderId}&ShowHeaderFooter=0';">היסטוריה</div>
                     </div>
                 </div>
                 <div class="col-sm-6">
