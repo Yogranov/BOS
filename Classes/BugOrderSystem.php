@@ -106,7 +106,7 @@ class BugOrderSystem {
                 $Email = new \PHPMailer();
                 $Email->isSendmail();
                 $Email->IsHTML(true);
-                $Email->setFrom('OrderSystem@bug.co.il', 'Bug_Order_System(BoS) No-Reply');
+                $Email->setFrom(Constant::EMAIL_SYSTEM_EMAIL, Constant::EMAIL_SYSTEM_NAME);
                 $Email->CharSet = 'utf-8';
 
                 $body = <<<BUG
@@ -118,7 +118,6 @@ class BugOrderSystem {
 BUG;
                 $Email->Subject = $subject;
                 $Email->Body = $body;
-
 
                 $ret = self::$email = $Email;
             }

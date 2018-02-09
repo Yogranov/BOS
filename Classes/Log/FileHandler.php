@@ -40,15 +40,14 @@ class FileHandler extends RotatingFileHandler implements ILogRead
      * @throws Exception
      */
     public function Read(int $rows = 0, DateTime $TimeFrom = null, DateTime $TimeTo = null) {
-        //
         $contents = array();
 
+        $dir = Services::MultiToArray($this->getGlobPattern(), "/");
+
         //find Regex Word according to filename format
-        $fileName = Services::MultiToArray($this->getGlobPattern(), "/");
-        $searchRegex = "/" . str_replace("*", "[0-9_-]+", $fileName[count($fileName)-1]) . "/i";
+        $searchRegex = "/" . str_replace("*", "[0-9_-]+", $dir[count($dir)-1]) . "/i";
 
         //find log files location
-        $dir = Services::MultiToArray($this->getGlobPattern(),"/");
         unset($dir[count($dir)-1]);
         $dir = Services::ArrayToMulti($dir, "/")."/";
 
@@ -64,8 +63,11 @@ class FileHandler extends RotatingFileHandler implements ILogRead
             }
         }
 
+        //SORT Array
         usort($contents, function(\Log\Message $a, \Log\Message $b) {
-            if(  $a->GetTime() ==  $b->GetTime() ){ return 0 ; }
+            if( $a->GetTime() ==  $b->GetTime() )
+                return 0 ;
+
             return ($a->GetTime() < $b->GetTime()) ? 1 : -1;
         });
 

@@ -24,13 +24,8 @@ $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
     header("Location: login.php");
 }
-/*
-$productBarcode = $_REQUEST["barcode"];
-$productObj = &Products::GetByBarcode($productBarcode);
-*/
+
 $shopObject = &Shop::GetById($shopId);
-
-
 
 //setting header
 require_once "Header.php";
@@ -103,7 +98,6 @@ if(isset($_POST["editproduct"])){
         try{
             $productObj = Products::GetByBarcode($_POST["ProductBarcode"]);
 
-
             $arrayToUpdate = array(
                 "SetName" => $productName,
                 "SetRemarks" => $productRemarks
@@ -125,7 +119,6 @@ if(isset($_POST["editproduct"])){
             }
 
         } catch (\Throwable $e){
-
             try {
                 Products::Add($productBarcode, $productName, $productRemarks);
                 \Services::setPlaceHolder($PageTemplate,"infoFlash","<center><b>המוצר {$productName} נוצר בהצלחה!</b></center>");
@@ -133,11 +126,7 @@ if(isset($_POST["editproduct"])){
                 $errorMsg = $e->getMessage();
                 echo $errorMsg;
             }
-
-
-
         }
-
 
     }else {
         \Services::setPlaceHolder($PageTemplate,"infoFlash","<center><b>נא למלא את השדות הנדרשים!</b></center>");
