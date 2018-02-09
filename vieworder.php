@@ -34,19 +34,15 @@ $orderObject = $orderInfo;
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
 //setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "הזמנה: ".$_GET["id"]);
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "הזמנה: ".$_GET["id"]);
 
-$PageTemplate .= headerBody;
-$data = "";
 if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !isset($_GET["ShowHeaderFooter"])) {
     //setting menu bar
-    $data = headerMenu;
-    \Services::setPlaceHolder($data, "shopName", $shopObject->GetShopName());
-    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageMenu", $GLOBALS["UserMenu"]);
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObject->GetShopName());
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "ordersBoardClass", "active");
 }
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
 
 if (isset($_REQUEST["productBarcode"])) {
     $productBarcode = $_REQUEST["productBarcode"];
@@ -109,7 +105,7 @@ else if(isset($_REQUEST["SetAsProductsDelivered"])) {
 }
 
 
-$PageTemplate .= <<<PAGE
+$pageBody = <<<PAGE
       <main id="ViewOrder">
         <div id="dialog-EmailConfirm" title="לשלוח אימייל ללקוח?" style="display: none; direction: rtl; float: right;">
             <p>
@@ -190,26 +186,26 @@ $orderRemarks = $orderObject->GetRemarks();
 if (empty($orderRemarks))
     $orderRemarks = "ללא";
 */
-\Services::setPlaceHolder($PageTemplate, "OrderRemarks", $orderRemarks);
+\Services::setPlaceHolder($pageBody, "OrderRemarks", $orderRemarks);
 
 $clientEmail = $orderObject->GetClient()->GetEmail();
 if (empty($clientEmail))
     $clientEmail = "לא הוזן";
-\Services::setPlaceHolder($PageTemplate, "ClientEmail", $clientEmail);
+\Services::setPlaceHolder($pageBody, "ClientEmail", $clientEmail);
 
 //set seller name - can be change or delete
 try {
     $orderSeller = $orderObject->GetSeller()->GetFullName();
-    \Services::setPlaceHolder($PageTemplate, "SellerName", $orderSeller);
+    \Services::setPlaceHolder($pageBody, "SellerName", $orderSeller);
 } catch (\Exception $e) {
     $errorMsg = $e->getMessage();
-    \Services::setPlaceHolder($PageTemplate, "SellerName", "מוכר לא ידוע");
+    \Services::setPlaceHolder($pageBody, "SellerName", "מוכר לא ידוע");
 }
 ///
 
 ///order status
 $orderStatusString = $orderObject->GetStatus()->getDesc();
-\Services::setPlaceHolder($PageTemplate, "OrderStatus", $orderStatusString);
+\Services::setPlaceHolder($pageBody, "OrderStatus", $orderStatusString);
 //
 
 
@@ -221,8 +217,8 @@ if ($orderInfo->GetClient()->IsWantEmail()) {
     $wantEmail = 'לא';
     $wantEmailBool = 0;
 }
-\Services::setPlaceHolder($PageTemplate, "ClientWantsEmails", $wantEmail);
-\Services::setPlaceHolder($PageTemplate, "clientWantsEmailsBool", $wantEmailBool);
+\Services::setPlaceHolder($pageBody, "ClientWantsEmails", $wantEmail);
+\Services::setPlaceHolder($pageBody, "clientWantsEmailsBool", $wantEmailBool);
 
 //*********************************************{product operations Buttons}******************************************//
 //Show ClientInformed Button according to status
@@ -236,7 +232,7 @@ if($orderObject->GetStatus() < EOrderStatus::Client_Informed()) {
         }
     }
 }
-\Services::setPlaceHolder($PageTemplate, "ClientInformedButton", $ClientInformedButtonText);
+\Services::setPlaceHolder($pageBody, "ClientInformedButton", $ClientInformedButtonText);
 
 //Show Products Ordered Button if there are products that need to be ordered
 $ProductsOrderedButtonText = "";
@@ -249,7 +245,7 @@ if($orderObject->GetStatus() == EOrderStatus::Open()) {
         }
     }
 }
-\Services::setPlaceHolder($PageTemplate, "ProductsOrderedButton", $ProductsOrderedButtonText);
+\Services::setPlaceHolder($pageBody, "ProductsOrderedButton", $ProductsOrderedButtonText);
 
 //Show Products Delivered Button if there are products that need to be Deliver
 $ProductsDeliveredButtonText = "";
@@ -262,7 +258,7 @@ if($orderObject->GetStatus() !== EOrderStatus::Delivered()) {
         }
     }
 }
-\Services::setPlaceHolder($PageTemplate, "ProductsDeliveredButton", $ProductsDeliveredButtonText);
+\Services::setPlaceHolder($pageBody, "ProductsDeliveredButton", $ProductsDeliveredButtonText);
 //*********************************************{End product operations Buttons}******************************************//
 
 $productRow = <<<EOF
@@ -303,13 +299,10 @@ foreach ($orderObject->GetOrderProducts() as $product) {
 
     \Services::setPlaceHolder($productList, "editProduct","<a href=\"editproduct.php?id={$orderId}&productBarcode={$product->GetProductBarcode()}&ShowHeaderFooter=0\"><img src=\"images/icons/edit.png\"  height='30px' style='cursor: pointer'></a>");
 }
-\Services::setPlaceHolder($PageTemplate, "productsList", $productList);
+\Services::setPlaceHolder($pageBody, "productsList", $productList);
 
-//setting footer
-if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !isset($_GET["ShowHeaderFooter"])) {
-    $PageTemplate .= footer;
-}
 
-echo $PageTemplate;
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageBody", $pageBody);
+echo $GLOBALS["PageTemplate"];
 
 ?>

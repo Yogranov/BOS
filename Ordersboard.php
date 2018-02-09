@@ -26,16 +26,14 @@ $shopObject = &Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
+
 //setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "לוח הזמנות");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "לוח הזמנות");
 //setting menu bar
-$PageTemplate .= headerBody;
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", headerMenu);
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "ordersBoardClass", "active");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObject->GetShopName());
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "ordersBoardClass", "active");
 ///
-$PageTemplate .= <<<PAGE
+$PageBody = <<<PAGE
 <main>
   <orderboard>
     <div class="wrapper">
@@ -65,8 +63,6 @@ $PageTemplate .= <<<PAGE
 </main>
 PAGE;
 
-//setting footer
-$PageTemplate .= footer;
 
 $OrderBoard_Table_Temlplate = <<<EOF
 <tr data-action="OpenBOSDialog" data-page="vieworder.php" data-dialogTitle="הזמנה {orderId}" data-variables="id={orderId}&ShowHeaderFooter=0">
@@ -92,7 +88,6 @@ $productOrderTemplate_Quantity_One = "<li style='{productColor}'>{ProductName}</
 $productOrderTemplate_Quantity_One_Code = "<li>{ProductCode}</li>";
 
 $shopOrders = Order::GetActiveOrders($shopObject);
-
 $orderBoard = (count($shopOrders) > 0) ? "" : "<tr colspan='7'><div id='no-orders-available'>אין הזמנות </div></tr>";
 
 foreach ($shopOrders as $order) {
@@ -152,7 +147,7 @@ foreach ($shopOrders as $order) {
     \Services::setPlaceHolder($orderBoard, "barcodeTemplate", $orderProductCode);
 
 }
-\Services::setPlaceHolder($PageTemplate, "OrderBoard_Table_Template", $orderBoard);
+\Services::setPlaceHolder($PageBody, "OrderBoard_Table_Template", $orderBoard);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -245,13 +240,13 @@ foreach ($shopPreOrders as $order) {
 }
 \Services::setPlaceHolder($preOrderTemplate, "PreOrderBoard_Table_Template", $PreOrderBoard);
 
-if(count($shopPreOrders)) {
-    \Services::setPlaceHolder($PageTemplate, "PreOrderBoard_Table", $preOrderTemplate);
-} else {
-    \Services::setPlaceHolder($PageTemplate, "PreOrderBoard_Table", "");
-
-}
+if(count($shopPreOrders))
+    \Services::setPlaceHolder($PageBody, "PreOrderBoard_Table", $preOrderTemplate);
+else
+    \Services::setPlaceHolder($PageBody, "PreOrderBoard_Table", "");
 
 
-echo $PageTemplate;
+
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageBody", $PageBody);
+echo $GLOBALS["PageTemplate"];
 

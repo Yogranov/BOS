@@ -26,22 +26,15 @@ $shopObj = &Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
 //setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "היסטוריית הזמנה");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "היסטוריית הזמנה");
 
 //setting menu bar
-$PageTemplate .= headerBody;
-$data = "";
-if (is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) {
-    //setting menu bar
-    $data = headerMenu;
-    \Services::setPlaceHolder($data, "shopName", $shopObj->GetShopName());
-    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
-}
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObj->GetShopName());
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "ordersBoardClass", "active");
 
-$PageTemplate .= <<<PAGE
+
+$PageBody = <<<PAGE
 <main>
     <div class="row">
         <div class="col-sm-12" style="height: auto;">
@@ -83,12 +76,9 @@ HTML;
 
     $rowNum++;
 }
-\Services::setPlaceHolder($PageTemplate, "productHistory", $productHistory);
+\Services::setPlaceHolder($PageBody, "productHistory", $productHistory);
 
-//setting footer
-if (is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"])
-    $PageTemplate .= footer;
-
-echo $PageTemplate;
+\Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody",$PageBody);
+echo $GLOBALS["PageTemplate"];
 
 ?>

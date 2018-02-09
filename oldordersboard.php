@@ -17,22 +17,19 @@ $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
     header("Location: login.php");
 }
-$shopObject = Shop::GetById($shopId);
+$shopObject = &Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
 //setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "הזמנות ישנות");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "הזמנות ישנות");
 //setting menu bar
-$PageTemplate .= headerBody;
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", headerMenu);
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "oldOrdersClass", "active");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObject->GetShopName());
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "oldOrdersClass", "active");
 ///
 
 
-$PageTemplate .= <<<PAGE
+$PageBody = <<<PAGE
 <main>
     <oldorderboard>
     <div class="wrapper" style="margin-top:45px">
@@ -104,35 +101,35 @@ $PageTemplate .= <<<PAGE
     </script>
 
     <script>
-    var table = '#mytable'
+    var table = '#mytable';
     $('#maxRows').on('change', function(){
-        $('.pagination').html('')
-        var trnum = 0
-        var maxRows = parseInt($(this).val())
-        var totalRows = $(table+' tbody tr').length
+        $('.pagination').html('');
+        var trnum = 0;
+        var maxRows = parseInt($(this).val());
+        var totalRows = $(table+' tbody tr').length;
         $(table+' tr:gt(0)').each(function(){
-            trnum++
+            trnum++;
             if(trnum > maxRows){
                 $(this).hide()
             }
             if(trnum <= maxRows){
                 $(this).show()
             }
-        })
+        });
         if(totalRows > maxRows){
-            var pagenum = Math.ceil(totalRows/maxRows)
+            var pagenum = Math.ceil(totalRows/maxRows);
             for(var i=1;i<=pagenum;){
                 $('.pagination').append('<li data-page="'+i+'">\<span>'+ i++ +'<span class="sr-only">(current)</span></span>\</li>').show()
             }
         }
-        $('.pagination li:first-child').addClass('active')
+        $('.pagination li:first-child').addClass('active');
         $('.pagination li').on('click',function(){
-            var pageNum = $(this).attr('data-page')
+            var pageNum = $(this).attr('data-page');
             var trIndex = 0;
-            $('.pagination li').removeClass('active')
-            $(this).addClass('active')
+            $('.pagination li').removeClass('active');
+            $(this).addClass('active');
             $(table+' tr:gt(0)').each(function(){
-                trIndex++
+                trIndex++;
                 if(trIndex > (maxRows*pageNum) || trIndex <= ((maxRows*pageNum)-maxRows)){
                     $(this).hide()
                 } else{
@@ -149,9 +146,6 @@ $PageTemplate .= <<<PAGE
     </oldorderboard>
 </main>
 PAGE;
-//setting footer
-$PageTemplate .= footer;
-
 
 
 $OrderBoard_Table_Temlplate = <<<EOF
@@ -175,7 +169,7 @@ $productOrderTemplate_Quantity_More_Then_One = "<li><span style='color: indianre
 $productOrderTemplate_Quantity_One = "<li>{ProductName}</li>";
 $productOrderTemplate_Quantity_One_Code = "<li>{ProductCode}</li>";
 
-$shopOrders = Order::GetOldOrders($shopObject);
+$shopOrders = &Order::GetOldOrders($shopObject);
 
 $orderBoard = (count($shopOrders) > 0) ? "" : "<tr colspan='7'><div id='no-orders-available'>אין הזמנות </div></tr>";
 foreach ($shopOrders as $order) {
@@ -215,7 +209,7 @@ foreach ($shopOrders as $order) {
     \Services::setPlaceHolder($orderBoard, "barcodeTemplate", $orderProductCode);
 
 }
-\Services::setPlaceHolder($PageTemplate, "OrderBoard_Table_Template", $orderBoard);
-
-echo $PageTemplate;
+\Services::setPlaceHolder($PageBody, "OrderBoard_Table_Template", $orderBoard);
+\Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody",$PageBody);
+echo $GLOBALS["PageTemplate"];
 

@@ -23,22 +23,17 @@ $shopObj = &Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
+
 //setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "הזמנה חדשה");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "הזמנה חדשה");
 //setting menu bar
-$PageTemplate .= headerBody;
-$data = "";
-if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 1) || !isset($_GET["ShowHeaderFooter"])) {
-    //setting menu bar
-    $data = headerMenu;
-    \Services::setPlaceHolder($data, "shopName", $shopObj->GetShopName());
-    \Services::setPlaceHolder($data, "newOrdersClass", "active");
-}
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
+
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObj->GetShopName());
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "newOrdersClass", "active");
+
 ///
 
-$PageTemplate .= <<<PAGE
+$PageBody = <<<PAGE
 <main>
     <div class="container">
         <div class="row centered-form" id="new-order">
@@ -195,17 +190,13 @@ $PageTemplate .= <<<PAGE
 </main>
 PAGE;
 
-//setting footer
-if ((is_bool($_GET["ShowHeaderFooter"]) && $_GET["ShowHeaderFooter"] == 0) || !isset($_GET["ShowHeaderFooter"]))
-    $PageTemplate .= footer;
-
 //setting sellers list
 $orderSellersString = "";
 foreach ($shopObj->GetActiveSellers() as $sellerId => $sellerObj) {
     $orderSellersString .= "<option value='".$sellerId."' ";
     $orderSellersString .= ">".$sellerObj->GetFullName()."</option>";
 }
-\Services::setPlaceHolder($PageTemplate, "sellerSelect", $orderSellersString);
+\Services::setPlaceHolder($PageBody, "sellerSelect", $orderSellersString);
 /////
 
 //Take form filed and make them variable.
@@ -282,7 +273,7 @@ if(isset($_POST['neworder']))  {
         echo $e->getMessage();
     }
 }
-
-echo $PageTemplate;
+\Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody",$PageBody);
+echo $GLOBALS["PageTemplate"];
 
 ?>

@@ -95,6 +95,7 @@ class LoginC {
 
         if($connectedShopData) {
             $_SESSION["ShopId"] = $connectedShopData["Id"];
+            $_SESSION["UserType"] = substr(self::ConnectedAs(), 0, strlen(self::ConnectedAs())-2);
             $type = "shop";
 
             //Log

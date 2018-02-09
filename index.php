@@ -33,18 +33,15 @@ $shopObject = Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
 //setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "ראשי");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "ראשי");
 //setting menu bar
-$PageTemplate .= headerBody;
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", headerMenu);
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "mainPageClass", "active");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObject->GetShopName());
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "mainPageClass", "active");
 ///
 
 
-$PageTemplate .= <<<INDEX
+$PageBody = <<<INDEX
       <main>
         <div class="container">
 
@@ -88,18 +85,17 @@ $PageTemplate .= <<<INDEX
     </remindboard>
     </main>
 INDEX;
-//setting footer
-$PageTemplate .= footer;
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageBody", $PageBody);
 
 /////Set the list of all seller on remind board
-$allSellers = Shop::GetById($shopId)->GetActiveSellers();
+$allSellers = &Shop::GetById($shopId)->GetActiveSellers();
 $sellerOrder = "";
 foreach ($allSellers as $seller) {
     $sellerOrder .= "<option value='".$seller->GetId()."' ";
     $sellerOrder .= ">".$seller->GetFullName() . "</option>";
 
 }
-\Services::setPlaceHolder($PageTemplate, "selectSellers", $sellerOrder);
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "selectSellers", $sellerOrder);
 //////
 
 
@@ -123,7 +119,7 @@ foreach ($shopReminds as $remind) {
     \Services::setPlaceHolder($remindsBoard, "remind", $remind->GetRemind());
     \Services::setPlaceHolder($remindsBoard, "remindTime", $remind->GetTimestamp()->format("d/m/Y H:i"));
 }
-\Services::setPlaceHolder($PageTemplate, "remindsBoard_Table_Template", $remindsBoard);
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "remindsBoard_Table_Template", $remindsBoard);
 //////
 
 
@@ -157,12 +153,12 @@ if(isset($_GET['deleteId'])) {
 
 
 /////errors placers
-\Services::setPlaceHolder($PageTemplate,"reminderError", $reminderError);
+\Services::setPlaceHolder($GLOBALS["PageTemplate"],"reminderError", $reminderError);
 ////
 
 
 
-echo $PageTemplate;
+echo $GLOBALS["PageTemplate"];
 
 
 

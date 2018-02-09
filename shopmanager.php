@@ -22,29 +22,25 @@ if(!isset($manager)) {
     header("Location: index.php");
 }
 */
+$_SESSION["UserType"] = "ShopManager";
 
+$shopObject = &Shop::GetById($shopId);
 
-$managerPassword = Shop::GetById($shopId)->GetId();
+$managerPassword = $shopObject->GetId();
 $managerPassword .= "manager";
-
-
-
-$shopObject = Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
+
 //setting page title
 \Services::setPlaceHolder($PageTemplate, "PageTitle", "לוח מנהל");
 //setting menu bar
-$PageTemplate .= headerBody;
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", headerMenu);
-\Services::setPlaceHolder($PageTemplate, "shopName", $shopObject->GetShopName());
-\Services::setPlaceHolder($PageTemplate, "mainPageClass", "active");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObject->GetShopName());
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "mainPageClass", "active");
 ///
 
 
-$PageTemplate .= <<<PAGE
+$PageBody = <<<PAGE
         <main>
             <div class="wrapper">
                 <div id="reminder-table">
@@ -88,9 +84,6 @@ $PageTemplate .= <<<PAGE
    
 </main>
 PAGE;
-//setting footer
-$PageTemplate .= footer;
-
 
 
 //////////////////////Create Table Of All Sellers
@@ -105,7 +98,7 @@ $Seller_Table_Temlplate = <<<EOF
 EOF;
 
 
-$allSellers = Shop::GetById($shopId)->GetSellers();
+$allSellers = $shopObject->GetSellers();
 
 $allSellerList = (count($allSellers) > 0) ? "" : "<tr colspan='7'><div id='no-orders-available'>אין מוכרנים </div></tr>";
 foreach ($allSellers as $seller) {
@@ -117,7 +110,7 @@ foreach ($allSellers as $seller) {
     \Services::setPlaceHolder($allSellerList, "sellerNum", $seller->GetId());
 
 }
-\Services::setPlaceHolder($PageTemplate, "Seller_Table_Temlplate", $allSellerList);
+\Services::setPlaceHolder($PageBody, "Seller_Table_Temlplate", $allSellerList);
 //////////////////////////////////////////
 
 
@@ -130,7 +123,7 @@ if(isset($_GET['deleteId'])) {
 
     $deleteId = $_GET['deleteId'];
 
-    $sellerObj = Seller::GetById($deleteId);
+    $sellerObj = &Seller::GetById($deleteId);
     try {
         if ($sellerObj->GetStatus()->getValue() == 1) {
             $sellerObj->Fire();
@@ -193,7 +186,8 @@ if(isset($_POST["manager-password"])) {
             //header("Location: shopmanager.php");
         } else {
             ///echo the page
-            echo $PageTemplate;
+            \Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody", $PageBody);
+            echo $GLOBALS["PageTemplate"];
             ///
         }
     }
