@@ -13,29 +13,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library name="PHP" type="php">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/Classes/vendor/chillerlan/php-authenticator" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/chillerlan/php-qrcode" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/chillerlan/php-traits" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/composer" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/joshcam/mysqli-database-class" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/mobiledetect/mobiledetectlib" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/phpmailer/phpmailer" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/twilio/sdk" />
-        </CLASSES>
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/Classes/vendor/chillerlan/php-authenticator" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/chillerlan/php-qrcode" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/chillerlan/php-traits" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/composer" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/joshcam/mysqli-database-class" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/mobiledetect/mobiledetectlib" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/phpmailer/phpmailer" />
-          <root url="file://$MODULE_DIR$/Classes/vendor/twilio/sdk" />
-        </SOURCES>
-      </library>
-    </orderEntry>
   </component>
 </module>

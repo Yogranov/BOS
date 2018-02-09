@@ -29,7 +29,6 @@ require __DIR__ . '/vendor/autoload.php';
 
 class Log
 {
-    const READ_INTERFACE = "ILogRead";
     private $loggerObject;
     private $name;
     private $userName;
@@ -150,8 +149,9 @@ class Log
      * @param string $toEmail
      * @param string $fromEmail
      * @param bool $bubble
-     * @return object|void
+     * @return FileHandler|void
      * @throws Exception
+     * @throws ReflectionException
      */
     public function AddEmailHandler(\Log\ELogLevel $minlevel, string $toEmail, string $fromEmail = "", bool $bubble = true) {
         if (empty($toEmail))
@@ -173,7 +173,8 @@ class Log
      * @param MysqliDb $dbinstance
      * @param string $DbTable
      * @param bool $bubble
-     * @return MysqliDBHandler|void
+     * @return FileHandler|void
+     * @throws ReflectionException
      */
     public function AddMysqliDbHandler(\Log\ELogLevel $minlevel, MysqliDb $dbinstance, string $DbTable = "", bool $bubble = true) {
         $handler = new MysqliDBHandler($dbinstance, $minlevel->getValue(), $DbTable, $bubble);
@@ -190,7 +191,8 @@ class Log
      * @param string $DbTable
      * @param array $DbColumns
      * @param bool $bubble
-     * @return MySQLHandler|void
+     * @return FileHandler|void
+     * @throws ReflectionException
      */
     public function AddDbHandler(\Log\ELogLevel $minlevel, mysqli $dbinstance, string $DbTable, array $DbColumns, bool $bubble = true) {
         $handler = new MySQLHandler($dbinstance, $DbTable, $DbColumns, $minlevel->getValue(), $bubble);
@@ -208,8 +210,9 @@ class Log
      * @param string $toPhoneNumber
      * @param string $fromPhoneNumber
      * @param bool $bubble
-     * @return object|void
+     * @return FileHandler|void
      * @throws Exception
+     * @throws ReflectionException
      */
     public function AddSmsHandlerPLIVO(\Log\ELogLevel $minlevel, string $Token, string $AuthId, string $toPhoneNumber, string $fromPhoneNumber, bool $bubble = true) {
         if (empty($Token))
@@ -239,8 +242,9 @@ class Log
      * @param string $toPhoneNumber
      * @param string $fromPhoneNumber
      * @param bool $bubble
-     * @return object|void
+     * @return FileHandler|void
      * @throws Exception
+     * @throws ReflectionException
      */
     public function AddSmsHandlerTWILIO(\Log\ELogLevel $minlevel, string $Token, string $AuthId, string $toPhoneNumber, string $fromPhoneNumber, bool $bubble = true) {
         if (empty($Token))
@@ -269,8 +273,9 @@ class Log
      * @param string $toPhoneNumber
      * @param string|null $fromPhoneNumber
      * @param bool $bubble
-     * @return object|void
+     * @return FileHandler|void
      * @throws Exception
+     * @throws ReflectionException
      */
     public function AddSmsHandlerCLICKATELL(\Log\ELogLevel $minlevel, string $Token, string $toPhoneNumber, string $fromPhoneNumber = null, bool $bubble = true) {
         if (empty($Token))
@@ -291,8 +296,9 @@ class Log
      * @param \Log\ELogLevel $minlevel
      * @param string $Token
      * @param bool $bubble
-     * @return object|void
+     * @return FileHandler|void
      * @throws Exception
+     * @throws ReflectionException
      */
     public function AddLogglyHandler(\Log\ELogLevel $minlevel, string $Token, $bubble = true) {
         if (empty($Token))
@@ -307,11 +313,12 @@ class Log
 
     /**
      * @param $handler
+     * @return FileHandler|void
      * @throws ReflectionException
      */
     private function getReturnedData(&$handler) {
         $reflection = new \ReflectionClass($handler);
-        if ($reflection->implementsInterface(self::READ_INTERFACE))
+        if ($reflection->implementsInterface("ILogRead"))
             return $handler;
         else
             return;
