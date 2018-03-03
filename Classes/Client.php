@@ -165,8 +165,6 @@ class Client {
 
         $emailObject = BugOrderSystem::GetEmail($subject, $message);
         $emailObject->addAddress($this->email, $this->firstName." ".$this->lastName);
-        $emailObject->Body = $message;
-        $emailObject->Subject = $subject;
         //if (is_string($AttachedFile) && file_exists($AttachedFile)) {
             //\Services::dump($AttachedFile);
             //$emailObject->addAttachment($AttachedFile);

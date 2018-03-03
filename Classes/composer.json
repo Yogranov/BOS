@@ -1,10 +1,16 @@
 {
-  "name": "BugOrderSystem/Classes",
+  "name": "IsrTG/Classes",
   "require": {
-    "phpmailer/phpmailer": "~6.0",
-    "joshcam/mysqli-database-class": "dev-master",
-    "twilio/sdk": "~5.15",
+	"php": ">=5.4.0",
+	"phpmailer/phpmailer": "^5.2",
+	"joshcam/mysqli-database-class": "dev-master",
+	"twilio/sdk": "~5.15",
 	"chillerlan/php-qrcode": "dev-master",
-	"mobiledetect/mobiledetectlib": "^2.8"
-  }
+	"mobiledetect/mobiledetectlib": "^2.8",
+	"phpauth/phpauth": "dev-master",
+	"bjeavons/zxcvbn-php": "^0.3"
+	},
+"require_dev": {
+	"phpunit/phpunit": "6.*"
+	}
 }

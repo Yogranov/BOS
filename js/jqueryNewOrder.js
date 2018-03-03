@@ -101,11 +101,11 @@ function AutoFillUserData(phoneNumber) {
     var retData = DoAPIAjax("GetClientByPhoneNumber", phoneNumber);
     console.log(retData);
     if (retData !== false && retData !== 0) {
-        $("#form-FirstName").val(retData.FirstName).attr("disabled", "true");
-        $("#form-LastName").val(retData.LastName).attr("disabled", "true");
+        $("#form-FirstName").val(retData.FirstName);
+        $("#form-LastName").val(retData.LastName)
         $("#form-Email").val(retData.Email);
         if (retData.Email !== "") {
-            $("#form-Email").attr("disabled", "true");
+            //$("#form-Email").attr("disabled", "true");
         }
 
         if (retData.ClientWantsMails === 1) {
@@ -116,6 +116,8 @@ function AutoFillUserData(phoneNumber) {
             $('input[name=wantsemail]').attr('checked', false);
             document.getElementById("clientwantsemails").className = "form-group";
         }
+
+
     }
     else {
         $("#form-FirstName").val("").attr("disabled", "false");

@@ -107,7 +107,7 @@ class Services
     /**
      * @param $var
      * @param bool $echo
-     * @return mixed|string
+     * @return string
      */
     public static function dump($var, $echo = TRUE) {
         ob_start();

@@ -18,7 +18,7 @@ class Message
     const DEFAULT_SPACER = "\x9"; //ascii for TAB
     const DEFAULT_LINE_END = "\xA"; //ascii for new line
 
-    const MESSAGE_REGEX_PATTERN = "/[@a-z_.0-9\-:#\sא-ת\(\)\,\/\"\']+/i";
+    const MESSAGE_REGEX_PATTERN = "/[@a-z_.0-9:#\sא-ת\(\)\,\/\"\'\+\-]+/i";
     private static $defaultFormat = "[%datetime%] %channel%*%level_name% %context.ip%*%context.username% %message% %context% %extra%" . self::DEFAULT_LINE_END;
 
     /*

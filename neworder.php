@@ -48,7 +48,7 @@ $PageBody = <<<PAGE
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                     <label for="form-PhoneNumber">מספר טלפון</label>
-                                    <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern=".{10,}" maxlength="10" title="10 ספרות" onkeyup="this.value=this.value.replace(/[^\d]/,'');" required>
+                                    <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern="[0-9]{10,}" maxlength="10" title="מספר טלפון 10 דפרות" onkeyup="this.value=this.value.replace(/[^\d]/,'');" required>
                                     </div>                                
                                 </div>
                                 
@@ -58,7 +58,6 @@ $PageBody = <<<PAGE
                                         <span><input type="text" class="form-control" id="form-LastName" name="lastname" placeholder="שם משפחה" required></span>
                                     </div>
                                 </div>
-                                
                                 
                                 <div class="col-xs-6 col-sm-6 col-md-6">
                                     <div class="form-group">
@@ -76,7 +75,6 @@ $PageBody = <<<PAGE
                                 
                                 <div class="col-sm-12">
                                    <div id="clientwantsemails" class="form-group">
-                                        <label for="form-Email">אימייל</label>
                                         <span><input type="text" class="form-control" id="form-Email" name="email" placeholder="דואר אלקטרוני"></span>
                                     </div>
                                 </div>
@@ -222,6 +220,7 @@ if(isset($_POST['neworder']))  {
             $NewProductArray[$barcode][$property] = $_REQUEST[$productRequestName];
         }
 
+        \Services::dump($_REQUEST);
         if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number) && !empty($order_seller) && count($NewProductArray) > 0) {
 
                 //starting create order//
@@ -252,14 +251,21 @@ if(isset($_POST['neworder']))  {
                     $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
                     $encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
 
-                    \Services::setPlaceHolder($orderSummery, "OrderId", $orderObject->GetId());
                     \Services::setPlaceHolder($orderSummery, "ClientName", $orderObject->GetClient()->GetFirstName());
+                    \Services::setPlaceHolder($orderSummery, "OrderId", $orderObject->GetId());
+
+                    $productSummaryTable = "";
+                    $number = 1;
+                    foreach ($orderObject->GetOrderProducts() as $product) {
+                        $productSummaryTable .= Constant::EMAIL_CLIENT_SUMMERY_ORDER_TABLE;
+                        \Services::setPlaceHolder($productSummaryTable, "number", $number);
+                        \Services::setPlaceHolder($productSummaryTable, "productName", $product->GetProductName());
+                        \Services::setPlaceHolder($productSummaryTable, "productQuantity", $product->GetQuantity());
+                        $number++;
+                    }
+                    \Services::setPlaceHolder($orderSummery, "OrderProductSummary", $productSummaryTable);
+
                     \Services::setPlaceHolder($orderSummery, "StatusCheckURL", $encode);
-                    \Services::setPlaceHolder($orderSummery, "OrderDate", $orderObject->GetTimeStamp()->format("d/m/y H:m"));
-                    \Services::setPlaceHolder($orderSummery, "ShopName", $orderObject->GetShop()->GetShopName());
-                    \Services::setPlaceHolder($orderSummery, "Address", $orderObject->GetShop()->GetLocation());
-                    \Services::setPlaceHolder($orderSummery, "Seller", $orderObject->GetSeller()->GetFirstName());
-                    \Services::setPlaceHolder($orderSummery, "PhoneNumber", $orderObject->GetShop()->GetPhoneNumber());
                     \Services::setPlaceHolder($orderSummery, "ShopName", $orderObject->GetShop()->GetShopName());
 
                     $NewClientObj->SendEmail($orderSummery, "סיכום הזמנה");
@@ -276,4 +282,12 @@ if(isset($_POST['neworder']))  {
 \Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody",$PageBody);
 echo $GLOBALS["PageTemplate"];
 
+/*
+<tr>
+          <th scope="row">1</th>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td>@mdo</td>
+            </tr>
+*/
 ?>

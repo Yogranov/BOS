@@ -111,8 +111,24 @@ class BugOrderSystem {
 
                 $body = <<<BUG
 <html dir=rtl>
-    <body>
-        {$message}
+    <header>
+        <style>
+        
+        </style>
+    </header>
+    <body style="background-color: #f2fcfe">
+        <div style="background-color: #fcfcfc; top:10px; height: 60px; box-shadow: -18px 22px 20px -19px rgba(199,199,199,1);">
+            <logo>
+                <img src="https://bug.845.co.il/images/logo.png" style="float: left; position: absolute; vertical-align: middle;">
+            </logo>
+            <h2 style="text-align: center;">מערכת הזמנות B.O.S</h2>        
+        </div>
+        <div>
+            {$message}
+        </div>
+        <div style="text-align: center">
+            <b>כל הזכויות שמורות - B.O.S</b>
+        </div>
     </body>
 </html>
 BUG;
