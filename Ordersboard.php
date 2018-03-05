@@ -116,8 +116,10 @@ foreach ($shopOrders as $order) {
     \Services::setPlaceHolder($orderBoard, "clientName", $order->GetClient()->GetFullName());
     \Services::setPlaceHolder($orderBoard, "orderDate", $order->GetTimeStamp()->format("d/m"));
 
+
     $orderProductString = "";
     foreach ($order->GetOrderProducts() as $orderProduct) {
+
         if ($orderProduct->GetQuantity() > 1) {
             $orderProductString .= $productOrderTemplate_Quantity_More_Then_One;
             \Services::setPlaceHolder($orderProductString, "ProductQuantity", $orderProduct->GetQuantity());
@@ -131,7 +133,7 @@ foreach ($shopOrders as $order) {
 
             //Add color to product name if arrived
             if(count($order->GetOrderProducts()) > 1)
-                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[1][0]);
+                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
         }
         \Services::setPlaceHolder($orderProductString, "ProductName", $orderProduct->getProductName());
     }

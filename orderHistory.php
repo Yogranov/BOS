@@ -39,7 +39,7 @@ $PageBody = <<<PAGE
     <div class="row">
         <div class="col-sm-12" style="height: auto;">
             <div class="order-products-info">
-                <span><h4>היסטורייה</h4></span>
+                <span><h4>היסטוריה</h4></span>
                   <table id="OrderHistory" class="table table-striped">
                      <thead style="background: rgba(216,246,210,0.2)">
                        <tr>

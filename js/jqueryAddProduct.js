@@ -27,6 +27,7 @@ $(document).ready(function() {
             GetBarcodeData(ui.item.Barcode);
         },
         change: function (event, ui) {
+
             if (ui.item == null)
             {
                 var productName = $("#form-product-name").val();
@@ -39,6 +40,12 @@ $(document).ready(function() {
         }
     });
 });
+
+function productBlankName() {
+    if($("#form-product-name").val() === '') {
+        ChangeBarcodeToInput();
+    }
+}
 
 function ChangeBarcodeToSpan(value) {
     ProductBarcodeDiv.find("#form-product-barcode[type!='hidden']").replaceWith("<div id='barcode_Text'><input type='hidden' id='form-product-barcode' name='ProductBarcode' value='" + value + "'><span>" + value + "</span></div>");

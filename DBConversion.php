@@ -15,6 +15,8 @@ if (Constant::SYSTEM_DEBUG) {
     error_reporting(E_ALL);
 }
 
+/*
+
 $orderProducts = BugOrderSystem::GetDB()->orderBy("orderId")->get("orderproducts");
 if (is_array($orderProducts) && count($orderProducts) > 0) {
     $updatedOrderTable = array();
@@ -57,6 +59,8 @@ if (is_array($orderProducts) && count($orderProducts) > 0) {
  * @param array $inserted
  * @throws Exception
  */
+
+/*
 function AddProduct(array $productData, array &$inserted) {
     if (count($inserted) > 0 && array_search($productData["ProductBarcode"], $inserted) !== false)
         return;
@@ -79,6 +83,8 @@ function AddProduct(array $productData, array &$inserted) {
  * @param array $updated
  * @throws Exception
  */
+
+/*
 function AddProductsToOrderTable(array $productData, array &$updated){
     $orderProductArray = array();
     $orderProduct = BugOrderSystem::GetDB()->where("OrderId", $productData["OrderId"])->get("orders", null, "products");
@@ -96,6 +102,9 @@ function AddProductsToOrderTable(array $productData, array &$updated){
             return;
     }
     */
+
+
+/*
 
     $orderProductArray[$ProductBarcode] = $productArray;
     $jsonString = @json_encode($orderProductArray);

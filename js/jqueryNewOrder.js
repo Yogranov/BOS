@@ -120,13 +120,15 @@ function AutoFillUserData(phoneNumber) {
 
     }
     else {
-        $("#form-FirstName").val("").attr("disabled", "false");
-        $("#form-LastName").val("").attr("disabled", "false");
-        $("#form-Email").val("").attr({"disabled": "false"});
+       // $("#form-FirstName").val("").attr("disabled", "false");
+       // $("#form-LastName").val("").attr("disabled", "false");
+       // $("#form-Email").val("").attr({"disabled": "false"});
         $('input[name=wantsemail]').attr('checked', false);
         document.getElementById("clientwantsemails").className = "form-group";
     }
 }
+
+
 
 function showHideProductOrderTable(what) {
     switch (what) {

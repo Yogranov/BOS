@@ -159,7 +159,7 @@ $PageBody = <<<PAGE
                                                             <div class="col-sm-5">
                                                                 <div class="form-group" id="productName">
                                                                     <label for="form-product-name">שם המוצר</label>
-                                                                    <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
+                                                                    <input type="text" class="form-control" id="form-product-name" name="productname" onkeyup="productBlankName()" placeholder="שם המוצר">
                                                                 </div>
                                                             </div>
                                                         </div>   

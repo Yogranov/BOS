@@ -185,6 +185,7 @@ $(document).ready(function(){
         autoOpen: false,
         resizable: false,
         closeOnEscape: true,
+        position: { my: 'left-700', at: 'top+150' },
         modal: true,
         classes: {
             "ui-dialog": DialogClasses
