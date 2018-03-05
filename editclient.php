@@ -25,22 +25,9 @@ $shopObject = Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
-//setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "עריכת לקוח");
-//setting menu bar
-$PageTemplate .= headerBody;
-$data = "";
-if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
-    //setting menu bar
-    $data = headerMenu;
-    \Services::setPlaceHolder($data, "shopName", $shopObject->GetShopName());
-    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
-}
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
-///
 
-$PageTemplate .= <<<PAGE
+
+$pageBody = <<<PAGE
 <main>
     <div class="container">
         <div id="new-order">
@@ -84,18 +71,14 @@ $PageTemplate .= <<<PAGE
 </main>
 PAGE;
 
-//setting footer
-if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
-    $PageTemplate .= footer;
-
 $checkedString = "";
 $emailClassString = "";
 if ($clientObject->IsWantEmail()) {
     $checkedString = "Checked";
     $emailClassString = "open";
 }
-\Services::setPlaceHolder($PageTemplate,"checkedString", $checkedString);
-\Services::setPlaceHolder($PageTemplate,"emailClassString", $emailClassString);
+\Services::setPlaceHolder($pageBody,"checkedString", $checkedString);
+\Services::setPlaceHolder($pageBody,"emailClassString", $emailClassString);
 
 
 //Take form filed and make them variable.
@@ -135,8 +118,8 @@ if(isset($_POST['editclient'])) {
     }
 }
 
-echo $PageTemplate;
-
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageBody", $pageBody);
+echo $GLOBALS["PageTemplate"];
 ?>
 
 

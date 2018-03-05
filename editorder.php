@@ -25,24 +25,8 @@ $shopObj = &Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
-$PageTemplate = headerTemplate;
-//setting page title
-\Services::setPlaceHolder($PageTemplate, "PageTitle", "עריכת הזמנה");
 
-//setting menu bar
-$PageTemplate .= headerBody;
-$data = "";
-if (is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) {
-    //setting menu bar
-    $data = headerMenu;
-    \Services::setPlaceHolder($data, "shopName", $shopObj->GetShopName());
-    \Services::setPlaceHolder($data, "ordersBoardClass", "active");
-}
-\Services::setPlaceHolder($PageTemplate, "HeaderMenu", $data);
-///
-
-
-$PageTemplate .= <<<PAGE
+$pageBody = <<<PAGE
 <main>
     <div class="container">
         <div id="new-order">
@@ -72,10 +56,6 @@ $PageTemplate .= <<<PAGE
     </div>
 </main>
 PAGE;
-//setting footer
-if (is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"])
-    $PageTemplate .= footer;
-
 
 
 $orderSellersString = "";
@@ -86,7 +66,7 @@ foreach ($shopObj->GetActiveSellers() as $sellerId => $sellerObj) {
     $orderSellersString .= ">".$sellerObj->GetFullName()."</option>";
 
 }
-\Services::setPlaceHolder($PageTemplate, "sellerSelect", $orderSellersString);
+\Services::setPlaceHolder($pageBody, "sellerSelect", $orderSellersString);
 
 
 
@@ -123,6 +103,7 @@ if(isset($_POST['editorder'])) {
     }
 }
 
-echo $PageTemplate;
 
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageBody", $pageBody);
+echo $GLOBALS["PageTemplate"];
 ?>
