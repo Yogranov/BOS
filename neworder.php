@@ -153,13 +153,13 @@ $PageBody = <<<PAGE
                                                             <div class="col-sm-5">
                                                                 <div class="form-group" id="productBarcode">
                                                                     <label for="form-product-barcode">ברקוד</label>
-                                                                    <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" placeholder="ברקוד" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                                    <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" onkeyup="productBlankName();" placeholder="ברקוד">
                                                                 </div>
                                                             </div>    
                                                             <div class="col-sm-5">
                                                                 <div class="form-group" id="productName">
                                                                     <label for="form-product-name">שם המוצר</label>
-                                                                    <input type="text" class="form-control" id="form-product-name" name="productname" onkeyup="productBlankName()" placeholder="שם המוצר">
+                                                                    <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
                                                                 </div>
                                                             </div>
                                                         </div>   
@@ -220,7 +220,7 @@ if(isset($_POST['neworder']))  {
             $NewProductArray[$barcode][$property] = $_REQUEST[$productRequestName];
         }
 
-        \Services::dump($_REQUEST);
+        //\Services::dump($_REQUEST);
         if (!empty($client_first_name) && !empty($client_last_name) && !empty($client_phone_number) && !empty($order_seller) && count($NewProductArray) > 0) {
 
                 //starting create order//
@@ -228,11 +228,20 @@ if(isset($_POST['neworder']))  {
                 $clientId = Client::isPhoneExist($client_phone_number);
                 if ($clientId == False)
                     $NewClientObj = &Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
-                else
+                else {
                     $NewClientObj = &Client::GetById($clientId);
+                    if ($NewClientObj->GetEmail() == "" && $client_wants_emails)
+                        $NewClientObj->ChangeEmail($client_email);
+                        $NewClientObj->SetWantEmail(1); //TODO: need to remove when we changing the 'WantEmail' behavior
+                }
+
+                if ($client_email != '' && $client_wants_emails)
+                    $notificationEmail = $client_email;
+                else
+                    $notificationEmail = null;
 
                 //create order//
-                $orderObject = &Order::Add($NewClientObj, Shop::GetById($shopId), Seller::GetById($order_seller), $order_remarks);
+                $orderObject = &Order::Add($NewClientObj, Shop::GetById($shopId), Seller::GetById($order_seller), $order_remarks, $notificationEmail);
 
             try {
                 //Add products to order.
@@ -242,12 +251,13 @@ if(isset($_POST['neworder']))  {
                 }
             }
             catch (\Throwable $e) {
+                //TODO: need to check if there at least one more product - if it is we need to proceed without removal - otherwise we need to remove the order
                 $orderObject->Remove();
                 throw $e;
             }
 
                 //Send order summery to client
-                if ($NewClientObj->IsWantEmail() && $NewClientObj->GetEmail() !== "") {
+                if (!is_null($orderObject->GetNotificationEmail())) {
                     $orderSummery = Constant::EMAIL_CLIENT_SUMMERY_ORDER;
                     $encode = base64_encode($orderObject->GetShop()->GetId() . "_" . $orderObject->GetId() . "_" . $orderObject->GetTimeStamp()->format("U"));
 
@@ -268,7 +278,7 @@ if(isset($_POST['neworder']))  {
                     \Services::setPlaceHolder($orderSummery, "StatusCheckURL", $encode);
                     \Services::setPlaceHolder($orderSummery, "ShopName", $orderObject->GetShop()->GetShopName());
 
-                    $NewClientObj->SendEmail($orderSummery, "סיכום הזמנה");
+                    $orderObject->SendEmail($orderSummery, "סיכום הזמנה");
                 }
                 header("Location: ".$pageLocation);
 

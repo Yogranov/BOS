@@ -9,13 +9,13 @@ $(document).ready(function() {
 
     //**************************** {BugOrderSystem Ajax Product Name autocomplete  } *****************************//
     var Barcode = "";
-    $("#form-product-name").autocomplete({
+    $("#form-product-barcode").autocomplete({
         source: function (request, response) {
             $.ajax({
                 url: "API_CALLS.php?method=SearchProduct",
                 dataType: "json",
                 data: {
-                    data: request.term + "|Name"
+                    data: request.term + "|Barcode"
                 },
                 success: function (data) {
                     response(data);
@@ -24,7 +24,7 @@ $(document).ready(function() {
         },
         minLength: 2,
         select: function (event, ui) {
-            GetBarcodeData(ui.item.Barcode);
+            GetNameData(ui.item.Barcode);
         },
         change: function (event, ui) {
 
@@ -36,13 +36,21 @@ $(document).ready(function() {
             }
             else
                 var barcode = ui.item.Barcode;
-            GetBarcodeData(barcode);
+            GetNameData(barcode);
         }
     });
 });
 
+function productBlankBarcode() {
+    var val = $("#form-product-barcode").val();
+    if(val === '') {
+        ChangeNameToInput();
+    }
+}
+
 function productBlankName() {
-    if($("#form-product-name").val() === '') {
+    var val = $("#form-product-name").val();
+    if(val === '') {
         ChangeBarcodeToInput();
     }
 }
@@ -56,4 +64,15 @@ function ChangeBarcodeToInput(requiredBool = false) {
     if (requiredBool)
         AdditionalRequire = " required";
     ProductBarcodeDiv.find('div').replaceWith("<input type='text' class='form-control' id='form-product-barcode' placeholder='ברקוד' name='ProductBarcode' "+AdditionalRequire+">");
+}
+
+function ChangeNameToSpan(value) {
+    ProductNameDiv.find("#form-product-name[type!='hidden']").replaceWith("<div id='barcode_Text'><input type='hidden' id='form-product-name' name='productname' value='" + value + "'><span>" + value + "</span></div>");
+}
+
+function ChangeNameToInput(requiredBool = false) {
+    var AdditionalRequire = "";
+    if (requiredBool)
+        AdditionalRequire = " required";
+    ProductNameDiv.find('div').replaceWith("<input type='text' class='form-control' id='form-product-name' placeholder='שם המוצר' name='productname' "+AdditionalRequire+">");
 }

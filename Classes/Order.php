@@ -29,6 +29,7 @@ class Order
     private $remarks;
     private $timeStamp;
     private $OrderInnerStatus;
+    private $emailNotification;
     /**
      * @var EOrderStatus
      */
@@ -57,6 +58,7 @@ class Order
         if (in_array($orderData["Status"], EOrderStatus::toArray()))
             $this->OrderInnerStatus = EOrderStatus::search($orderData["Status"]);
         $this->status = $this->GetStatus();
+        $this->emailNotification = $orderData["Email"];
     }
 
     /**
@@ -143,17 +145,19 @@ class Order
      * @param Shop $shop
      * @param Seller $seller
      * @param string $remarks
+     * @param string|null $emailNotification
      * @return Order
      * @throws Exception
      * @throws \Exception
      */
-    public static function &Add(Client $client, Shop $shop, Seller $seller, string $remarks = "")
+    public static function &Add(Client $client, Shop $shop, Seller $seller, string $remarks = "", string $emailNotification = null)
     {
         $OrderData= array(
             "ClientId" => $client->GetId(),
             "ShopId" => $shop->GetId(),
             "SellerId" => $seller->GetId(),
             "Remarks" => $remarks,
+            "Email" => $emailNotification,
             "Status" => 0
         );
 
@@ -351,6 +355,35 @@ class Order
      */
     public function GetId() {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function GetNotificationEmail() {
+        return $this->emailNotification;
+    }
+
+    /**
+     * @param string $message
+     * @param string $subject
+     * @param string $AttachedFile
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
+        if (empty($this->emailNotification))
+            throw new Exception("Email not exist!", $this);
+
+        $emailObject = BugOrderSystem::GetEmail($subject, $message);
+        $emailObject->addAddress($this->emailNotification, $this->GetClient()->GetFullName());
+        //if (is_string($AttachedFile) && file_exists($AttachedFile)) {
+        //\Services::dump($AttachedFile);
+        //$emailObject->addAttachment($AttachedFile);
+        //}
+
+        if (!$emailObject->send())
+            throw new Exception($emailObject->ErrorInfo);
     }
 
     /**

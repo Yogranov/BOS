@@ -216,7 +216,6 @@ class Client {
         return $this->wantEmail;
     }
 
-
     /**
      * @return mixed
      */

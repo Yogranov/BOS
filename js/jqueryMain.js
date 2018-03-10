@@ -171,3 +171,18 @@ function GetBarcodeData(productBarcode) {
         ChangeBarcodeToInput("");
     }
 }
+
+function GetNameData(productBarcode) {
+    var retData = DoAPIAjax("GetProductData", productBarcode + "|javascript");
+    //console.log(retData);
+    if (retData !== false && retData !== 0) {
+        //exist in product db
+        ChangeNameToSpan(retData.Name);
+    }
+    else {
+        //not exist in products db
+        ChangeNameToInput("");
+    }
+}
+
+

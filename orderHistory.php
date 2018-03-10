@@ -37,8 +37,8 @@ require_once "Header.php";
 $PageBody = <<<PAGE
 <main>
     <div class="row">
-        <div class="col-sm-12" style="height: auto;">
-            <div class="order-products-info">
+        <div class="col-sm-12" style="height: auto">
+            <div class="order-products-info"  style="width: 90%; margin: 0 auto">
                 <span><h4>היסטוריה</h4></span>
                   <table id="OrderHistory" class="table table-striped">
                      <thead style="background: rgba(216,246,210,0.2)">

@@ -139,7 +139,7 @@ $pageBody = <<<PAGE
                 </div>
                 <div class="col-sm-6">
                     <div class="order-client-info">
-                        <span><h4 class="bold underline"> פרטי לקוח </h4></span>
+                        <span><h4 class="bold underline">פרטי התקשרות</h4></span>
                              <ul>
                                <li><span> שם הלקוח:</span> {$orderInfo->GetClient()->GetFullName()}</li>
                                <li><span> פלאפון:</span> {$clientExtendPhoneNumber}</li>
@@ -188,10 +188,19 @@ if (empty($orderRemarks))
 */
 \Services::setPlaceHolder($pageBody, "OrderRemarks", $orderRemarks);
 
-$clientEmail = $orderObject->GetClient()->GetEmail();
-if (empty($clientEmail))
+$clientEmail = $orderObject->GetNotificationEmail();
+if (empty($clientEmail)) {
     $clientEmail = "לא הוזן";
+    $wantEmail =  'לא';
+    $wantEmailBool = 0;
+}
+else {
+    $wantEmail =  'כן';
+    $wantEmailBool = 1;
+}
 \Services::setPlaceHolder($pageBody, "ClientEmail", $clientEmail);
+\Services::setPlaceHolder($pageBody, "ClientWantsEmails", $wantEmail);
+\Services::setPlaceHolder($pageBody, "clientWantsEmailsBool", $wantEmailBool);
 
 //set seller name - can be change or delete
 try {
@@ -208,17 +217,6 @@ $orderStatusString = $orderObject->GetStatus()->getDesc();
 \Services::setPlaceHolder($pageBody, "OrderStatus", $orderStatusString);
 //
 
-
-//set if the client wants email or not
-if ($orderInfo->GetClient()->IsWantEmail()) {
-    $wantEmail =  'כן';
-    $wantEmailBool = 1;
-} else {
-    $wantEmail = 'לא';
-    $wantEmailBool = 0;
-}
-\Services::setPlaceHolder($pageBody, "ClientWantsEmails", $wantEmail);
-\Services::setPlaceHolder($pageBody, "clientWantsEmailsBool", $wantEmailBool);
 
 //*********************************************{product operations Buttons}******************************************//
 //Show ClientInformed Button according to status
