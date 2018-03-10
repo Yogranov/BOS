@@ -1,10 +1,11 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Yogev
- * Date: 04-Oct-17
- * Time: 16:13
+ * User: shalev
+ * Date: 3/10/2018
+ * Time: 11:25 AM
  */
+
 namespace BugOrderSystem;
 
 use Log\Message;
@@ -26,18 +27,18 @@ $shopObj = &Shop::GetById($shopId);
 //setting header
 require_once "Header.php";
 //setting page title
-\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "היסטוריית הזמנה");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "PageTitle", "היסטוריית מערכת");
 
 //setting menu bar
-    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObj->GetShopName());
-    \Services::setPlaceHolder($GLOBALS["PageTemplate"], "ordersBoardClass", "active");
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObj->GetShopName());
+\Services::setPlaceHolder($GLOBALS["PageTemplate"], "ordersBoardClass", "active");
 
 
 $PageBody = <<<PAGE
 <main>
     <div class="row">
-        <div class="col-sm-12" style="height: auto">
-            <div class="order-products-info"  style="width: 90%; margin: 0 auto">
+        <div class="col-sm-12" style="height: auto;">
+            <div class="order-products-info">
                 <span><h4>היסטוריה</h4></span>
                   <table id="OrderHistory" class="table table-striped">
                      <thead style="background: rgba(216,246,210,0.2)">
@@ -58,15 +59,15 @@ $PageBody = <<<PAGE
 </main>
 PAGE;
 
-$productHistory = "";
-$searchArray = array("הזמנה {$orderId}");
+$history = "";
+$searchArray = array("");
 BugOrderSystem::GetLog();
 $orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["db"], $searchArray);
 //$orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["file"], $searchArray);
 if (count($orderMessage) > 0) {
     $rowNum = 1;
     foreach ($orderMessage as $message) {
-        $productHistory .= <<<HTML
+        $history .= <<<HTML
     <tr>
         <td>{$rowNum}</td>
         <td>{$message->GetTime()->format("d/m/Y")}</td>
@@ -79,16 +80,14 @@ HTML;
     }
 }
 else {
-    $productHistory = <<<HTML
+    $history = <<<HTML
     <tr>
-        <td colspan="4">לא קיימת היסטוריה להזמנה</td>
+        <td colspan="4">לא קיימת היסטוריה למערכת</td>
     </tr>
 HTML;
 }
 
-\Services::setPlaceHolder($PageBody, "productHistory", $productHistory);
+\Services::setPlaceHolder($PageBody, "productHistory", $history);
 
 \Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody",$PageBody);
 echo $GLOBALS["PageTemplate"];
-
-?>

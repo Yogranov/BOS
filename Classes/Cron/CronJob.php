@@ -5,13 +5,16 @@
  * Date: 3/3/2018
  * Time: 11:31 AM
  */
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+namespace BugOrderSystem;
 
 require_once __DIR__.'/vendor/autoload.php';
 require_once __DIR__.'/../BugOrderSystem.php';
+
+if (\BugOrderSystem\Constant::SYSTEM_DEBUG) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
 
 use GO\Scheduler;
 

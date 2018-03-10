@@ -2,7 +2,7 @@
 This file contain jquery code that deal with the View Order Page vieworder.php
  */
 
-var ClickEvent = "dblclick";
+var ClickEvent = "click";
 
 var viewOrder = "";
 var viewOrderProducts = "";
