@@ -99,7 +99,7 @@ $(document).ready(function(){
 
 function AutoFillUserData(phoneNumber) {
     var retData = DoAPIAjax("GetClientByPhoneNumber", phoneNumber);
-    console.log(retData);
+    //console.log(retData);
     if (retData !== false && retData !== 0) {
         $("#form-FirstName").val(retData.FirstName);
         $("#form-LastName").val(retData.LastName)

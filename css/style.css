@@ -8,6 +8,15 @@
 ############
 */
 
+:required:placeholder-shown, .require:placeholder-shown {
+    box-shadow: 4px 4px 20px rgba(237, 87, 71, 0.5); /* Red border only if the input is empty */
+}
+
+:required:not(:placeholder-shown), .require:not(:placeholder-shown) {
+    box-shadow: 4px 4px 20px rgba(148, 216, 86, 0.5); /* Green border only if the input is not empty */
+}
+
+
 #showHideNewProductForm {
     width: 100%;
 }

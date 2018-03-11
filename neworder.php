@@ -47,22 +47,22 @@ $PageBody = <<<PAGE
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                    <label for="form-PhoneNumber">מספר טלפון</label>
-                                    <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern="[0-9]{10,}" maxlength="10" title="מספר טלפון 10 דפרות" onkeyup="this.value=this.value.replace(/[^\d]/,'');" required>
+                                    <label for="form-PhoneNumber">מספר טלפון <span style="color:#ED5747; font-size: 0.9em;" class="glyphicon glyphicon-asterisk"></span></label>
+                                    <input type="text" class="form-control" id="form-PhoneNumber" name="phonenumber" placeholder="מספר טלפון"  pattern="[0-9]{10,}" maxlength="10" title="מספר טלפון 10 דפרות" required="true">
                                     </div>                                
                                 </div>
                                 
                                 <div class="col-xs-6 col-sm-6 col-md-6">
                                     <div class="form-group">
-                                        <label for="form-LastName">שם משפחה</label>
-                                        <span><input type="text" class="form-control" id="form-LastName" name="lastname" placeholder="שם משפחה" required></span>
+                                        <label for="form-LastName">שם משפחה <span style="color:#ED5747; font-size: 0.9em;" class="glyphicon glyphicon-asterisk"></span></label>
+                                        <span><input type="text" class="form-control" id="form-LastName" name="lastname" placeholder="שם משפחה" required="true"></span>
                                     </div>
                                 </div>
                                 
                                 <div class="col-xs-6 col-sm-6 col-md-6">
                                     <div class="form-group">
-                                      <label for="form-FirstName">שם פרטי</label>
-                                      <span><input type="text" class="form-control" id="form-FirstName" name="firstname" placeholder="שם פרטי" required></span>
+                                      <label for="form-FirstName">שם פרטי <span style="color:#ED5747; font-size: 0.9em;" class="glyphicon glyphicon-asterisk"></span></label>
+                                      <span><input type="text" class="form-control" id="form-FirstName" name="firstname" placeholder="שם פרטי" required="true"></span>
                                     </div>                                
                                 </div>
                                 
@@ -93,8 +93,8 @@ $PageBody = <<<PAGE
                                 
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label for="form-seller">מוכרן</label>
-                                        <select class="form-control" name="seller" id="form-seller" required><br>
+                                        <label for="form-seller">מוכרן <span style="color:#ED5747; font-size: 0.9em;" class="glyphicon glyphicon-asterisk"></span></label>
+                                        <select class="form-control" name="seller" id="form-seller" required="true"><br>
                                              {sellerSelect}
                                         </select>
                                     </div>
@@ -146,19 +146,19 @@ $PageBody = <<<PAGE
                                                         <div class="row">
                                                             <div class="col-sm-2">
                                                                 <div class="form-group">
-                                                                    <label for="form-product-quantity">כמות</label>
-                                                                    <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
+                                                                    <label for="form-product-quantity">כמות <span style="color:#ED5747; font-size: 0.9em;" class="glyphicon glyphicon-asterisk"></span></label>
+                                                                    <input type="text" class="form-control" id="form-product-quantity" name="quantity" value="1" pattern="[0-9]{1,3}" onkeyup="this.value=this.value.replace(/[^\d]/,'')">
                                                                 </div>
                                                             </div>   
                                                             <div class="col-sm-5">
                                                                 <div class="form-group" id="productBarcode">
-                                                                    <label for="form-product-barcode">ברקוד</label>
-                                                                    <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" onkeyup="productBlankName();" placeholder="ברקוד">
+                                                                    <label for="form-product-barcode">ברקוד <span style="color:#ED5747; font-size: 0.9em;" class="glyphicon glyphicon-asterisk"></span></label>
+                                                                    <input type="text" class="form-control" id="form-product-barcode" name="productbarcode" onkeyup="productBlankBarcode();" placeholder="ברקוד">
                                                                 </div>
                                                             </div>    
                                                             <div class="col-sm-5">
                                                                 <div class="form-group" id="productName">
-                                                                    <label for="form-product-name">שם המוצר</label>
+                                                                    <label for="form-product-name">שם המוצר <span style="color:#ED5747; font-size: 0.9em;" class="glyphicon glyphicon-asterisk"></span></label>
                                                                     <input type="text" class="form-control" id="form-product-name" name="productname" placeholder="שם המוצר">
                                                                 </div>
                                                             </div>

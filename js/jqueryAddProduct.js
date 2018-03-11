@@ -43,14 +43,14 @@ $(document).ready(function() {
 
 function productBlankBarcode() {
     var val = $("#form-product-barcode").val();
-    if(val === '') {
+    if(val == "") {
         ChangeNameToInput();
     }
 }
 
 function productBlankName() {
     var val = $("#form-product-name").val();
-    if(val === '') {
+    if(val == "") {
         ChangeBarcodeToInput();
     }
 }

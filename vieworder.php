@@ -267,7 +267,7 @@ $productRow = <<<EOF
     <td><span>
         <form method="POST" id="changeProductStatus_{productBarcode}" name="changeProductStatus_{productBarcode}">
             <input type="hidden" name="productBarcode" id="productBarcode" value={productBarcode}>
-            <select class="productstatus" name="{productBarcode}" data-OrderId="{$orderObject->GetId()}" required>
+            <select class="productstatus" name="{productBarcode}" data-OrderId="{$orderObject->GetId()}">
                 {productStatusOptions}
             </select>
         </form>
