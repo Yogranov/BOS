@@ -27,9 +27,9 @@ unset($_SESSION['manager']);
 $passwordError = "";
 $reminderError = "";
 
-$managerPassword = Shop::GetById($shopId)->GetId();
+$managerPassword = &Shop::GetById($shopId)->GetId();
 $managerPassword .= "manager";
-$shopObject = Shop::GetById($shopId);
+$shopObject = &Shop::GetById($shopId);
 
 //setting header
 require_once "Header.php";
@@ -140,11 +140,9 @@ if(isset($_POST['addremind'])) {
 //////
 
 /// Delete remind
-if(isset($_GET['deleteId'])) {
+if(isset($_GET['deleteId']) && Reminder::IsExist((int)$_GET['deleteId'])) {
 
-    $deleteId = $_GET['deleteId'];
-
-    Reminder::GetById($deleteId)->Delete();
+    Reminder::GetById((int)$_GET['deleteId'])->Delete();
     header("Location: index.php");
 
 }

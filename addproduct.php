@@ -77,10 +77,10 @@ PAGE;
 //Take form filed and make them variable.
 
 if(isset($_POST['addproduct'])) {
-    $product_name = $_POST['ProductName'];
-    $product_barcode = $_POST['ProductBarcode'];
-    $product_quantity = $_POST['Quantity'];
-    $product_remarks = $_POST['Remarks'];
+    $product_name = $_REQUEST['productname'];
+    $product_barcode = $_REQUEST['ProductBarcode'];
+    $product_quantity = $_REQUEST['Quantity'];
+    $product_remarks = $_REQUEST['Remarks'];
 
     if(!empty($product_name) && !empty($product_barcode) && !empty($product_quantity)) {
         try {

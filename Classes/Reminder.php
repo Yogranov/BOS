@@ -113,10 +113,19 @@ class Reminder {
         }
     }
 
+    /**
+     * @param int $reminderId
+     * @return bool
+     * @throws Exception
+     */
+    public static function IsExist(int $reminderId) {
+        return (bool)BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $reminderId)->count;
+    }
 
     /**
      * @param callable $function_doEachIteration
      * @param array $OrderByArray
+     * @throws Exception
      */
     public static function LoopAll(callable $function_doEachIteration, array $OrderByArray = array())
     {
@@ -144,7 +153,8 @@ class Reminder {
 
     /**
      * @param Shop $shop
-     * @return Reminder[]
+     * @return array
+     * @throws Exception
      */
     public static function GetShopReminders(Shop $shop)
     {
@@ -175,6 +185,7 @@ class Reminder {
 
     /**
      * @return Shop
+     * @throws \Exception
      */
     public function GetShop() {
         $shop = &Shop::GetById($this->shopId);
@@ -183,32 +194,20 @@ class Reminder {
 
     /**
      * @return Seller
+     * @throws DBException
+     * @throws Exception
+     * @throws \Exception
      */
     public function GetSeller() {
         $seller = &Seller::GetById($this->sellerId);
         return $seller;
     }
 
-
     /**
      * @return Reminder
      */
     public function GetRemind() {
         return $this->remind;
-    }
-
-    /**
-     * @return Seller
-     */
-    public function GetSellerId() {
-        return $this->sellerId;
-    }
-
-    /**
-     * @return Shop
-     */
-    public function GetShopId() {
-        return $this->shopId;
     }
 
     /**
@@ -219,10 +218,10 @@ class Reminder {
         return $this->timestamp;
     }
 
-
     /**
      * @param $shopId
      * @return array
+     * @throws Exception
      */
     public static function GetAllReminds($shopId) {
         $allRemindsObj = BugOrderSystem::GetDB()->where(self::TABLE_SHOP_COLUMN,$shopId)->get(self::TABLE_NAME);
