@@ -46,7 +46,7 @@ $PageBody = <<<PAGE
                 <center>הוספת פריט להזמנה - {$orderId}</center>
             <div class="form-group" id="productName">
                 <label for="form-product-name">שם המוצר</label>
-                <input type="text" class="form-control" id="form-product-name" placeholder="שם המוצר" name="ProductName" required><br>
+                <input type="text" class="form-control" id="form-product-name" placeholder="שם המוצר" name="productname" required><br>
             </div>
             
             <div class="form-group" id="productBarcode">

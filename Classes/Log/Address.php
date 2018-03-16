@@ -78,15 +78,14 @@ class Address
 
     /**
      * @param string $format
-     * @return bool|mixed
+     * @return bool|string
      */
     public function FormatAddress($format='{ip}:{port} {query}')
     {
-		if ($this->ip != "" && $this->port > 0)
-        {
+		if ($this->ip != "") {
 			$what_array=array('{ip}','{port}','{query}');
 			$replacedValues=array($this->ip, $this->port, $this->query);
-			$addr=str_replace($what_array, $replacedValues, $format);
+			$addr = str_replace($what_array, $replacedValues, $format);
 
 		    return $addr;
         }

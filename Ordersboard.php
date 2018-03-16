@@ -82,8 +82,8 @@ $OrderBoard_Table_Temlplate = <<<EOF
 </tr>
 EOF;
 
-$productOrderTemplate_Quantity_More_Then_One = "<li>{ProductName}<span style='color: indianred'> {ProductQuantity} X </span></li>";
-$productOrderTemplate_Quantity_One = "<li style='{productColor}'>{ProductName}</li>";
+$productOrderTemplate_Quantity_More_Then_One = "<li style='{productStyle}' class='{liClass}'>{ProductName}<span style='color: indianred'> {ProductQuantity} X </span></li>";
+$productOrderTemplate_Quantity_One = "<li style='{productStyle}' class='{liClass}'>{ProductName}</li>";
 
 $productOrderTemplate_Quantity_One_Code = "<li>{ProductCode}</li>";
 
@@ -123,18 +123,14 @@ foreach ($shopOrders as $order) {
         if ($orderProduct->GetQuantity() > 1) {
             $orderProductString .= $productOrderTemplate_Quantity_More_Then_One;
             \Services::setPlaceHolder($orderProductString, "ProductQuantity", $orderProduct->GetQuantity());
-
-            //Add color to product name if arrived
-            if(count($order->GetOrderProducts()) > 1)
-                \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
         }
-        else {
+        else
             $orderProductString .= $productOrderTemplate_Quantity_One;
 
-            //Add color to product name if arrived
-            if(count($order->GetOrderProducts()) > 1)
-                    \Services::setPlaceHolder($orderProductString, "productColor", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
-        }
+        if(count($order->GetOrderProducts()) > 1)
+            \Services::setPlaceHolder($orderProductString, "productStyle", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][0]);
+
+        \Services::setPlaceHolder($orderProductString, "liClass", Constant::PRODUCTS_STATUS_STYLE[$orderProduct->GetStatus()->getValue()][1]);
         \Services::setPlaceHolder($orderProductString, "ProductName", $orderProduct->getProductName());
     }
 

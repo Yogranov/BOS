@@ -43,10 +43,13 @@ $PageBody = <<<PAGE
                   <table id="OrderHistory" class="table table-striped">
                      <thead style="background: rgba(216,246,210,0.2)">
                        <tr>
-                          <th>מס</th>
-                          <th>תאריך</th>
-                          <th>שעה</th>
-                          <th>הודעה</th>
+                          <th scope="col">מס</th>
+                          <th scope="col">תאריך</th>
+                          <th scope="col">שעה</th>
+                          <th scope="col">סוג</th>
+                          <th scope="col">אייפי</th>
+                          <th scope="col">משתמש</th>
+                          <th scope="col">הודעה</th>
                        </tr>
                      </thead>
                      <tbody>
@@ -67,12 +70,18 @@ $orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["db"], $
 if (count($orderMessage) > 0) {
     $rowNum = 1;
     foreach ($orderMessage as $message) {
+        //message row color
+        //$property = Constant::GetMessageRowClass($message->GetLevel()->getName());
+
         $history .= <<<HTML
-    <tr>
-        <td>{$rowNum}</td>
-        <td>{$message->GetTime()->format("d/m/Y")}</td>
-        <td>{$message->GetTime()->format("H:i:s")}</td>
-        <td>{$message->GetMessage()}</td>
+    <tr {$property}>
+        <th scope="row">{$rowNum}</th>
+        <td {$property}>{$message->GetTime()->format("d/m/Y")}</td>
+        <td {$property}>{$message->GetTime()->format("H:i:s")}</td>
+        <td {$property}>{$message->GetLevel()->getDesc()}</td>
+        <td {$property}>{$message->GetIp()->FormatAddress("{ip}")}</td>
+        <td {$property}>{$message->GetUser()}</td>
+        <td {$property}>{$message->GetMessage()}</td>
     </tr>
 HTML;
 
