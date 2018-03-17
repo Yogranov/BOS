@@ -296,10 +296,11 @@ class Shop
      * @param string $message
      * @param string $subject
      * @param string $AttachedFile
+     * @param bool $log
      * @throws Exception
      * @throws \Exception
      */
-    public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
+    public function SendEmail(string $message, string $subject, string $AttachedFile = "", bool $log = true) {
         if (empty($this->email))
             throw new Exception("Email not exist!", $this);
 
@@ -313,8 +314,10 @@ class Shop
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
 
-        $logText = "אימייל נשלח אל החנות ".$this;
-        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("Subject" => $subject, "Message" => $message));
+        if ($log) {
+            $logText = "אימייל נשלח אל החנות ".$this;
+            BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("Subject" => $subject, "Message" => $message));
+        }
     }
 
 
