@@ -98,7 +98,7 @@ class OrderProducts {
         BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("product" => $this, "oldStatus" => $this->status->getDesc(), "newStatus" => $newStatus->getDesc()));
 
         $this->status = $newStatus;
-        $this->Update(false);
+        $this->Update(false, true);
 
         return $this->status;
     }
@@ -149,12 +149,13 @@ class OrderProducts {
 
     /**
      * @param bool $log
+     * @param bool $statusChange
      * @throws Exception
      * @throws \Exception
      */
-    public function Update(bool $log = true) {
+    public function Update(bool $log = true, bool $statusChange = false) {
         $orderObject = &Order::GetById($this->orderId);
-        $orderObject->ProductsUpdate($log);
+        $orderObject->ProductsUpdate($log, $statusChange);
     }
 
     /**

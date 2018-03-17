@@ -28,6 +28,7 @@ class Order
     private $sellerId;
     private $remarks;
     private $timeStamp;
+    private $statusUpdateTimestamp;
     private $OrderInnerStatus;
     private $emailNotification;
     /**
@@ -57,8 +58,10 @@ class Order
 
         if (in_array($orderData["Status"], EOrderStatus::toArray()))
             $this->OrderInnerStatus = EOrderStatus::search($orderData["Status"]);
+
         $this->status = $this->GetStatus();
         $this->emailNotification = $orderData["Email"];
+        $this->statusUpdateTimestamp = new \DateTime($orderData["LastStatusUpdateTimestamp"]);
     }
 
     /**
@@ -152,13 +155,18 @@ class Order
      */
     public static function &Add(Client $client, Shop $shop, Seller $seller, string $remarks = "", string $emailNotification = null)
     {
+        $now = new \DateTime('now', new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
+        $currentTime = $now->format("Y-m-d H:i:s");
+
         $OrderData= array(
             "ClientId" => $client->GetId(),
             "ShopId" => $shop->GetId(),
             "SellerId" => $seller->GetId(),
             "Remarks" => $remarks,
             "Email" => $emailNotification,
-            "Status" => 0
+            "Status" => 0,
+            "Timestamp" => $currentTime,
+            "LastStatusUpdateTimestamp" => $currentTime
         );
 
         $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $OrderData);
@@ -491,17 +499,36 @@ class Order
         if (is_array($this->orderProducts) && array_key_exists($product->GetBarcode(), $this->orderProducts))
             throw new Exception("{0} כבר קיים ב{1}!", null, $product, $this);
 
-        if (is_null($status))
+        $newProduct = false;
+        if (is_null($status)) {
             $status = EProductStatus::Created();
+            $newProduct = True;
+        }
 
         $orderProduct = new OrderProducts($this->id, $product, $quantity, $status, $remarks);
         $this->orderProducts[$product->GetBarcode()] = $orderProduct;
-        $this->ProductsUpdate(false);
+        $this->ProductsUpdate(false, $newProduct);
 
         if ($log) {
             $logText = "{product} נוסף ל{order} בכמות {quantity}";
             BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "product" => $product, "quantity" => $quantity));
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function setStatusUpdateTimestamp() {
+        $now = new \DateTime('now', new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
+        BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, array("LastStatusUpdateTimestamp" => $now->format("Y-m-d H:i:s")), 1);
+        $this->statusUpdateTimestamp = $now;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function GetStatusUpdateTimestamp() {
+        return $this->statusUpdateTimestamp;
     }
 
     /**
@@ -548,10 +575,11 @@ class Order
 
     /**
      * @param bool $log
+     * @param bool $statusChange
      * @throws Exception
      * @throws \Exception
      */
-    public function ProductsUpdate(bool $log = true) {
+    public function ProductsUpdate(bool $log = true, bool $statusChange = false) {
         $jsonString = $this->convertOrderProductArrayToJsonString();
         $updateArray = array(
             "products" => $jsonString
@@ -564,6 +592,9 @@ class Order
             $logText = " עודכנו המוצרים {products} של {order}!";
             BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "products"=> array_keys($this->GetOrderProducts())));
         }
+
+        if ($statusChange)
+            $this->setStatusUpdateTimestamp();
     }
 
     /**
