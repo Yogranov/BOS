@@ -27,16 +27,14 @@ $(document).ready(function() {
             GetNameData(ui.item.Barcode);
         },
         change: function (event, ui) {
-
-            if (ui.item == null)
-            {
+            if (ui.item == null) {
                 var productName = $("#form-product-name").val();
                 var retData = DoAPIAjax("SearchProduct", productName + "|Name");
                 barcode = retData[0].Barcode;
             }
             else
                 var barcode = ui.item.Barcode;
-            GetNameData(barcode);
+            //GetNameData(barcode);
         }
     });
 });
