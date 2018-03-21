@@ -172,6 +172,9 @@ class Client {
 
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
+
+        $logText = "נשלח מייל אל הלקוח {client}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
     }
 
     /**
