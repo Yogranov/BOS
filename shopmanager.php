@@ -22,7 +22,6 @@ if(!isset($manager)) {
     header("Location: index.php");
 }
 */
-$_SESSION["UserType"] = "ShopManager";
 
 $shopObject = &Shop::GetById($shopId);
 
@@ -44,12 +43,13 @@ $PageBody = <<<PAGE
         <main>
             <div class="wrapper">
                 <div id="reminder-table">
+                <center><button class="btn btn-primary" data-action="OpenBOSDialog" data-page="editproduct.php" data-dialogTitle="עריכת מוצרים" data-variables="ShowHeaderFooter=0">עריכת פריטים</button></center>
                         <table>
                           <thead>
                             <tr>
-                                         <th>לפטר</th>
-                                                <th>עריכה</th>
-                                        <th>סטאטוס</th>
+                                <th>לפטר</th>
+                                <th>עריכה</th>
+                                <th>סטאטוס</th>
                                 <th>שם מלא</th>
                                 <th>מספר עובד</th>
                             </tr>
@@ -58,27 +58,24 @@ $PageBody = <<<PAGE
                             {Seller_Table_Temlplate}
                           </tbody>
                         </table>
-                
-<form class="new-remind-form" method="POST">
-<center>הוסף מוכרן חדש</center>
-<br>
-:מספר מוכרן<br>
-   <input type="text" name="sellernum" required>
-   
- <br>
-:שם פרטי<br>
-   <input type="text" name="firstname" required>
-   <br>
-  :שם משפחה <br>
-   <input type="text" name="lastname" required>
-   <br>
-      :אימייל<br>
-   <input type="text" name="email" required>
-   <br>
-          <br>
-                    <button type="submit" name="addseller">הוסף מוכרן</button>
-</form>
-                        
+                        <form class="new-remind-form" method="POST">
+                            <center>הוסף מוכרן חדש</center>
+                            <br>
+                            :מספר מוכרן<br>
+                            <input type="text" name="sellernum" required>  
+                            <br>
+                            :שם פרטי<br>
+                            <input type="text" name="firstname" required>
+                            <br>
+                            :שם משפחה <br>
+                            <input type="text" name="lastname" required>
+                            <br>
+                            :אימייל<br>
+                            <input type="text" name="email" required>
+                            <br>
+                            <br>
+                            <button type="submit" name="addseller">הוסף מוכרן</button>
+                        </form>
                     </div>
                 </div>
    
@@ -178,21 +175,15 @@ if(isset($_POST['addseller'])) {
 
 if(isset($_POST["manager-password"])) {
     $password = $_POST["manager-password"];
+    $_SESSION["UserType"] = "ShopManager";
+}
 
-    if(!empty($password)) {
-        if ($password != $managerPassword) {
-            echo "סיסמה לא נכונה";
-            //$_SESSION["manager"] = Shop::GetById($shopId)->GetManager();
-            //header("Location: shopmanager.php");
-        } else {
-            ///echo the page
-            \Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody", $PageBody);
-            echo $GLOBALS["PageTemplate"];
-            ///
-        }
-    }
-} else {
-    echo "לא הוכנסה סיסמת מנהל";
+if(isset($_SESSION["UserType"]) && $_SESSION["UserType"] == "ShopManager") {
+    \Services::setPlaceHolder($GLOBALS["PageTemplate"],"PageBody", $PageBody);
+    echo $GLOBALS["PageTemplate"];
+
+    } else {
+    echo "שגיאה, נא נסו מאוחר יותר";
 }
 
 

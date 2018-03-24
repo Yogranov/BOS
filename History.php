@@ -42,8 +42,8 @@ require_once "Header.php";
 
 $PageBody = <<<PAGE
 <main>
-    <div class="row">
-        <div class="col-sm-12" style="height: auto;">
+    <div class="contaier">
+        <div class="col-sm-10 col-sm-offset-1" style="height: auto;">
             <div class="order-products-info">
                 <span><h4>היסטוריה</h4></span>
                   <table id="OrderHistory" class="table table-striped">

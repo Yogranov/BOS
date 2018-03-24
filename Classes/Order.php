@@ -392,6 +392,9 @@ class Order
 
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
+
+        $logText = "נשלח מייל אל הלקוח מהזמנה {client} לכתובת {emailAddress}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this->id, "emailAddress" => $this->emailNotification));
     }
 
     /**

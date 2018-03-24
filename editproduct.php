@@ -106,8 +106,10 @@ try {
             }
 
             //redirecting
-            if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"]))
-                header("Location: ".$_SESSION["REFERER"]);
+            if ((is_bool($_GET["ShowHeaderFooter"]) && !$_GET["ShowHeaderFooter"]) || !isset($_GET["ShowHeaderFooter"])) {
+                //header("Location: " . $_SESSION["REFERER"]);
+                header("Location: editproduct.php");
+            }
             else
                 echo "<script>window.location.href = '{$_SESSION["REFERER"]}';</script>";
 

@@ -14,7 +14,6 @@ switch ($_SESSION["UserType"]){
 
     $InnerUserMenu = <<<InnerUserMEnu
       <ul class="nav navbar-nav navbar-right">
-        <li class="{productManagment}"><a href="editproduct.php">ניהול פריט <i class="glyphicon glyphicon-inbox"></i></a></li>
         <li class="{oldOrdersClass}"><a href="oldordersboard.php">הזמנות ישנות <i class="glyphicon glyphicon-inbox"></i></a></li>
         <li class="{newOrdersClass}"><a href="neworder.php" >הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>
         <!-- <li class="{newOrdersClass}" data-action="OpenBOSDialog" data-page="neworder.php" data-dialogTitle="פתיחת הזמנה חדשה" data-variables="ShowHeaderFooter=0"><a href="#">הזמנה חדשה <i class="glyphicon glyphicon-edit"></i></a></li>-->
