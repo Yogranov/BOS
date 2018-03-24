@@ -11,6 +11,7 @@ namespace CronJob;
 
 class Constants {
     const DEBUG = false;
+    const SYSTEM_TIMEZONE = "Asia/Jerusalem";
     const EMAIL_SEND = true;
     const ALLOWED_IPS = array(
         "LocalServerIp" => "88.99.28.98",

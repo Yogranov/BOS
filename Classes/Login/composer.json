@@ -1,0 +1,6 @@
+{
+    "require": {
+        "alexshelkov/simpleacl": "2.*",
+		"phpauth/phpauth": ">=1.0"
+    }
+}

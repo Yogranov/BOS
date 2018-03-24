@@ -13,15 +13,21 @@ use Log\Message;
 session_start();
 require_once "Classes/BugOrderSystem.php";
 
+if (Constant::SYSTEM_DEBUG) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+
 $localUrl = 'https://'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-if ($_SERVER["HTTP_REFERER"] !== $localUrl)
+if (isset($_SERVER["HTTP_REFERER"]) && $_SERVER["HTTP_REFERER"] !== $localUrl)
     $_SESSION["REFERER"] = $_SERVER["HTTP_REFERER"];
 
 $shopId = $_SESSION["ShopId"];
 if(!isset($shopId)) {
     header("Location: login.php");
 }
-$orderId = $_GET["orderId"];
+
 $shopObj = &Shop::GetById($shopId);
 
 //setting header
@@ -66,11 +72,13 @@ $history = "";
 $searchArray = array("");
 BugOrderSystem::GetLog();
 $orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["db"], $searchArray);
+
 //$orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["file"], $searchArray);
 if (count($orderMessage) > 0) {
     $rowNum = 1;
     foreach ($orderMessage as $message) {
         //message row color
+        $property = "";
         //$property = Constant::GetMessageRowClass($message->GetLevel()->getName());
 
         $history .= <<<HTML

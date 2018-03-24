@@ -1,8 +1,7 @@
 <?php
 namespace BugOrderSystem;
 
-require "MysqliDb.php";
-require "PHPMailer/PHPMailer.php";
+require_once "vendor/autoload.php";
 require "Log/Log.php";
 
 //aux classes
@@ -23,6 +22,7 @@ include_once "Shop.php";
 include_once "Client.php";
 include_once "LoginC.php";
 
+use PHPMailer\PHPMailer\PHPMailer;
 use Log\ELogLevel;
 
 class BugOrderSystem {
@@ -79,8 +79,9 @@ class BugOrderSystem {
                 self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog".Constant::SYSTEM_TEST_OR_EMPTY);
                 self::$log->AddEmailHandler(ELogLevel::CRITICAL(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
 
-                $LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
-                self::$log->AddLogglyHandler(ELogLevel::INFO(), $LogglyCredentials->GetPassword());
+                //$LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
+                //\Services::dump($LogglyCredentials);
+                //self::$log->AddLogglyHandler(ELogLevel::INFO(), $LogglyCredentials->GetPassword());
 
                 return self::$log;
             }
@@ -94,7 +95,7 @@ class BugOrderSystem {
      * @param string $subject
      * @param string $message
      * @param bool $clear
-     * @return \PHPMailer
+     * @return PHPMailer
      * @throws Exception
      */
     public static function GetEmail(string $subject, string $message, bool $clear = True) {
@@ -103,7 +104,7 @@ class BugOrderSystem {
                 $ret = self::$email;
             }
             else {
-                $Email = new \PHPMailer();
+                $Email = new PHPMailer(true);
                 $Email->isSendmail();
                 $Email->IsHTML(true);
                 $Email->setFrom(Constant::EMAIL_SYSTEM_EMAIL, Constant::EMAIL_SYSTEM_NAME);

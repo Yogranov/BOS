@@ -302,9 +302,9 @@ class Log
      */
     public function AddLogglyHandler(\Log\ELogLevel $minlevel, string $Token, $bubble = true) {
         if (empty($Token))
-            throw new Exception("Unable to set sms handler without provider Token!");
+            throw new Exception("Unable to set loggly handler without provider Token!");
 
-        $handler = new \Monolog\Handler\LogglyHandler($Token.'/tag/monolog', $minlevel->getValue(), $bubble);
+        $handler = new LogglyHandler($Token.'/tag/monolog', $minlevel->getValue(), $bubble);
         $handler->setFormatter($this->formatter);
         $this->loggerObject->pushHandler($handler);
 

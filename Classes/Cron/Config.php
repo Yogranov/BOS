@@ -9,6 +9,7 @@
 use CronJob\Constants;
 
 require_once __DIR__.'/Constants.php';
+date_default_timezone_set(Constants::SYSTEM_TIMEZONE); //set the default timezone for all system pages
 require_once __DIR__.'/vendor/autoload.php';
 
 require_once __DIR__.'/../BugOrderSystem.php'; //External class
