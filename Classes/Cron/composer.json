@@ -1,5 +1,6 @@
 {
   "require": {
-	"peppeocchi/php-cron-scheduler": "2.*"
+	  "peppeocchi/php-cron-scheduler": "2.*",
+	  "joshcam/mysqli-database-class": "dev-master"
 	}
 }

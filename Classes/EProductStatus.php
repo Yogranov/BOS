@@ -19,5 +19,5 @@ class EProductStatus extends \Enum
     const Delivered = array(7, "המוצר נאסף");
     const Aborted = array(8, "בוטל");
     const Pre_order = array(9, "הזמנה מוקדמת");
-
+    const Message_Sent = array(10, "הודעה נשלחה ללקוח");
 }

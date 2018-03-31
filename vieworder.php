@@ -284,10 +284,12 @@ foreach ($orderObject->GetOrderProducts() as $product) {
     \Services::setPlaceHolder($productList, "productBarcode", $product->GetProductBarcode());
 
     $productStatusString = "";
-    foreach (EProductStatus::toArray() as $status) {
+    foreach (EProductStatus::toArray() as $statusName => $status) {
         $productStatusString .= "<option value='".$status[0]."' ";
-        if ($product->GetStatus()->getValue() == $status[0]){
-            $productStatusString .= "selected='selected'";}
+        if ($product->GetStatus()->getValue() == $status[0])
+            $productStatusString .= "selected='selected'";
+        if (in_array($statusName, Constant::PRODUCTS_STATUS_NOT_SELECTABLE))
+            $productStatusString .= " disabled";
         $productStatusString .= ">".$status[1]."</option>";
     }
     \Services::setPlaceHolder($productList, "productStatusOptions", $productStatusString);
