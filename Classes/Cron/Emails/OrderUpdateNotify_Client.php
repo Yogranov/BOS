@@ -9,7 +9,7 @@
 use CronJob\Constants;
 use BugOrderSystem\Order;
 use BugOrderSystem\EProductStatus;
-use BugOrderSystem\Products;
+use BugOrderSystem\OrderProducts;
 
 $PageName = "/Email/OrderUpdateNotify_Client.php";
 require_once __DIR__ . '/../Config.php';
@@ -22,22 +22,61 @@ try {
     $logText = $logPrePendText . "החל ריצה אוטומטית";
     \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::NOTICE(), array(), false, false);
 
-    /** @var Products[][] $ordersToAlert */
+    /** @var OrderProducts[][] $ordersToAlert */
     $ordersToAlert = array();
     Order::LoopAll(function(Order $order) use (&$ordersToAlert) {
         if ($order->GetNotificationEmail() !== null) {
+            $proceed = false;
             foreach($order->GetOrderProducts() as $product) {
-                if ($product->GetStatus() == EProductStatus::Arrived())
+                if (!$proceed && $product->GetStatus() == EProductStatus::Arrived())
+                    $proceed = true;
+
+                if ($product->GetStatus()->getValue() == EProductStatus::Arrived[0] || $product->GetStatus()->getValue() == EProductStatus::Client_Informed[0] || $product->GetStatus()->getValue() == EProductStatus::Message_Sent[0]) {
                     $ordersToAlert[$order->GetId()][] = $product;
+                }
             }
+
+            if (!$proceed)
+                unset($ordersToAlert[$order->GetId()]);
         }
     });
 
-    Services::dump($ordersToAlert);
+    //Services::dump($ordersToAlert);
     $sentEmail = array();
     foreach ($ordersToAlert as $orderId => $productsArray) {
         $orderObject = &Order::GetById($orderId);
-        $shopEmailMessage = \BugOrderSystem\Constant::EMAIL_CLIENT_PRODUCT_ARRIVED;
+        $ClientEmailMessage = \BugOrderSystem\Constant::EMAIL_CLIENT_PRODUCT_ARRIVED;
+        Services::setPlaceHolder($ClientEmailMessage, "ShopName", $orderObject->GetShop()->GetShopName());
+        Services::setPlaceHolder($ClientEmailMessage, "Name", $orderObject->GetClient()->GetFirstName());
+        Services::setPlaceHolder($ClientEmailMessage, "OrderNumber", $orderId);
+
+        $number = 1;
+        $productsTable = "";
+        foreach ($productsArray as $product) {
+            $productsTable .= \BugOrderSystem\Constant::EMAIL_CLIENT_PRODUCT_ARRIVED_TABLE;
+            Services::setPlaceHolder($productsTable, "ProductName", $product->GetProductName());
+            Services::setPlaceHolder($productsTable, "Quantity", $product->GetQuantity());
+            Services::setPlaceHolder($productsTable, "Number", $number);
+            $number++;
+        }
+        Services::setPlaceHolder($ClientEmailMessage, "ClientOrdersList", $productsTable);
+
+        /*
+        if (Constants::EMAIL_SEND && $orderObject->GetNotificationEmail() !== null) {
+            try {
+                $orderObject->SendEmail($ClientEmailMessage, "", "", false);
+
+                $sentEmail[$orderId] = $ClientEmailMessage;
+
+                $logText = $logPrePendText . "";
+                \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::DEBUG(), array(""),false, false);
+            } catch (Throwable $e) {
+                //error sending cron emails
+                $logText = $logPrePendText . "";
+                \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::ERROR(), array(""),false, false);
+            }
+        }
+        */
     }
 
     $logText = $logPrePendText . "הסתיימה הריצה - נשלחו {emailNumber} אימיילים ללקוחות";

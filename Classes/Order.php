@@ -376,10 +376,11 @@ class Order
      * @param string $message
      * @param string $subject
      * @param string $AttachedFile
+     * @param bool $log
      * @throws Exception
-     * @throws \Exception
+     * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
+    public function SendEmail(string $message, string $subject, string $AttachedFile = "", bool $log = true) {
         if (empty($this->emailNotification))
             throw new Exception("Email not exist!", $this);
 
@@ -393,8 +394,10 @@ class Order
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
 
-        $logText = "נשלח מייל אל הלקוח מהזמנה {client} לכתובת {emailAddress}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this->id, "emailAddress" => $this->emailNotification));
+        if ($log) {
+            $logText = "נשלח מייל אל הלקוח מהזמנה {client} לכתובת {emailAddress}";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this->id, "emailAddress" => $this->emailNotification));
+        }
     }
 
     /**
