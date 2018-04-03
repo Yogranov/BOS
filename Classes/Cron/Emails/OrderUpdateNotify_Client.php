@@ -41,7 +41,6 @@ try {
         }
     });
 
-    //Services::dump($ordersToAlert);
     $sentEmail = array();
     foreach ($ordersToAlert as $orderId => $productsArray) {
         $orderObject = &Order::GetById($orderId);
@@ -61,22 +60,20 @@ try {
         }
         Services::setPlaceHolder($ClientEmailMessage, "ClientOrdersList", $productsTable);
 
-        /*
-        if (Constants::EMAIL_SEND && $orderObject->GetNotificationEmail() !== null) {
+        if (Constants::EMAIL_SEND) {
             try {
-                $orderObject->SendEmail($ClientEmailMessage, "", "", false);
+                $orderObject->SendEmail($ClientEmailMessage, "פריט שהזמנת הגיע לסניף", "", false);
 
                 $sentEmail[$orderId] = $ClientEmailMessage;
 
-                $logText = $logPrePendText . "";
-                \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::DEBUG(), array(""),false, false);
+                $logText = $logPrePendText . "נשלח מייל ללקוח {Name} בעל בהזמנה {OrderId} עם {ProductNumber} הפריטים שממתינים בסניף";
+                \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::DEBUG(), array("Name" => $orderObject->GetClient(), "ProductNumber" => count($productsArray), "OrderId" => $orderObject, "Products" => $productsArray, "Shop" => $orderObject->GetShop(), "EmailMessage" => $ClientEmailMessage),false, false);
             } catch (Throwable $e) {
                 //error sending cron emails
-                $logText = $logPrePendText . "";
-                \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::ERROR(), array(""),false, false);
+                $logText = $logPrePendText . "התרחשה שגיאה בשליחת אימייל ללקוח {Name} בעל הזמנה {OrderId}";
+                \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::ERROR(), array("OrderId" => $orderObject, "Name" => $orderObject->GetClient()),false, false);
             }
         }
-        */
     }
 
     $logText = $logPrePendText . "הסתיימה הריצה - נשלחו {emailNumber} אימיילים ללקוחות";
