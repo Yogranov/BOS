@@ -117,7 +117,7 @@ class Products {
             $productObject = &self::GetByBarcode($barcode);
         } catch(\Throwable $e) {
             //if error need to add in the DB
-            $productData = array("Barcode" => $barcode, "Name" => $name, "Remark" => $remarks);
+            $productData = array("Barcode" => $barcode, "Name" => \Services::StripString($name), "Remark" => $remarks);
             $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $productData);
             if (!$success)
                 throw new Exception("Unable to Add new Product!", $productData);

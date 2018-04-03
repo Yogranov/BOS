@@ -267,4 +267,16 @@ class Services
             return false;
         }
     }
+
+    /**
+     * @param string $string
+     * @param string $AllowPattern
+     * @return string
+     */
+    public static function StripString(string $string, string $AllowPattern = "/[^a-z_.0-9:#א-ת\(\)\,\/\"\'\+\-\&\`\-\s]/i") {
+        //$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+        $string = preg_replace($AllowPattern, '', $string); // Removes special chars.
+
+        return trim(preg_replace('/\t+/', '', $string)); // Replaces multiple spaces with single one.
+    }
 }
