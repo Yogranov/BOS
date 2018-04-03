@@ -67,8 +67,8 @@ $PageBody = <<<PAGE
                                 </div>
                                 
                                 <div class="col-sm-12">
-                                    <div class="form-check">
-                                        <input type="checkbox" name="wantsemail" id="form-checkwantsemails" style="cursor: pointer" onclick="emailsClick()" value="1">
+                                    <div id="check-wantsemail" class="form-check">
+                                        <input type="checkbox" name="wantsemail" id="form-checkwantsemails" style="cursor: pointer" value="1">
                                         <label for="form-checkwantsemails">עדכונים באימייל</label>
                                     </div>
                                 </div>
@@ -232,10 +232,9 @@ if(isset($_POST['neworder']))  {
                     $NewClientObj = &Client::GetById($clientId);
                     if ($NewClientObj->GetEmail() == "" && $client_wants_emails)
                         $NewClientObj->ChangeEmail($client_email);
-                        $NewClientObj->SetWantEmail(1); //TODO: need to remove when we changing the 'WantEmail' behavior
                 }
 
-                if ($client_email != '' && $client_wants_emails)
+                if ($client_wants_emails && $client_email != '')
                     $notificationEmail = $client_email;
                 else
                     $notificationEmail = null;
@@ -245,13 +244,28 @@ if(isset($_POST['neworder']))  {
 
             try {
                 //Add products to order.
+                $productLoopCounter = 0;
+                /*
+                productAddingLoop:
+                for($i = $productLoopCounter; $i <= count($NewProductArray); $i++) {
+                    $productLoopCounter++;
+                    $productBarcode = array_keys($NewProductArray)[$i];
+                    $productObject = &Products::Add($productBarcode, $NewProductArray[$productBarcode]["Name"]);
+                    $orderObject->AddOrderProduct($productObject, $NewProductArray[$productBarcode]["Quantity"], $NewProductArray[$productBarcode]["Remark"]);
+                }
+                */
                 foreach ($NewProductArray as $productBarcode => $productArray) {
+                    $productLoopCounter++;
                     $productObject = &Products::Add($productBarcode, $NewProductArray[$productBarcode]["Name"]);
                     $orderObject->AddOrderProduct($productObject, $NewProductArray[$productBarcode]["Quantity"], $NewProductArray[$productBarcode]["Remark"]);
                 }
             }
             catch (\Throwable $e) {
-                //TODO: need to check if there at least one more product - if it is we need to proceed without removal - otherwise we need to remove the order
+                /*
+                if ($productLoopCounter < count($NewProductArray))
+                    goto productAddingLoop;
+                */
+
                 $orderObject->Remove();
                 throw $e;
             }

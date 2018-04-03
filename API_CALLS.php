@@ -71,8 +71,14 @@ try {
             \Services::setPlaceHolder($message, "ShopName", $orderObject->GetShop()->GetShopName());
 
             try {
-                $orderObject->GetClient()->SendEmail($message, $subject);
+                $orderObject->SendEmail($message, $subject);
                 $outputData[] = "success";
+
+                foreach ($orderObject->GetOrderProducts() as $product) {
+                    if ($product->GetStatus() == EProductStatus::Arrived())
+                        $product->ChangeStatus(EProductStatus::Message_Sent());
+                }
+
             } catch (\Throwable $e) {
                 $errorMsg = $e->getMessage();
                 $outputData = "לא ניתן לשלוח מייל ".$errorMsg;
@@ -136,6 +142,21 @@ try {
                 $productObject = $orderObject->GetOrderProducts()[$productBarcode];
                 if (is_object($productObject) && $productObject instanceof OrderProducts && method_exists($productObject, $function)) {
                     $productObject->$function($data);
+                    $outputData = 1;
+                }
+            }
+            catch(\Throwable $e) {
+                $outputData = 0;
+            }
+            break;
+
+        case "UpdateOrderData":
+            list($orderId, $function, $data) = $pageData;
+            $outputData = 0;
+            try {
+                $orderObject = &Order::GetById($orderId);
+                if (is_object($orderObject) && $orderObject instanceof Order && method_exists($orderObject, $function)) {
+                    $orderObject->$function($data);
                     $outputData = 1;
                 }
             }

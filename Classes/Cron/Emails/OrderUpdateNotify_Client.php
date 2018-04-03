@@ -48,6 +48,7 @@ try {
         Services::setPlaceHolder($ClientEmailMessage, "ShopName", $orderObject->GetShop()->GetShopName());
         Services::setPlaceHolder($ClientEmailMessage, "Name", $orderObject->GetClient()->GetFirstName());
         Services::setPlaceHolder($ClientEmailMessage, "OrderNumber", $orderId);
+        Services::setPlaceHolder($ClientEmailMessage, "serverLoc", \BugOrderSystem\Constant::SYSTEM_DOMAIN.\BugOrderSystem\Constant::SYSTEM_SUBFOLDER);
 
         /** @var OrderProducts[] $arrivedProducts */
         $arrivedProducts = array();
@@ -73,7 +74,7 @@ try {
                 foreach ($arrivedProducts as $product)
                     $product->ChangeStatus(EProductStatus::Message_Sent());
 
-                $logText = $logPrePendText . "נשלח מייל ללקוח {Name} בעל בהזמנה {OrderId} עם {ProductNumber} הפריטים שממתינים בסניף";
+                $logText = $logPrePendText . "נשלח מייל ללקוח {Name} בעל הזמנה {OrderId} עם {ProductNumber} הפריטים שממתינים בסניף";
                 \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::DEBUG(), array("Name" => $orderObject->GetClient(), "ProductNumber" => count($productsArray), "OrderId" => $orderObject, "Products" => $productsArray, "Shop" => $orderObject->GetShop(), "EmailMessage" => $ClientEmailMessage),false, false);
 
             } catch (Throwable $e) {

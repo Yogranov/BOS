@@ -112,9 +112,15 @@ class BugOrderSystem {
 
                 $body = <<<BUG
 <html dir=rtl>
-    <header>
+    <body>
+       {$message}
+    </body>
+</html>
+BUG;
+                /*
+                      <header>
         <style>
-        
+
         </style>
     </header>
     <body style="background-color: #f2fcfe">
@@ -122,7 +128,7 @@ class BugOrderSystem {
             <logo>
                 <img src="https://bug.845.co.il/images/logo.png" style="float: left; position: absolute; vertical-align: middle;">
             </logo>
-            <h2 style="text-align: center;">מערכת הזמנות B.O.S</h2>        
+            <h2 style="text-align: center;">מערכת הזמנות B.O.S</h2>
         </div>
         <div>
             {$message}
@@ -131,8 +137,9 @@ class BugOrderSystem {
             <b>כל הזכויות שמורות - B.O.S</b>
         </div>
     </body>
-</html>
-BUG;
+
+                 */
+
                 $Email->Subject = $subject;
                 $Email->Body = $body;
 

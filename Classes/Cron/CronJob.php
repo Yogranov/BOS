@@ -20,8 +20,7 @@ try {
     $scheduler->php('Emails/DelayedOrder_Shop.php')->inForeground()->at("0 8 * * 0-5"); // https://crontab.guru/#0_8_*_*_0-5
     $scheduler->php('Emails/DelayedOrder_Shop.php')->inForeground()->at("0 18 * * 6"); // https://crontab.guru/#0_18_*_*_6
 
-    //$scheduler->php('Emails/OrderUpdateNotify_Client.php')->inForeground()->at("0 9 * * 0-5"); // https://crontab.guru/#0_9_*_*_0-5
-    //$scheduler->php('Emails/OrderUpdateNotify_Client.php')->inForeground()->at("0 16 * * 0-5"); // https://crontab.guru/#0_16_*_*_0-5
+    $scheduler->php('Emails/OrderUpdateNotify_Client.php')->inForeground()->at("0 9,12,16 * * 0-5"); // https://crontab.guru/#0_9,12,16_*_*_0-5
 
 
     // Let the scheduler execute jobs which are due.

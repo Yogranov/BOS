@@ -1,4 +1,4 @@
-
+/*
 function emailsClick() {
     var checkBox = document.getElementById("checkwantsemails");
     var emailBox = document.getElementById("clientwantsemails");
@@ -9,7 +9,7 @@ function emailsClick() {
         emailBox.className = "open";
     }
 }
-
+*/
 function arrayKeys(input) {
     var output = new Array();
     var counter = 0;
@@ -58,8 +58,6 @@ function DoAPIAjax(method, postData) {
             retData = returnedData;
         },
         error: function (ajaxobject, statusText, errorThrowen) {
-            //console.log(statusText);
-            //console.log(ajaxobject);
             retData = false;
         }
     });

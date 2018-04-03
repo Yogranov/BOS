@@ -19,9 +19,7 @@ if(!isset($shopId)) {
     header("Location: login.php");
 }
 $clientId = $_GET["clientId"];
-$clientObject = Client::GetById($clientId);
-$shopObject = Shop::GetById($shopId);
-
+$clientObject = &Client::GetById($clientId);
 
 //setting header
 require_once "Header.php";
@@ -49,20 +47,13 @@ $pageBody = <<<PAGE
                     <label for="client-phone-number">מספר טלפון</label>
                 <input type="text" class="form-control" name="phonenumber" id="client-phone-number" value="{$clientObject->GetPhoneNumber()}" onkeyup="this.value=this.value.replace(/[^\d]/,'')" required><br>
                 </div>
-                
-                <label for="checkwantsemails">מעוניין לקבל עדכונים במייל</label>
 
-                 <input type="checkbox" id="checkwantsemails" value=1 name="wantsemail" style="display = 'none'" onclick="emailsClick()" {checkedString}><br><br>
-
-                <div id="clientwantsemails" class="{emailClassString}">
-                <label for="client-wants-email">אימייל</label>
-                <input type="text" class="form-control" id="client-wants-email" name="email" value="{$clientObject->GetEmail()}"><br>
+                <div class="form-group">
+                    <label for="client-email">אימייל</label>
+                <input type="text" class="form-control" id="client-email" name="email" value="{$clientObject->GetEmail()}"><br>
                 </div>
                 
                 <input type="submit" value="עדכן לקוח" name="editclient" class="btn btn-info btn-block">
-
-                
-                
 
             </form>
 
@@ -71,29 +62,15 @@ $pageBody = <<<PAGE
 </main>
 PAGE;
 
-$checkedString = "";
-$emailClassString = "";
-if ($clientObject->IsWantEmail()) {
-    $checkedString = "Checked";
-    $emailClassString = "open";
-}
-\Services::setPlaceHolder($pageBody,"checkedString", $checkedString);
-\Services::setPlaceHolder($pageBody,"emailClassString", $emailClassString);
-
 
 //Take form filed and make them variable.
 
 if(isset($_POST['editclient'])) {
 
-    $client_wants_emails = 0;
-    if (isset($_POST['wantsemail']))
-        $client_wants_emails = 1;
-
     $arrayToUpdate = array(
         "SetFirstName" => $_POST['firstname'],
         "SetLastName" => $_POST['lastname'],
         "SetPhoneNumber" => $_POST['phonenumber'],
-        "SetWantEmail" => $client_wants_emails,
         "ChangeEmail" => $_POST['email']
     );
 

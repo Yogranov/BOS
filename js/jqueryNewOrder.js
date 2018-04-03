@@ -32,11 +32,14 @@ $(document).ready(function(){
             ProductData[Element.id] = Element.value;
 
             //clear input after adding to array
+
+            ChangeNameToInput("");
             var valueData = "";
             if (Element.id === "form-product-quantity")
                 valueData = 1;
             Element.value = valueData;
         });
+        //console.log(ProductData);
         ChangeBarcodeToInput();
 
         if (ProductData["form-product-barcode"] === "" && ProductData["form-product-name"] === "") {
@@ -73,6 +76,7 @@ $(document).ready(function(){
     });
 
     //**************************** { Client Data AutoFill } *****************************//
+    $("#clientwantsemails").hide();
     $("#form-PhoneNumber").autocomplete({
         source: function (request, response) {
             $.ajax({
@@ -89,10 +93,25 @@ $(document).ready(function(){
         minLength: 3,
         select: function (event, ui) {
             AutoFillUserData(ui.item.PhoneNumber);
+            console.log(ui.item);
+            if (ui.item.Email != null) {
+                $("#form-checkwantsemails").prop('checked', true);
+                $("#clientwantsemails").show(500);
+            }
         },
         change: function (event, ui) {
             var PhoneNumber = $(this).val();
             AutoFillUserData(PhoneNumber);
+        }
+    });
+
+    //**************************** { toggle email according to wantemail checkbox } *****************************//
+    $(document).on("click", "#check-wantsemail", function() {
+        if ($(this).children("#form-checkwantsemails").prop("checked")) {
+            $("#clientwantsemails").show(500);
+        }
+        else {
+            $("#clientwantsemails").hide(500);
         }
     });
 });

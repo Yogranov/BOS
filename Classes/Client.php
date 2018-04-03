@@ -17,7 +17,6 @@ class Client {
     private $lastName;
     private $email;
     private $phoneNumber;
-    private $wantEmail;
 
     /**
      * Client constructor.
@@ -29,7 +28,6 @@ class Client {
         $this->lastName =    $clientData["LastName"];
         $this->email =       $clientData["Email"];
         $this->phoneNumber = $clientData["PhoneNumber"];
-        $this->wantEmail =   (bool)$clientData["ClientWantsMails"];
     }
 
     /**
@@ -157,9 +155,6 @@ class Client {
      * @throws \Exception
      */
     public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
-        if (!$this->wantEmail)
-            return;
-
         if (empty($this->email))
             throw new Exception("Email not exist!", $this);
 
@@ -210,13 +205,6 @@ class Client {
      */
     public function GetFullName () {
         return $this->firstName." ".$this->lastName;
-    }
-
-    /**
-     * @return bool
-     */
-    public function IsWantEmail() {
-        return $this->wantEmail;
     }
 
     /**
@@ -311,18 +299,6 @@ class Client {
     }
 
     /**
-     * @param int $wantEmail
-     * @param bool $update
-     * @throws DBException
-     * @throws \Exception
-     */
-    public function SetWantEmail(int $wantEmail, bool $update = true) {
-        $this->wantEmail = (bool)$wantEmail;
-        if ($update)
-            $this->Update();
-    }
-
-    /**
      * @throws DBException
      * @throws \Exception
      */
@@ -331,8 +307,7 @@ class Client {
             "Email" => $this->email,
             "FirstName" => $this->firstName,
             "LastName" => $this->lastName,
-            "PhoneNumber" => $this->phoneNumber,
-            "ClientWantsMails" => (string)$this->wantEmail
+            "PhoneNumber" => $this->phoneNumber
         );
 
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);

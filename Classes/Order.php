@@ -373,6 +373,24 @@ class Order
     }
 
     /**
+     * @param string|null $newEmail
+     * @param bool $update
+     * @throws Exception
+     */
+    public function ChangeNotificationEmail(string $newEmail, bool $update = true) {
+        if(!empty($newEmail)) {
+            $emailObject = new \PHPMailer();
+            if (!$emailObject::validateAddress($newEmail))
+                throw new Exception("Invalid client Email address ({0})!", null, $newEmail);
+        }
+
+        $this->emailNotification = $newEmail;
+        if ($update)
+            $this->Update();
+
+    }
+
+    /**
      * @param string $message
      * @param string $subject
      * @param string $AttachedFile
@@ -569,6 +587,7 @@ class Order
         $updateArray = array(
             "SellerId" => $this->sellerId,
             "products" => $this->convertOrderProductArrayToJsonString(),
+            "Email" => $this->emailNotification,
             "Remarks" => $this->remarks
         );
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->update(self::TABLE_NAME, $updateArray, 1);

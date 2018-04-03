@@ -53,15 +53,8 @@ if (isset($_REQUEST["productBarcode"])) {
 
     if ($orderProductArray[$productBarcode]->ChangeStatus($newStatus)) {
         if ($newStatus == EProductStatus::Arrived()) {
-            $arrivedCount = 0;
-            $allOrderProducts = $orderObject->GetOrderProducts();
-            foreach ($orderObject->GetOrderProducts() as $innerproductBarcode => $productObject) {
-                if ($productObject->GetStatus() == EProductStatus::Arrived())
-                    $arrivedCount++;
-            }
-
-            if ($arrivedCount == count($allOrderProducts)) {
-                if ($orderObject->GetClient()->IsWantEmail())
+            if ($orderObject->GetStatus() == EOrderStatus::Arrived()) {
+                if ($orderObject->GetNotificationEmail() !== null)
                     $confType = "dialog-EmailConfirm";
                 else
                     $confType = "dialog-ManualConfirm";
@@ -84,7 +77,7 @@ if (isset($_REQUEST["productBarcode"])) {
 }
 else if(isset($_REQUEST["SetAsClientInformed"])) {
     foreach ($orderObject->GetOrderProducts() as $productBarcode => $productObject) {
-        if ($productObject->GetStatus()->getValue() == EProductStatus::Arrived[0]) {
+        if ($productObject->GetStatus()->getValue() == EProductStatus::Arrived[0] || $productObject->GetStatus()->getValue() == EProductStatus::Message_Sent[0]) {
             $productObject->ChangeStatus(EProductStatus::Client_Informed());
         }
     }
@@ -98,7 +91,7 @@ else if(isset($_REQUEST["SetAsProductsOrdered"])) {
 }
 else if(isset($_REQUEST["SetAsProductsDelivered"])) {
     foreach ($orderObject->GetOrderProducts() as $productBarcode => $productObject) {
-        if ($productObject->GetStatus() == EProductStatus::Client_Informed()) {
+        if ($productObject->GetStatus() == EProductStatus::Client_Informed() || $productObject->GetStatus()->getValue() == EProductStatus::Message_Sent[0]) {
             $productObject->ChangeStatus(EProductStatus::Delivered());
         }
     }
@@ -143,8 +136,7 @@ $pageBody = <<<PAGE
                              <ul>
                                <li><span> שם הלקוח:</span> {$orderInfo->GetClient()->GetFullName()}</li>
                                <li><span> פלאפון:</span> {$clientExtendPhoneNumber}</li>
-                               <li><span> לקוח מעוניין בעדכון ע"י אימייל:</span>&nbsp;<span style="font-weight: normal" id="ClientWantEmails" data-value="{clientWantsEmailsBool}">{ClientWantsEmails}</span></li>
-                               <li><span> אימייל:</span>    {ClientEmail}</li>
+                               <li id="order-email"><span> אימייל:</span> <span class="editable"><input type='hidden' name='order_Email' data-orderId = "{$orderId}" data-function = "ChangeNotificationEmail" data-OldValue="{ClientEmail}" value='{ClientEmail}'><span>{ClientEmail}</span></span></li>
                             </ul>
                          <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0';">ערוך לקוח </div>
                          <!-- <div class="btn btn-primary" style="float: left; margin: 3px;" data-action="OpenBOSDialog" data-page="editclient.php" data-dialogTitle="עריכת לקוח" data-variables="clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0">ערוך לקוח </div> -->
@@ -189,18 +181,9 @@ if (empty($orderRemarks))
 \Services::setPlaceHolder($pageBody, "OrderRemarks", $orderRemarks);
 
 $clientEmail = $orderObject->GetNotificationEmail();
-if (empty($clientEmail)) {
+if (empty($clientEmail))
     $clientEmail = "לא הוזן";
-    $wantEmail =  'לא';
-    $wantEmailBool = 0;
-}
-else {
-    $wantEmail =  'כן';
-    $wantEmailBool = 1;
-}
 \Services::setPlaceHolder($pageBody, "ClientEmail", $clientEmail);
-\Services::setPlaceHolder($pageBody, "ClientWantsEmails", $wantEmail);
-\Services::setPlaceHolder($pageBody, "clientWantsEmailsBool", $wantEmailBool);
 
 //set seller name - can be change or delete
 try {
@@ -223,7 +206,7 @@ $orderStatusString = $orderObject->GetStatus()->getDesc();
 $ClientInformedButtonText = "";
 if($orderObject->GetStatus() < EOrderStatus::Client_Informed()) {
     foreach ($orderObject->GetOrderProducts() as $productObject) {
-        if ($productObject->GetStatus() == EProductStatus::Arrived()) {
+        if ($productObject->GetStatus() == EProductStatus::Arrived() || $productObject->GetStatus() == EProductStatus::Message_Sent()) {
             //check if at least one product arrived and show inform button
             $ClientInformedButtonText = "<span class='btn btn-warning' id='ClientInformed' data-SubmitPage = 'vieworder.php?id={$orderObject->GetId()}&ShowHeaderFooter=0&SetAsClientInformed=1' data-orderId='{$orderObject->GetId()}'> לקוח מעודכן </span>";
             break;
@@ -249,7 +232,7 @@ if($orderObject->GetStatus() == EOrderStatus::Open()) {
 $ProductsDeliveredButtonText = "";
 if($orderObject->GetStatus() !== EOrderStatus::Delivered()) {
     foreach ($orderObject->GetOrderProducts() as $productObject) {
-        if ($productObject->GetStatus() == EProductStatus::Client_Informed()) {
+        if ($productObject->GetStatus() == EProductStatus::Client_Informed() || $productObject->GetStatus() == EProductStatus::Message_Sent()) {
             //check if at least one product need to be deliver and show that button
             $ProductsDeliveredButtonText = "<span class='btn btn-info' id='ProductsDelivered' data-SubmitPage = 'vieworder.php?id={$orderObject->GetId()}&ShowHeaderFooter=0&SetAsProductsDelivered=1' data-orderId='{$orderObject->GetId()}'> המוצרים נאספו </span>";
             break;
