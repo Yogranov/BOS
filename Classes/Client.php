@@ -76,13 +76,12 @@ class Client {
      * @param string $lastName
      * @param string $phoneNumber
      * @param string $email
-     * @param bool $clientWantsMails
      * @return Client
      * @throws DBException
      * @throws Exception
      * @throws \Exception
      */
-    public static function &Add(string $firstName, string $lastName, string $phoneNumber, string $email, bool $clientWantsMails) {
+    public static function &Add(string $firstName, string $lastName, string $phoneNumber, string $email) {
         if(empty($firstName))
             throw new Exception("לא הוכנס שם פרטי");
 
@@ -102,8 +101,7 @@ class Client {
             "FirstName" => $firstName,
             "LastName" => $lastName,
             "PhoneNumber" => $phoneNumber,
-            "Email" => $email,
-            "ClientWantsMails" => (int)$clientWantsMails
+            "Email" => $email
         );
         $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $clientData);
         if (!$success)
