@@ -227,7 +227,7 @@ if(isset($_POST['neworder']))  {
                 //create client//
                 $clientId = Client::isPhoneExist($client_phone_number);
                 if ($clientId == False)
-                    $NewClientObj = &Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email, $client_wants_emails);
+                    $NewClientObj = &Client::Add($client_first_name, $client_last_name, $client_phone_number, $client_email);
                 else {
                     $NewClientObj = &Client::GetById($clientId);
                     if ($NewClientObj->GetEmail() == "" && $client_wants_emails)
