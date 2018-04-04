@@ -373,9 +373,10 @@ class Order
     }
 
     /**
-     * @param string|null $newEmail
+     * @param string $newEmail
      * @param bool $update
-     * @throws Exception
+     * @throws DBException
+     * @throws \Exception
      */
     public function ChangeNotificationEmail(string $newEmail, bool $update = true) {
         if(!empty($newEmail)) {
@@ -385,6 +386,7 @@ class Order
         }
 
         $this->emailNotification = $newEmail;
+        $this->GetClient()->ChangeEmail($newEmail); //change client default email
         if ($update)
             $this->Update();
 
@@ -395,7 +397,7 @@ class Order
      * @param string $subject
      * @param string $AttachedFile
      * @param bool $log
-     * @throws Exception
+     * @throws \Exception
      * @throws \PHPMailer\PHPMailer\Exception
      */
     public function SendEmail(string $message, string $subject, string $AttachedFile = "", bool $log = true) {

@@ -255,7 +255,6 @@ class Client {
             if (!$emailObject::validateAddress($newEmail))
                 throw new Exception("Invalid client Email address ({0})!", null, $newEmail);
 
-            $oldEmail = $this->email;
             $this->email = $newEmail;
             if ($update)
                 $this->Update();
