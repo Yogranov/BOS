@@ -14,7 +14,7 @@ require_once __DIR__ . '/Config.php';
 try {
     // Create a new scheduler
     $scheduler = new Scheduler();
-    $scheduler->clearJobs();
+    //$scheduler->clearJobs();
 
     //Emails
     $scheduler->php('Emails/DelayedOrder_Shop.php')->inForeground()->at("0 8 * * 0-5"); // https://crontab.guru/#0_8_*_*_0-5
@@ -22,6 +22,10 @@ try {
 
     $scheduler->php('Emails/OrderUpdateNotify_Client.php')->inForeground()->at("0 9,12,16 * * 0-5"); // https://crontab.guru/#0_9,12,16_*_*_0-5
 
+    //$scheduler->php('Emails/DbBackup_Webmaster.php')->inForeground()->at("0 7 * * 6"); // https://crontab.guru/#0_2_*_*_6
+
+    //db backups
+    $scheduler->php('Db/Backup.php')->inForeground()->at("0 0 * * *"); // https://crontab.guru/#0_0_*_*_*
 
     // Let the scheduler execute jobs which are due.
     $scheduler->run();
