@@ -8,6 +8,7 @@
 
 namespace BugOrderSystem;
 
+use Log\ELogLevel;
 
 class Reminder {
 
@@ -96,6 +97,10 @@ class Reminder {
             throw new Exception("Unable to Add new remind.", $remindData);
 
         $res = &self::GetById($success);
+
+        $logText = "נוצרה תזכורת חדשה '{remind}' על ידי {remindSeller}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("remind" => $res->GetRemind(), "remindSeller" => $res->GetSeller()->GetFullName()));
+
         return $res;
 
     }
@@ -110,6 +115,8 @@ class Reminder {
             throw new Exception("Cannot delete remind {0} right now!",null,$this->id);
         } else {
             unset(self::$reminders[$this->id]);
+            $logText = "התזכורת '{remind}' נמחקה";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("remind" => $this->GetRemind()));
         }
     }
 

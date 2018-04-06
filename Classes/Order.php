@@ -390,6 +390,8 @@ class Order
         if ($update)
             $this->Update();
 
+        $logText = "הזמנה מספר {orderId} - הוחלף אימייל לכתובת {emailAddress}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderId" => $this->id, "emailAddress" => $this->emailNotification));
     }
 
     /**

@@ -203,6 +203,9 @@ class Seller {
     public function Fire() {
         $this->sellerStatus = ESellerStatus::Fired();
         $this->update();
+
+        $logText = "המוכר {seller} פוטר";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $this->GetFullName()));
     }
 
     /**
@@ -212,6 +215,9 @@ class Seller {
     public function BackToWork() {
         $this->sellerStatus = ESellerStatus::Active();
         $this->update();
+
+        $logText = "המוכר {seller} חזר לעבוד";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $this->GetFullName()));
     }
 
     /**

@@ -108,6 +108,10 @@ class Client {
             throw new DBException("Unable to add client!", $clientData);
 
         $res = &self::getById($success);
+
+        $logText = "נוצר לקוח חדש בשם {clientName} מספר פלאפון {clientPhone}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("clientName" => $res->GetFullName(), "clientPhone" => $res->GetPhoneNumber()));
+
         return $res;
     }
 
