@@ -8,7 +8,7 @@
 
 use CronJob\Constants;
 
-$PageName = "/Email/DelayedOrder_Shop.php";
+$PageName = "/Email/DbBackup_Webmaster.php";
 require_once __DIR__ . '/../Config.php';
 
 if (!Constants::EMAIL_SEND && !Constants::DEBUG) {
@@ -46,7 +46,7 @@ try {
         throw new Exception($EmailObject->ErrorInfo);
 
     $logText = $logPrePendText . "הסתיימה הריצה - נשלח אימייל עם בסיסי הנתונים '{DbToBackup}' לכתובות הבאות: '{EmailTo}'";
-    \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::NOTICE(), array("DbToBackup" => Services::ArrayToMulti(array_keys($lastBackups), ","), "EmailTo" => $EmailObject->getToAddresses(), "Email" => $EmailObject),false, false);
+    \BugOrderSystem\BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::NOTICE(), array("DbToBackup" => Services::ArrayToMulti(array_keys($lastBackups), ", "), "EmailTo" => Services::ArrayToMulti($EmailObject->getToAddresses(), ", "), "Email" => $EmailObject),false, false);
 
 } catch(Throwable $e) {
     $logText = $logPrePendText . "הריצה לא הצליחה - אירעה שגיאה כללית {ErrorMessage}";
