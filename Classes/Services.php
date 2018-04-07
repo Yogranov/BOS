@@ -102,6 +102,29 @@ class Credential
     }
 }
 
+class ServiceFiles {
+
+    /**
+     * @param string $dir
+     * @return array
+     */
+    public static function DirToArray(string $dir) {
+
+        $result = array();
+
+        foreach (scandir($dir) as $key => $value) {
+            if (!in_array($value,array(".",".."))) {
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
+                    $result[$value] = self::DirToArray($dir . DIRECTORY_SEPARATOR . $value);
+                else
+                    $result[] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+}
 class Services
 {
     /**

@@ -77,7 +77,9 @@ class BugOrderSystem {
                 $LogsBaseDir = \Services::GetBaseDir(Constant::SYSTEM_NAME) . Constant::LOG_SUBFOLDER;
                 self::$logReadHandlers["file"] = self::$log->AddFileHandler(ELogLevel::DEBUG(), $LogsBaseDir, null, true,Constant::LOG_DEFAULT_MAX_FILE);
                 self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog".Constant::SYSTEM_TEST_OR_EMPTY);
-                self::$log->AddEmailHandler(ELogLevel::CRITICAL(), Constant::WEBMASTER_EMAIL, Constant::SYSTEM_NAME);
+
+                foreach (Constant::WEBMASTER_EMAIL as $webmasterEmail)
+                    self::$log->AddEmailHandler(ELogLevel::CRITICAL(), $webmasterEmail, Constant::SYSTEM_NAME);
 
                 //$LogglyCredentials = \Credential::GetCredential('log_LOGGLY.xml');
                 //\Services::dump($LogglyCredentials);

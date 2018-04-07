@@ -31,9 +31,7 @@ require_once "Header.php";
     \Services::setPlaceHolder($GLOBALS["PageTemplate"], "shopName", $shopObj->GetShopName());
     \Services::setPlaceHolder($GLOBALS["PageTemplate"], "newOrdersClass", "active");
 
-///
-
-$PageBody = <<<PAGE
+$PageBody = <<<HTML
 <main>
     <div class="container">
         <div class="row centered-form" id="new-order">
@@ -186,7 +184,7 @@ $PageBody = <<<PAGE
         </div>
     </div>
 </main>
-PAGE;
+HTML;
 
 //setting sellers list
 $orderSellersString = "";
