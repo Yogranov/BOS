@@ -156,7 +156,7 @@ class Client {
      * @throws Exception
      * @throws \Exception
      */
-    public function SendEmail(string $message, string $subject, string $AttachedFiles = "") {
+    public function SendEmail(string $message, string $subject, array $AttachedFiles = null) {
         if (empty($this->email))
             throw new Exception("Email not exist!", $this);
 

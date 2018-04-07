@@ -106,11 +106,10 @@ class Reminder {
 
     }
 
-
     /**
      * @throws \Exception
      */
-    public function Delete () {
+    public function Delete() {
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
         if(!$success) {
             throw new Exception("Cannot delete remind {0} right now!",null,$this->id);
