@@ -55,9 +55,9 @@ class Seller {
     /**
      * @param int $sellerId
      * @param array $sellerData
-     * @return mixed
+     * @return Seller
      * @throws DBException
-     * @throws Exception
+     * @throws \Exception
      */
     private static function addSellerBySellerData(int $sellerId, array $sellerData){
         $res = @self::$sellers[$sellerId];
@@ -205,7 +205,7 @@ class Seller {
         $this->update();
 
         $logText = "המוכר {seller} פוטר";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $this->GetFullName()));
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $this));
     }
 
     /**
@@ -217,7 +217,7 @@ class Seller {
         $this->update();
 
         $logText = "המוכר {seller} חזר לעבוד";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $this->GetFullName()));
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("seller" => $this));
     }
 
     /**
@@ -253,23 +253,29 @@ class Seller {
     /**
      * @param string $message
      * @param string $subject
-     * @param string $AttachedFile
+     * @param array|null $AttachedFiles
+     * @param bool $log
      * @throws Exception
      * @throws \Exception
      */
-    public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
+    public function SendEmail(string $message, string $subject, array $AttachedFiles = null, bool $log = true) {
         if (empty($this->email))
             throw new Exception("Unable to send email to {0} email not exist!", null, $this);
 
         $emailObject = BugOrderSystem::GetEmail($subject, $message);
         $emailObject->addAddress($this->email, $this->firstName." ".$this->lastName);
-        //if (is_string($AttachedFile) && file_exists($AttachedFile)) {
-        //\Services::dump($AttachedFile);
-        //$emailObject->addAttachment($AttachedFile);
-        //}
+        foreach ($AttachedFiles as $file) {
+            if ($file->isFile())
+                $emailObject->addAttachment($file->getRealPath(), $file->getFilename(), "base64", $file->getType());
+        }
 
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
+
+        if ($log) {
+            $logText = "אימייל נשלח אל המוכרן {seller}";
+            BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("seller" => $this , "Email" => $emailObject));
+        }
     }
 
     /**
@@ -288,8 +294,8 @@ class Seller {
         if (!$success)
             throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
 
-        $logText = "המוכר ".$this." עודכן";
-        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), $updateArray);
+        $logText = "עודכן המוכר {seller}";
+        BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("updateArray" => $updateArray, "seller" => $this));
     }
 
     /**

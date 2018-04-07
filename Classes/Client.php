@@ -109,8 +109,8 @@ class Client {
 
         $res = &self::getById($success);
 
-        $logText = "נוצר לקוח חדש בשם {clientName} מספר פלאפון {clientPhone}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("clientName" => $res->GetFullName(), "clientPhone" => $res->GetPhoneNumber()));
+        $logText = "נוצר לקוח חדש {clientName} מספר פלאפון {clientPhone}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("clientName" => $res, "clientPhone" => $res->GetPhoneNumber()));
 
         return $res;
     }
@@ -152,26 +152,27 @@ class Client {
     /**
      * @param string $message
      * @param string $subject
-     * @param string $AttachedFile
+     * @param \SplFileObject[]|null $AttachedFiles
      * @throws Exception
      * @throws \Exception
      */
-    public function SendEmail(string $message, string $subject, string $AttachedFile = "") {
+    public function SendEmail(string $message, string $subject, string $AttachedFiles = "") {
         if (empty($this->email))
             throw new Exception("Email not exist!", $this);
 
         $emailObject = BugOrderSystem::GetEmail($subject, $message);
         $emailObject->addAddress($this->email, $this->firstName." ".$this->lastName);
-        //if (is_string($AttachedFile) && file_exists($AttachedFile)) {
-            //\Services::dump($AttachedFile);
-            //$emailObject->addAttachment($AttachedFile);
-        //}
+
+        foreach ($AttachedFiles as $file) {
+            if ($file->isFile())
+                $emailObject->addAttachment($file->getRealPath(), $file->getFilename(), "base64", $file->getType());
+        }
 
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
 
         $logText = "נשלח מייל אל הלקוח {client}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this, "Email" => $emailObject));
     }
 
     /**
@@ -300,10 +301,11 @@ class Client {
     }
 
     /**
+     * @param bool $log
      * @throws DBException
      * @throws \Exception
      */
-    public function Update() {
+    public function Update(bool $log = true) {
         $updateArray = array(
             "Email" => $this->email,
             "FirstName" => $this->firstName,
@@ -315,8 +317,10 @@ class Client {
         if (!$success)
             throw new DBException("{0} לא ניתן לעדכן את", $updateArray, $this);
 
-        $logText = "הלקוח {client} עודכן";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this));
+        if ($log) {
+            $logText = "הלקוח {client} עודכן";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this, "UpdateArray" => $updateArray));
+        }
     }
 
     /**

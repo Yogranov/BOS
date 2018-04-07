@@ -291,32 +291,32 @@ class Shop
         BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO());
     }
 
-
     /**
      * @param string $message
      * @param string $subject
-     * @param string $AttachedFile
+     * @param \SplFileObject[]|null $AttachedFiles
      * @param bool $log
      * @throws Exception
      * @throws \Exception
      */
-    public function SendEmail(string $message, string $subject, string $AttachedFile = "", bool $log = true) {
+    public function SendEmail(string $message, string $subject, array $AttachedFiles = null, bool $log = true) {
         if (empty($this->email))
-            throw new Exception("Email not exist!", $this);
+            throw new Exception("Unable to send email to {0} email not exist!", null, $this);
 
         $emailObject = BugOrderSystem::GetEmail($subject, $message);
         $emailObject->addAddress($this->email);
-        //if (is_string($AttachedFile) && file_exists($AttachedFile)) {
-        //\Services::dump($AttachedFile);
-        //$emailObject->addAttachment($AttachedFile);
-        //}
+
+        foreach ($AttachedFiles as $file) {
+            if ($file->isFile())
+                $emailObject->addAttachment($file->getRealPath(), $file->getFilename(), "base64", $file->getType());
+        }
 
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
 
         if ($log) {
-            $logText = "אימייל נשלח אל החנות ".$this;
-            BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("Subject" => $subject, "Message" => $message));
+            $logText = "אימייל נשלח אל החנות {shop}";
+            BugOrderSystem::GetLog()->Write($logText, \Log\ELogLevel::INFO(), array("shop" => $this ,"Subject" => $subject, "Message" => $message, "Email" => $emailObject));
         }
     }
 

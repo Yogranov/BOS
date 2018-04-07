@@ -385,40 +385,40 @@ class Order
                 throw new Exception("Invalid client Email address ({0})!", null, $newEmail);
         }
 
+        $oldEmail = $this->emailNotification;
         $this->emailNotification = $newEmail;
         $this->GetClient()->ChangeEmail($newEmail); //change client default email
         if ($update)
             $this->Update();
 
-        $logText = "הזמנה מספר {orderId} - הוחלף אימייל לכתובת {emailAddress}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("orderId" => $this->id, "emailAddress" => $this->emailNotification));
+        $logText = "{order} - הוחלף אימייל מכתובת {oldEmail} לכתובת {emailAddress}";
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("order" => $this, "oldEmail" => $oldEmail, "emailAddress" => $this->emailNotification));
     }
 
     /**
      * @param string $message
      * @param string $subject
-     * @param string $AttachedFile
+     * @param \SplFileObject[]|null $AttachedFiles
      * @param bool $log
      * @throws \Exception
-     * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function SendEmail(string $message, string $subject, string $AttachedFile = "", bool $log = true) {
+    public function SendEmail(string $message, string $subject, array $AttachedFiles = null, bool $log = true) {
         if (empty($this->emailNotification))
             throw new Exception("Email not exist!", $this);
 
         $emailObject = BugOrderSystem::GetEmail($subject, $message);
         $emailObject->addAddress($this->emailNotification, $this->GetClient()->GetFullName());
-        //if (is_string($AttachedFile) && file_exists($AttachedFile)) {
-        //\Services::dump($AttachedFile);
-        //$emailObject->addAttachment($AttachedFile);
-        //}
+        foreach ($AttachedFiles as $file) {
+            if ($file->isFile())
+                $emailObject->addAttachment($file->getRealPath(), $file->getFilename(), "base64", $file->getType());
+        }
 
         if (!$emailObject->send())
             throw new Exception($emailObject->ErrorInfo);
 
         if ($log) {
-            $logText = "נשלח מייל אל הלקוח מהזמנה {client} לכתובת {emailAddress}";
-            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this->id, "emailAddress" => $this->emailNotification));
+            $logText = "נשלח מייל אל הלקוח {client} מ{order}  לכתובת {emailAddress}";
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("client" => $this->GetClient(), "order" => $this, "emailAddress" => $this->emailNotification, "Email" => $emailObject));
         }
     }
 

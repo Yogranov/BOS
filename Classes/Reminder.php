@@ -83,11 +83,12 @@ class Reminder {
         return $res;
     }
 
-
     /**
      * @param array $remindData
      * @return Reminder
-     * @throws Exception
+     * @throws DBException
+     * @throws \Exception
+     * Todo: need to change the array property to proper variables properties
      */
     public static function Add(array $remindData) {
         $sqlObject = BugOrderSystem::GetDB();
@@ -99,7 +100,7 @@ class Reminder {
         $res = &self::GetById($success);
 
         $logText = "נוצרה תזכורת חדשה '{remind}' על ידי {remindSeller}";
-        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("remind" => $res->GetRemind(), "remindSeller" => $res->GetSeller()->GetFullName()));
+        BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("remind" => $res, "remindSeller" => $res->GetSeller()));
 
         return $res;
 
@@ -107,7 +108,7 @@ class Reminder {
 
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function Delete () {
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME);
@@ -116,14 +117,14 @@ class Reminder {
         } else {
             unset(self::$reminders[$this->id]);
             $logText = "התזכורת '{remind}' נמחקה";
-            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("remind" => $this->GetRemind()));
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("remind" => $this));
         }
     }
 
     /**
      * @param int $reminderId
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public static function IsExist(int $reminderId) {
         return (bool)BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $reminderId)->count;
@@ -241,5 +242,10 @@ class Reminder {
 
         return $allRemindsArray;
     }
+
+    public function __toString() {
+        return $this->GetRemind()." (" . $this->GetId() . ")";
+    }
+
 
 }
