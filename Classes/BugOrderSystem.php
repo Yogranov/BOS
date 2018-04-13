@@ -110,6 +110,8 @@ class BugOrderSystem {
                 $Email->isSendmail();
                 $Email->IsHTML(true);
                 $Email->setFrom(Constant::EMAIL_SYSTEM_EMAIL, Constant::EMAIL_SYSTEM_NAME);
+                $Email->ContentType = "text/html;charset=utf-8";
+                $Email->headerLine("MIME-Version", 1.0);
                 $Email->CharSet = 'utf-8';
 
                 $body = <<<BUG
@@ -144,6 +146,7 @@ BUG;
 
                 $Email->Subject = $subject;
                 $Email->Body = $body;
+                $Email->AltBody = strip_tags($message);
 
                 $ret = self::$email = $Email;
             }
