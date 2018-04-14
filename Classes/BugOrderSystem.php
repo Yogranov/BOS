@@ -75,7 +75,8 @@ class BugOrderSystem {
             else {
                 self::$log = new \Log(Constant::LOG_SYSTEM_NAME, $username, new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
                 self::$logReadHandlers["file"] = self::$log->AddFileHandler(ELogLevel::DEBUG(), Constant::LOG_SUBFOLDER, null, true,Constant::LOG_DEFAULT_MAX_FILE);
-                self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog".Constant::SYSTEM_TEST_OR_OPER);
+                //self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog".Constant::SYSTEM_TEST_OR_OPER);
+                self::$logReadHandlers["db"] = self::$log->AddMysqliDbHandler(ELogLevel::INFO(), self::GetDB(), "Monolog");
 
                 foreach (Constant::WEBMASTER_EMAIL as $webmasterEmail)
                     self::$log->AddEmailHandler(ELogLevel::CRITICAL(), $webmasterEmail, Constant::SYSTEM_NAME);

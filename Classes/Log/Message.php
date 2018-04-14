@@ -224,25 +224,28 @@ class Message
     /**
      * @param \ILogRead $handler
      * @param array $SearchMessageArray
+     * @param string $channel
      * @param \DateTime|null $fromDate
      * @param \DateTime|null $toDate
-     * @return Message[]
+     * @return array
      */
-    public static function SearchMessage(\ILogRead $handler, array $SearchMessageArray, \DateTime $fromDate = null, \DateTime $toDate = null) {
+    public static function SearchMessage(\ILogRead $handler, array $SearchMessageArray, string $channel = null, \DateTime $fromDate = null, \DateTime $toDate = null) {
         $messageObjects = $handler->Read(0, $fromDate, $toDate);
         $matchesMessages = array();
         foreach ($messageObjects as $message) {
-            $meetTheRequirment = true;
-            foreach ($SearchMessageArray as $searchMessage) {
-                $match = @preg_match("/{$searchMessage}/i", $message->GetMessage());
-                if ($match == 0 || $match == false) {
-                    $meetTheRequirment = false;
-                    break;
+            if (is_null($channel) || ($channel == $message->GetChannel())) {
+                $meetTheRequirment = true;
+                foreach ($SearchMessageArray as $searchMessage) {
+                    $match = @preg_match("/{$searchMessage}/i", $message->GetMessage());
+                    if ($match == 0 || $match == false) {
+                        $meetTheRequirment = false;
+                        break;
+                    }
                 }
-            }
 
-            if ($meetTheRequirment)
-                array_push($matchesMessages, $message);
+                if ($meetTheRequirment)
+                    array_push($matchesMessages, $message);
+            }
         }
 
         return array_reverse($matchesMessages);

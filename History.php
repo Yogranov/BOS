@@ -50,6 +50,7 @@ $PageBody = <<<PAGE
                      <thead style="background: rgba(216,246,210,0.2)">
                        <tr>
                           <th scope="col">מס</th>
+                          <th scope="col">ערוץ</th>
                           <th scope="col">תאריך</th>
                           <th scope="col">שעה</th>
                           <th scope="col">סוג</th>
@@ -71,7 +72,7 @@ PAGE;
 $history = "";
 $searchArray = array("");
 BugOrderSystem::GetLog();
-$orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["db"], $searchArray);
+$orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["db"], $searchArray, Constant::LOG_SYSTEM_NAME);
 
 //$orderMessage = Message::SearchMessage(BugOrderSystem::$logReadHandlers["file"], $searchArray);
 if (count($orderMessage) > 0) {
@@ -82,15 +83,16 @@ if (count($orderMessage) > 0) {
         //$property = Constant::GetMessageRowClass($message->GetLevel()->getName());
 
         $history .= <<<HTML
-    <tr {$property}>
-        <th scope="row">{$rowNum}</th>
-        <td {$property}>{$message->GetTime()->format("d/m/Y")}</td>
-        <td {$property}>{$message->GetTime()->format("H:i:s")}</td>
-        <td {$property}>{$message->GetLevel()->getDesc()}</td>
-        <td {$property}>{$message->GetIp()->FormatAddress("{ip}")}</td>
-        <td {$property}>{$message->GetUser()}</td>
-        <td {$property}>{$message->GetMessage()}</td>
-    </tr>
+<tr {$property}>
+    <th scope="row">{$rowNum}</th>
+    <td {$property}>{$message->GetChannel()}</td>
+    <td {$property}>{$message->GetTime()->format("d/m/Y")}</td>
+    <td {$property}>{$message->GetTime()->format("H:i:s")}</td>
+    <td {$property}>{$message->GetLevel()->getDesc()}</td>
+    <td {$property}>{$message->GetIp()->FormatAddress("{ip}")}</td>
+    <td {$property}>{$message->GetUser()}</td>
+    <td {$property}>{$message->GetMessage()}</td>
+</tr>
 HTML;
 
         $rowNum++;
@@ -99,7 +101,7 @@ HTML;
 else {
     $history = <<<HTML
     <tr>
-        <td colspan="4">לא קיימת היסטוריה למערכת</td>
+        <td colspan="8">לא קיימת היסטוריה למערכת</td>
     </tr>
 HTML;
 }
