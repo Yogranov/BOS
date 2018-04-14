@@ -15,7 +15,7 @@ try {
     // Create a new scheduler
     $scheduler = new Scheduler();
     //$scheduler->clearJobs();
-
+/*
     //Emails
     $scheduler->php('Emails/DelayedOrder_Shop.php')->inForeground()->at("0 8 * * 0-5"); // https://crontab.guru/#0_8_*_*_0-5
     $scheduler->php('Emails/DelayedOrder_Shop.php')->inForeground()->at("0 18 * * 6"); // https://crontab.guru/#0_18_*_*_6
@@ -26,7 +26,7 @@ try {
 
     //db backups
     $scheduler->php('Db/Backup.php')->inForeground()->at("0 0 * * *"); // https://crontab.guru/#0_0_*_*_*
-
+*/
     // Let the scheduler execute jobs which are due.
     $scheduler->run();
 

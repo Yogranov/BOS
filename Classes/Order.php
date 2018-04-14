@@ -164,7 +164,6 @@ class Order
             "SellerId" => $seller->GetId(),
             "Remarks" => $remarks,
             "Email" => $emailNotification,
-            "Status" => 0,
             "Timestamp" => $currentTime,
             "LastStatusUpdateTimestamp" => $currentTime
         );
