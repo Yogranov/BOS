@@ -138,8 +138,7 @@ $pageBody = <<<PAGE
                                <li><span> פלאפון:</span> {$clientExtendPhoneNumber}</li>
                                <li id="order-email"><span> אימייל:</span> <span class="editable"><input type='hidden' name='order_Email' data-orderId = "{$orderId}" data-function = "ChangeNotificationEmail" data-OldValue="{ClientEmail}" value='{ClientEmail}'><span>{ClientEmail}</span></span></li>
                             </ul>
-                         <div class="btn btn-primary" style="float: left; margin: -34px 0 0 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0';">ערוך לקוח </div>
-                         <!-- <div class="btn btn-primary" style="float: left; margin: 3px;" data-action="OpenBOSDialog" data-page="editclient.php" data-dialogTitle="עריכת לקוח" data-variables="clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0">ערוך לקוח </div> -->
+                         <!--<div class="btn btn-primary" style="float: left; margin: 0 0 0 3px;" onclick="document.location ='editclient.php?clientId={$orderInfo->GetClient()->GetId()}&ShowHeaderFooter=0';">ערוך לקוח </div> -->
                     </div>
                 </div>
             </div>

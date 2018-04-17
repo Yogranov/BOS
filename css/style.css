@@ -1092,7 +1092,7 @@ Remider Table
 .order-client-info {
     /*height: 100%;*/
     width: 100%;
-    padding: 5px;
+    padding: 5px 5px 39px 5px;
     background: #ffffff;
     direction: rtl;
     text-align: right;

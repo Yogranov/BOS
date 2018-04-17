@@ -23,22 +23,27 @@ class Products {
     private $barcode;
     private $name;
     private $remarks;
+    private $family;
 
     /**
      * Products constructor.
      * @param array $productData
+     * @throws DBException
+     * @throws Exception
      */
     private function __construct(array $productData) {
         //\Services::dump($productData);
         $this->barcode = $productData["Barcode"];
         $this->name = $productData["Name"];
         $this->remarks = $productData["Remark"];
+        $this->family = $productData["Family"];
     }
 
     /**
      * @param $barcode
      * @param $productData
      * @return mixed
+     * @throws DBException
      * @throws Exception
      */
     private static function AddProductByProductData($barcode, $productData) {
@@ -180,9 +185,21 @@ class Products {
     /**
      * @return string
      */
-    public function GetRemark() {
+    public function GetRemarks() {
         return $this->remarks;
     }
+
+    /**
+     * @return Family
+     * @throws DBException
+     * @throws Exception
+     */
+    public function GetFamily() {
+        if($this->family != null)
+            return Family::GetById($this->family);
+        return null;
+    }
+
 
     /**
      * @param string $name
@@ -209,6 +226,17 @@ class Products {
     }
 
     /**
+     * @param int $familyId
+     * @param bool $update
+     * @throws Exception
+     */
+    public function SetFamily(int $familyId, bool $update = true) {
+        $this->family = $familyId;
+        if ($update)
+            $this->Update();
+    }
+
+    /**
      * @throws Exception
      * @throws \Exception
      */
@@ -216,7 +244,8 @@ class Products {
         $updateArray = array(
             "Name" => $this->name,
             "Barcode" => $this->barcode,
-            "Remark" => $this->remarks
+            "Remark" => $this->remarks,
+            "Family" => $this->family
         );
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->barcode)->update(self::TABLE_NAME, $updateArray, 1);
         if (!$success)
