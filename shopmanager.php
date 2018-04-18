@@ -43,8 +43,13 @@ $PageBody = <<<PAGE
         <main>
             <div class="wrapper">
                 <div id="reminder-table">
-                <center><button class="btn btn-primary" data-action="OpenBOSDialog" data-page="editproduct.php" data-dialogTitle="עריכת מוצרים" data-variables="ShowHeaderFooter=0">עריכת פריטים</button></center>
-                        <table>
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-5">
+                        <button class="btn btn-primary" data-action="OpenBOSDialog" data-page="editproduct.php" data-dialogTitle="עריכת מוצרים" data-variables="ShowHeaderFooter=0">עריכת מוצרים</button>
+                        <button class="btn btn-primary" data-action="OpenBOSDialog" data-page="editclient.php" data-dialogTitle="עריכת לקוחות" data-variables="ShowHeaderFooter=0">עריכת לקוחות</button>
+                    </div>
+                </div>
+                               <table>
                           <thead>
                             <tr>
                                 <th>לפטר</th>

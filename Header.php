@@ -43,6 +43,7 @@ $pageHeader = <<<Header
     <script src="js/jqueryNewOrder.js"></script>
     <script src="js/jqueryViewOrder.js"></script>
     <script src="js/jqueryAddEditProduct.js"></script>
+    <script src="js/jqueryEditClient.js"></script>
 </head>
 Header;
 
