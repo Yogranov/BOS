@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Created by PhpStorm.
  * User: Yogev
@@ -9,6 +8,7 @@
 namespace BugOrderSystem;
 
 session_start();
+@ob_start();
 
 require_once "Classes/BugOrderSystem.php";
 
@@ -22,9 +22,11 @@ $shopId = $_SESSION["ShopId"];
 $regionId = $_SESSION["RegionId"];
 
 if(!isset($shopId) && !isset($regionId)) {
-    header("Location: login.php");
+    header('Location: login.php');
+    die();
 } elseif (isset($regionId)) {
     header("Location: region/rindex.php");
+    die();
 }
 
 unset($_SESSION['manager']);

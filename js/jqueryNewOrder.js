@@ -93,7 +93,6 @@ $(document).ready(function(){
         minLength: 3,
         select: function (event, ui) {
             AutoFillUserData(ui.item.PhoneNumber);
-            console.log(ui.item);
             if (ui.item.Email != null) {
                 $("#form-checkwantsemails").prop('checked', true);
                 $("#clientwantsemails").show(500);
@@ -118,10 +117,9 @@ $(document).ready(function(){
 
 function AutoFillUserData(phoneNumber) {
     var retData = DoAPIAjax("GetClientByPhoneNumber", phoneNumber);
-    //console.log(retData);
     if (retData !== false && retData !== 0) {
         $("#form-FirstName").val(retData.FirstName);
-        $("#form-LastName").val(retData.LastName)
+        $("#form-LastName").val(retData.LastName);
         $("#form-Email").val(retData.Email);
         if (retData.Email !== "") {
             //$("#form-Email").attr("disabled", "true");

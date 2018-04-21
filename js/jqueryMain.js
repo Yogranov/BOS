@@ -174,7 +174,6 @@ function GetBarcodeData(productBarcode) {
 
 function GetNameData(productBarcode) {
     var retData = DoAPIAjax("GetProductData", productBarcode + "|javascript");
-    //console.log(retData);
     if (retData !== false && retData !== 0) {
         //exist in product db
         ChangeNameToSpan(retData.Name);

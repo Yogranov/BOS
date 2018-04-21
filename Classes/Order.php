@@ -55,10 +55,11 @@ class Order
         $this->timeStamp = new \DateTime($orderData["Timestamp"]);
 
         $this->JsonStringToOrderProduct($orderData["products"]);
-
+        /*
         if (in_array($orderData["Status"], EOrderStatus::toArray()))
             $this->OrderInnerStatus = EOrderStatus::search($orderData["Status"]);
-
+        \Services::dump($orderData["Status"]);
+        */
         $this->status = $this->GetStatus();
         $this->emailNotification = $orderData["Email"];
         $this->statusUpdateTimestamp = new \DateTime($orderData["LastStatusUpdateTimestamp"]);

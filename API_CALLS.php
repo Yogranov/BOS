@@ -121,7 +121,7 @@ try {
                             $outputData = array();
                             $outputData["Barcode"] = $productObject->GetBarcode();
                             $outputData["Name"] = $productObject->GetName();
-                            $outputData["Remark"] = $productObject->GetRemark();
+                            $outputData["Remark"] = $productObject->GetRemarks();
                             break;
 
                         default:
@@ -201,7 +201,6 @@ try {
                 $outputData = array(
                     'FirstName' => $sql['FirstName'],
                     'LastName' => $sql['LastName'],
-                    'ClientWantsMails' => $sql['ClientWantsMails'],
                     'Email' => $sql['Email']
                 );
             }
