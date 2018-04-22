@@ -201,6 +201,10 @@ class Seller {
      * @throws \Exception
      */
     public function Fire() {
+        $responsibleFamilies = Family::GetSellerResponsibility($this);
+        if (count($responsibleFamilies) > 0)
+            throw new Exception("Unable to Fire seller {0} because he is responsible over {1} product families!", $responsibleFamilies, $this, count($responsibleFamilies));
+
         $this->sellerStatus = ESellerStatus::Fired();
         $this->update();
 
@@ -225,6 +229,10 @@ class Seller {
      * @throws \Exception
      */
     public function Remove() {
+        $responsibleFamilies = Family::GetSellerResponsibility($this);
+        if (count($responsibleFamilies) > 0)
+            throw new Exception("Unable to delete seller {0} because he is responsible over {1} product families!", $responsibleFamilies, $this, count($responsibleFamilies));
+
         $success = BugOrderSystem::GetDB()->where(self::TABLE_KEY_COLUMN, $this->id)->delete(self::TABLE_NAME, 1);
         if(!$success)
             throw new DBException("Unable to remove seller {0}", null, $this);

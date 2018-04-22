@@ -8,6 +8,8 @@
 
 namespace BugOrderSystem;
 
+require_once "Family.php";
+
 use Log\ELogLevel;
 
 class Products {
@@ -107,11 +109,11 @@ class Products {
      * @param string $barcode
      * @param string $name
      * @param string|null $remarks
+     * @param Family|null $family
      * @return Products
      * @throws Exception
-     * @throws \Exception
      */
-    public static function &Add(string $barcode, string $name, string $remarks = null) {
+    public static function &Add(string $barcode, string $name, string $remarks = null, Family $family = null) {
         if (empty($barcode))
             throw new Exception("Illegal Barcode {0}!", null, $barcode);
 
@@ -122,13 +124,16 @@ class Products {
             $productObject = &self::GetByBarcode($barcode);
         } catch(\Throwable $e) {
             //if error need to add in the DB
-            $productData = array("Barcode" => $barcode, "Name" => \Services::StripString($name), "Remark" => $remarks);
+            if (!is_null($family))
+                $family = $family->GetId();
+
+            $productData = array("Barcode" => $barcode, "Name" => \Services::StripString($name), "Remark" => $remarks, "Family" => $family);
             $success = BugOrderSystem::GetDB()->insert(self::TABLE_NAME, $productData);
             if (!$success)
                 throw new Exception("Unable to Add new Product!", $productData);
 
             $logText = "נוסף מוצר חדש {productBarcode} {productName}";
-            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("productBarcode" => $productData["Barcode"] , "productName" => $productData["Name"]));
+            BugOrderSystem::GetLog()->Write($logText, ELogLevel::INFO(), array("productBarcode" => $productData["Barcode"] , "productName" => $productData["Name"], "Data" => $productData));
 
             $productObject = &self::GetByBarcode($barcode);
         }
@@ -190,16 +195,18 @@ class Products {
     }
 
     /**
-     * @return Family
+     * @return Family|null
      * @throws DBException
      * @throws Exception
      */
     public function GetFamily() {
-        if($this->family != null)
-            return Family::GetById($this->family);
+        if(!is_null($this->family) && is_int($this->family)) {
+            $family = &Family::GetById($this->family);
+            return $family;
+        }
+
         return null;
     }
-
 
     /**
      * @param string $name
@@ -226,12 +233,12 @@ class Products {
     }
 
     /**
-     * @param int $familyId
+     * @param Family $family
      * @param bool $update
      * @throws Exception
      */
-    public function SetFamily(int $familyId, bool $update = true) {
-        $this->family = $familyId;
+    public function SetFamily(Family $family, bool $update = true) {
+        $this->family = $family->GetId();
         if ($update)
             $this->Update();
     }

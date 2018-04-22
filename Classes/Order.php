@@ -29,7 +29,6 @@ class Order
     private $remarks;
     private $timeStamp;
     private $statusUpdateTimestamp;
-    private $OrderInnerStatus;
     private $emailNotification;
     /**
      * @var EOrderStatus
@@ -53,13 +52,7 @@ class Order
         $this->sellerId = $orderData["SellerId"];
         $this->remarks = $orderData["Remarks"];
         $this->timeStamp = new \DateTime($orderData["Timestamp"]);
-
         $this->JsonStringToOrderProduct($orderData["products"]);
-        /*
-        if (in_array($orderData["Status"], EOrderStatus::toArray()))
-            $this->OrderInnerStatus = EOrderStatus::search($orderData["Status"]);
-        \Services::dump($orderData["Status"]);
-        */
         $this->status = $this->GetStatus();
         $this->emailNotification = $orderData["Email"];
         $this->statusUpdateTimestamp = new \DateTime($orderData["LastStatusUpdateTimestamp"]);
@@ -154,8 +147,7 @@ class Order
      * @throws Exception
      * @throws \Exception
      */
-    public static function &Add(Client $client, Shop $shop, Seller $seller, string $remarks = "", string $emailNotification = null)
-    {
+    public static function &Add(Client $client, Shop $shop, Seller $seller, string $remarks = "", string $emailNotification = null) {
         $now = new \DateTime('now', new \DateTimeZone(Constant::SYSTEM_TIMEZONE));
         $currentTime = $now->format("Y-m-d H:i:s");
 

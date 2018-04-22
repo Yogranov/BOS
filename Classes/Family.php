@@ -20,7 +20,10 @@ class Family {
 
     private $id;
     private $name;
-    private $responsible;
+    /**
+     * @var Seller
+     */
+    private $responsibleSeller;
 
     /**
      * Family constructor.
@@ -31,7 +34,7 @@ class Family {
     private function __construct(array $familyData) {
         $this->id = $familyData["Id"];
         $this->name = $familyData["Name"];
-        $this->responsible = $familyData["Responsible"];
+        $this->responsibleSeller = &Seller::GetById($familyData["Responsible"]);
     }
 
     /**
@@ -76,6 +79,50 @@ class Family {
     }
 
     /**
+     * @param callable $function_doEachIteration
+     * @param array $OrderByArray
+     * @throws DBException
+     * @throws Exception
+     */
+    public static function LoopAll(callable $function_doEachIteration, array $OrderByArray = array()) {
+        if (!self::$loadedAll) {
+            $dbObject = BugOrderSystem::GetDB();
+            foreach ($OrderByArray as $orderBy) {
+                $dbObject->orderBy($orderBy[0], $orderBy[1]);
+            }
+            $familyData = $dbObject->get(self::TABLE_NAME);
+
+            foreach ($familyData as $family) {
+                if (!array_key_exists($family[self::TABLE_KEY_COLUMN], self::$families)) {
+                    self::addFamilyByFamilyData($family[self::TABLE_KEY_COLUMN], $family);
+                }
+            }
+
+            self::$loadedAll = true;
+        }
+
+        foreach (self::$families as $family) {
+            call_user_func($function_doEachIteration, $family);
+        }
+    }
+
+    /**
+     * @param Seller $seller
+     * @return Family[]
+     * @throws DBException
+     * @throws Exception
+     */
+    public static function GetSellerResponsibility(Seller $seller) {
+        $resposibleFamily = array();
+        self::LoopAll(function (Family $family) use (&$resposibleFamily, $seller) {
+            if ($family->responsibleSeller === $seller)
+                array_push($resposibleFamily, $family);
+        });
+
+        return $resposibleFamily;
+    }
+
+    /**
      * @return int
      */
     public function GetId() {
@@ -90,14 +137,11 @@ class Family {
     }
 
     /**
-     * @return Seller
-     * @throws DBException
-     * @throws Exception
+     * @return string
      */
-    public function GetResponsible(): Seller {
-        return Seller::GetById($this->responsible);
+    public function __toString() {
+        return "משפחה " . $this->GetName() . " (" . $this->GetId() . ")";
     }
-
 
 
 }
