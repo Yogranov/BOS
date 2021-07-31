@@ -13,23 +13,23 @@ main features:
 8. Big manager section - to manage you shops with statistics.
 
 Login<br>
-<img src="https://github.com/Yogranov/Yogranov-BOS/blob/master/README_MEDIA/login.jpg" width="600" height="305" />
+<img src="https://github.com/Yogranov/BOS/blob/master/README_MEDIA/login.jpg" width="600" height="305" />
 <br>
 
 Orders list<br>
-<img src="https://github.com/Yogranov/Yogranov-BOS/blob/master/README_MEDIA/orders-list.jpg" width="600" height="305" />
+<img src="https://github.com/Yogranov/BOS/blob/master/README_MEDIA/orders-list.jpg" width="600" height="305" />
 <br>
 
 Specific order <br>
-<img src="https://github.com/Yogranov/Yogranov-BOS/blob/master/README_MEDIA/order.jpg" width="600" height="305" />
+<img src="https://github.com/Yogranov/BOS/blob/master/README_MEDIA/order.jpg" width="600" height="305" />
 <br>
 
 New order <br>
-<img src="https://github.com/Yogranov/Yogranov-BOS/blob/master/README_MEDIA/new-order.jpg" width="600" height="305" />
+<img src="https://github.com/Yogranov/BOS/blob/master/README_MEDIA/new-order.jpg" width="600" height="305" />
 <br>
 
 Random info board <br>
-<img src="https://github.com/Yogranov/Yogranov-BOS/blob/master/README_MEDIA/remarks.jpg" width="600" height="305" />
+<img src="https://github.com/Yogranov/BOS/blob/master/README_MEDIA/remarks.jpg" width="600" height="305" />
 <br>
 
 Enjoy!
