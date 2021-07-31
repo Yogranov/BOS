@@ -32,4 +32,8 @@ Random info board <br>
 <img src="https://github.com/Yogranov/BOS/blob/master/README_MEDIA/remarks.jpg" width="600" height="305" />
 <br>
 
+Big manager board<br>
+<img src="https://github.com/Yogranov/BOS/blob/master/README_MEDIA/big-manager.jpg" width="600" height="305" />
+<br>
+
 Enjoy!
