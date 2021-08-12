@@ -1,0 +1,47 @@
+[
+    {
+        "name": "alexshelkov/simpleacl",
+        "version": "2.0.24",
+        "version_normalized": "2.0.24.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/alexshelkov/SimpleAcl.git",
+            "reference": "9d99f5516bcf1a31b5950d691866fbdc91f28a4d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/alexshelkov/SimpleAcl/zipball/9d99f5516bcf1a31b5950d691866fbdc91f28a4d",
+            "reference": "9d99f5516bcf1a31b5950d691866fbdc91f28a4d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2018-02-15T20:55:01+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "SimpleAcl": "library/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Alex Shelkovskiy",
+                "email": "alexshelkov@gmail.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "Simple Access Control List (ACL) for PHP.",
+        "homepage": "https://github.com/alexshelkov/SimpleAcl",
+        "keywords": [
+            "acl",
+            "authorization",
+            "permission"
+        ]
+    }
+]
